@@ -3,7 +3,7 @@
   }
   
   .ideias-inovadoras {
-    background: linear-gradient(90deg, #ff7e5f, #feb47b); /* Gradiente laranja */
+    background: linear-gradient(90deg, #ffee04, #feb47b); /* Gradiente laranja */
     -webkit-background-clip: text; /* Aplica o gradiente apenas ao texto */
     background-clip: text;
     color: transparent; /* Torna o texto transparente para mostrar o gradiente */
