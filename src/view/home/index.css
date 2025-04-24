@@ -1,0 +1,105 @@
+.dashboard-container {
+    padding-top: 56px; /* altura do navbar */
+  }
+  
+  .dashboard-navbar {
+    background-color: #28a745; /* verde */
+    padding: 0.5rem;
+  }
+  
+  .logo-container img {
+    max-width: 36px;
+    margin-left: 15px;
+    border-radius: 20px; /* borda arredondada */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* sombra leve */
+    
+
+  }
+  
+  .user-info {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding-right: 15px;
+  }
+  
+  .sidebar {
+    height: 100vh;
+    position: fixed;
+    top: 56px; /* abaixo do Navbar */
+    left: 0;
+    padding-top: 1rem;
+    border-right: 1px solid #ddd;
+    width: 240px;
+    transition: width 0.3s ease;
+    background-color: #ffffff; /* verde Bootstrap */
+    z-index: 1000;
+    overflow-x: hidden;
+  }
+  
+  .sidebar.closed {
+    width: 70px;
+  }
+  
+  .sidebar .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    color: #000000;
+    font-size: 15px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    border-radius: 6px;
+    margin-bottom: 5px;
+  }
+  
+  .sidebar .nav-link i,
+  .sidebar .nav-link svg {
+    font-size: 1.2rem;
+    min-width: 20px;
+  }
+  
+  .sidebar .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #06803d;
+  }
+  
+  .sidebar .active-nav-link {
+    background-color: #157347;
+    font-weight: bold;
+    color: #fff;
+  }
+  
+  .sidebar .sidebar-text {
+    display: inline-block;
+    transition: opacity 0.3s ease;
+  }
+  
+  .sidebar.closed .sidebar-text {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+  }
+  
+  
+  .content-area {
+    margin-left: 240px; /* Para deixar espaço para a sidebar */
+    transition: margin-left 0.3s ease;
+  }
+  
+  .sidebar.closed + .content-area {
+    margin-left: 70px; /* Ajuste quando sidebar está contraída */
+  }
+  
+  
+  
+  .sidebar i {
+    font-size: 1.5rem; /* Tamanho dos ícones */
+  }
+  
+  .sidebar.open .nav-link {
+    font-size: 14px; /* Exibe o texto apenas quando a sidebar estiver aberta */
+  }
+  

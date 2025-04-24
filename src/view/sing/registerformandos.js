@@ -146,7 +146,7 @@ const Registerformandos = () => {
 
   return (
     <>
-      <div className="container-fluid p-2">
+      <div className="">
         <div md={12} xs={12} className="p-3 bg-white border-1 rounded h-50">
           <Cabecalhos formik={formik} />
           <DadosFormandos
