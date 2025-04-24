@@ -6,6 +6,9 @@ import ErrorPage from "./view/Err/index.js";
 import Login from "./view/login/Login.js";
 import RegisterUser from "./view/sing/registouser.js";
 import Main from "./component/Menu/Menu.js";
+import RegisterProgramas from "./view/sing/registerprogramas.js";
+import RegisterCursos from "./view/sing/registercurso.js";
+import Registerformandos from "./view/sing/registerformandos.js";
 
 
 const ProtectedRoute = ({ children }) => {
@@ -25,7 +28,7 @@ function App() {
     <Router>
       <Routes>
         {/* Rota pública: Se o usuário já estiver autenticado, redireciona para /auth */}
-        <Route path="/" element={<PublicRoute element={<Login />} />} />
+        <Route path="/" element={<PublicRoute element={<Registerformandos />} />} />
 
         {/* Rota protegida: Só acessa se tiver token */}
       <Route path="/auth" element={<ProtectedRoute><Main /></ProtectedRoute>} />

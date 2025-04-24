@@ -1,6 +1,6 @@
 import axios from "axios";
 import { API_URL } from "../../api/urls";
-import { DeleteUser, GetCurso, GetPrograma, Getuser, PostCurso, PostPrograma, PostUser, PutCurso, PutPrograma, PutUser } from "../../api/urls/rotes_query";
+import { DeleteUser, GetCurso, GetCursof, GetPrograma, Getuser, PostCurso, PostPrograma, PostUser, PutCurso, PutPrograma, PutUser } from "../../api/urls/rotes_query";
 
 export const registarUser = async (uses, token) => {
     try {
@@ -150,6 +150,19 @@ export const registarUser = async (uses, token) => {
   export function fetchCursos(token, data) {
     return axios
       .post(API_URL + GetCurso, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => response.data) // Retorna os dados da resposta
+      .catch((error) => {
+        console.error("Erro ao buscar cursos:", error);
+        throw error; // Rejeita a promessa para permitir tratamento do erro no código que chamar a função
+      });
+  }
+  export function fetchCursosAno(token, data) {
+    return axios
+      .post(API_URL + GetCursof, data, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

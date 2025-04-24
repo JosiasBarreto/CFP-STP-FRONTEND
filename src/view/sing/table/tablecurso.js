@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { BsPencilSquare, BsTrash } from "react-icons/bs";
 import { Table, Button, Form, Card, Col, Dropdown } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import './index.css'
 import {
   faSortAlphaDown,
   faArrowDownZA,

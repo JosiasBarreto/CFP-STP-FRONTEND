@@ -169,7 +169,7 @@ function RegisterProgramas() {
 
   return (
     <>
-      <div className="bg-white shadow rounded p-3 mb-2">
+      <div className=" shadow rounded p-3 mb-2">
         <Row className="w-100">
           <Col md={3}>
             <Card className="border_tops shadow">
@@ -357,6 +357,7 @@ function RegisterProgramas() {
         isLoading={isLoading}
         isFetching={isFetching}
       />
+    
     </>
   );
 }

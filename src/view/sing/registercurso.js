@@ -76,6 +76,24 @@ function RegisterCursos() {
       setLoading(false);
     }
   };
+  const handleLimpar = async () => {
+    setLoading(true);
+    setSearchParams({
+      nome: "",
+      ano_execucao: new Date().getFullYear(),
+      programa: "",
+      local_realizacao: "",
+      acao: "",
+    });
+    queryClient.invalidateQueries({ queryKey: Qcurso });
+    try {
+      fetchCursos(token,searchParams)
+    } catch (error) {
+      console.error("Erro ao buscar cursos:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const validationSchema = Yup.object().shape({
     nome: Yup.string().required("Nome do Curso é obrigatório"),
@@ -311,7 +329,7 @@ function RegisterCursos() {
               <Col xs={12} md={2}  className="d-flex align-items-center">
                 <Button
                   variant="primary"
-                  onClick={handleSearch}
+                  onClick={handleLimpar}
                   disabled={loading}
                   className="w-100"
                 >

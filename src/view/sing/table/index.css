@@ -1,0 +1,29 @@
+/* === GLASS CARD CONTAINER === */
+.card-container-glass {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    color: #fff;
+  }
+  
+  /* === INDIVIDUAL CARDS === */
+  .card-glass {
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px); /* <- necessário para compatibilidade */
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    transition: all 0.3s ease-in-out;
+    color: #fff;
+    min-height: 260px;
+  }
+  
+  .card-glass:hover {
+    transform: scale(1.01);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+  }
+  
+

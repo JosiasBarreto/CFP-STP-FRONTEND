@@ -14,3 +14,7 @@ export const PutPrograma="/programa";
 export const PostCurso="/curso";
 export const PutCurso="/curso";
 export const GetCurso="/curso/busca";
+export const GetCursof="/curso/buscaf";
+
+export const PostFormandos="/formando/";
+export const PutFormandos="/formando/";
