@@ -14,6 +14,9 @@ import Registerformandos from "./view/sing/registerformandos.js";
 // Layout
 import DashboardLayout from "./view/home/index.js";
 import Main from "./component/Menu/Menu.js";
+import ContextRegister from "./view/register/ContextRegister.js";
+import TableFormandos from "./view/sing/table/tableformandos.js";
+import ListFormandos from "./view/page/indexformandos.js";
 
 // Componente de Rota Protegida (para páginas que precisam de autenticação)
 const ProtectedRoute = ({ children }) => {
@@ -33,15 +36,17 @@ function App() {
       <Routes>
         {/* Rota pública: Se o usuário não estiver autenticado, exibe o login */}
         <Route path="/" element={<PublicRoute element={<Login />} />} />
-
+        <Route path="/register" element={<PublicRoute element={<ContextRegister />} />} />
+        
         {/* Rota protegida: Só acessa se tiver token */}
-        <Route path="/auth" element={<DashboardLayout />}>
+        <Route path="/auth" element={<ProtectedRoute><DashboardLayout /> </ProtectedRoute>}>
           {/* Rotas dentro do DashboardLayout */}
           <Route path="home" element={<Home />} />
           <Route path="register-user" element={<RegisterUser />} />
           <Route path="register-programas" element={<RegisterProgramas />} />
           <Route path="register-cursos" element={<RegisterCursos />} />
           <Route path="register-formandos" element={<Registerformandos />} />
+          <Route path="list-formandos" element={<ListFormandos />} />
         </Route>
 
         {/* Página de erro para rotas inválidas */}

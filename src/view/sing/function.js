@@ -1,6 +1,6 @@
 import axios from "axios";
 import { API_URL } from "../../api/urls";
-import { DeleteUser, GetCurso, GetCursof, GetPrograma, Getuser, PostCurso, PostPrograma, PostUser, PutCurso, PutPrograma, PutUser } from "../../api/urls/rotes_query";
+import { DeleteUser, FiltroInscricao, GetCurso, GetCursof, GetPrograma, Getuser, LastFormandosID, PostCurso, PostPrograma, PostUser, PutCurso, PutPrograma, PutUser } from "../../api/urls/rotes_query";
 
 export const registarUser = async (uses, token) => {
     try {
@@ -147,6 +147,19 @@ export const registarUser = async (uses, token) => {
         throw error; // Rejeita a promessa para permitir tratamento do erro no código que chamar a função
       });
   }
+  export function LastIdFormando(token) {
+    return axios
+      .get(API_URL + LastFormandosID, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => response.data) // Retorna os dados da resposta
+      .catch((error) => {
+        console.error("Erro ao buscar programa:", error);
+        throw error; // Rejeita a promessa para permitir tratamento do erro no código que chamar a função
+      });
+  }
   export function fetchCursos(token, data) {
     return axios
       .post(API_URL + GetCurso, data, {
@@ -173,3 +186,17 @@ export const registarUser = async (uses, token) => {
         throw error; // Rejeita a promessa para permitir tratamento do erro no código que chamar a função
       });
   }
+  export function BuscarInscricao(token, data) {
+    return axios
+      .post(API_URL + FiltroInscricao, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",  // Garantir que o tipo de conteúdo é JSON
+        },
+      })
+      .then((response) => response.data) // Retorna os dados da resposta
+      .catch((error) => {
+        console.error("Erro ao buscar inscrição:", error);
+        throw error; // Rejeita a promessa para permitir tratamento do erro no código que chamar a função
+      });
+}

@@ -10,6 +10,11 @@ export const useRegistrarFormando = (token, formik, setPreview) => {
       const formData = new FormData();
 
       formData.append("processo", valores.processo);
+      formData.append("email", valores.email);
+      formData.append("agregado", valores.agregadofamiliar);
+      formData.append("ano_execucao", valores.anoexecucao);
+      formData.append("arquivo_identificacao", valores.arquivo_indentficacao);
+      formData.append("observacao", 'observacao');
       formData.append("nome", valores.nome);
       formData.append("nome_pai", valores.nomepai);
       formData.append("nome_mae", valores.nomemae);

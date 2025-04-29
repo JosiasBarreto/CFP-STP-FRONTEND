@@ -1,7 +1,6 @@
 import React from "react";
 import { FiSave, FiEdit, FiXCircle } from "react-icons/fi";
 import { useRef, useState, useEffect } from "react";
-
 import {
   Form,
   Col,
@@ -12,14 +11,14 @@ import {
   Card,
 } from "react-bootstrap";
 import { ToastContainer, toast } from "react-toastify";
-
+import { useLocation } from 'react-router-dom';
 import { FaUserCircle } from "react-icons/fa";
 import { ButtonS } from "../../component/Buttons.js/CustomButton";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { fetchCursosAno, fetchProgramas } from "./function";
+import { fetchCursosAno, fetchProgramas, LastIdFormando } from "./function";
 import { Qprograma } from "../../api/urls/nameQuery";
 import Cabecalhos from "./componenteformando/dadoscabeçalhos";
 import DadosFormandos from "./componenteformando/dadosformandos";
@@ -29,16 +28,73 @@ import { useEditarFormando } from "../../api/routes/formandos/updateformandos";
 const Registerformandos = () => {
   const token = localStorage.getItem("token");
   const [preview, setPreview] = useState(null);
+  const location = useLocation();
+const dadosEditaveis = location.state?.dadosFormando || null;
+
   const queryClient = useQueryClient();
   // Atualizado para React Query v5
   const { data, isLoading, isFetching } = useQuery({
     queryKey: Qprograma,
     queryFn: () => fetchProgramas(token),
   });
+  const { data: lastid } = useQuery({
+    queryKey: "lastid",
+
+    queryFn: () => LastIdFormando(token),
+  });
 
   // Quando formik tem uma foto existente (edição)
 
   const [show, setShow] = useState(false);
+  useEffect(() => {
+    if (dadosEditaveis) {
+      // Preencher campos do Formik com os dados recebidos
+      const valoresConvertidos = {
+        nome: dadosEditaveis.nome || "",
+        nomepai: dadosEditaveis.nome_pai || "",
+        nomemae: dadosEditaveis.nome_mae || "",
+        sexo: dadosEditaveis.sexo || "",
+        datanascimento: dadosEditaveis.data_nascimento || "",
+        telefone: dadosEditaveis.contacto || "",
+        telefone2: dadosEditaveis.contacto_opcional || "",
+        nif: dadosEditaveis.nif || "",
+        morada: dadosEditaveis.zona || "",
+        nacionalidade: dadosEditaveis.nacionalidade || "",
+        email:  dadosEditaveis.email || "",
+        numero_bi: dadosEditaveis.bi || "",
+        distrito: dadosEditaveis.distrito || "",
+        naturalidade: dadosEditaveis.naturalidade || "",
+        estadocivil: dadosEditaveis.estado_civil || "",
+        profissao: dadosEditaveis.ocupacao || "",
+        experiencia: dadosEditaveis.experiencia_profissional || "",
+        habilitacao: dadosEditaveis.habilitacao_literaria || "",
+        arquivo_indentficacao: dadosEditaveis.arquivo_bi || "",
+        agregadofamiliar: dadosEditaveis.agregado || 0,
+        anoexecucao: dadosEditaveis.ano || new Date().getFullYear(),
+        curso_primeiraopcao: dadosEditaveis.cursos_inscritos?.find((c) => c.opcao === "1")?.curso_id || "",
+        curso_segundaopcao: dadosEditaveis.cursos_inscritos?.find((c) => c.opcao === "2")?.curso_id || "",
+       
+        situacao: dadosEditaveis.status || "",
+        ocupacao: dadosEditaveis.ocupacao || "",
+        motivo: dadosEditaveis.motivo_inscricao || "",
+        arquivo_foto: dadosEditaveis.foto_url || "",
+        inscricao: dadosEditaveis.incricao_id || lastid?.id || 0,
+        processo: dadosEditaveis.processo || "",
+        programa: dadosEditaveis.cursos_inscritos?.find((c) => c.opcao === "1")?.id_programa || "",
+        data: dadosEditaveis.data_criacao
+  ? new Date(dadosEditaveis.data_criacao).toISOString().split("T")[0]
+  : new Date().toISOString().split("T")[0],
+
+      };
+  
+      Object.keys(valoresConvertidos).forEach((campo) => {
+        formik.setFieldValue(campo, valoresConvertidos[campo]);
+      });
+    } else if (lastid) {
+      formik.setFieldValue("inscricao", lastid.id + 1);
+    }
+  }, [dadosEditaveis, lastid]);
+  
 
   const validationSchema = Yup.object().shape({
     inscricao: Yup.number(),
@@ -54,7 +110,8 @@ const Registerformandos = () => {
     morada: Yup.string().required("Morada é obrigatória"),
     nacionalidade: Yup.string(),
     email: Yup.string().email("Email inválido"), // ✨ pode validar email aqui
-    numero_bi: Yup.string().required("Número do BI é obrigatório"),
+    numero_bi: Yup.string().required("Número do Identificação é obrigatório")
+    .max(9, "Número de Identificação inválido"),
     distrito: Yup.string().required("Distrito é obrigatório"),
     naturalidade: Yup.string(),
     estadocivil: Yup.string().required("Estado Civil é obrigatório"),
@@ -108,8 +165,8 @@ const Registerformandos = () => {
       motivo: "",
       arquivo_foto: "",
       data: new Date().toISOString().split("T")[0],
-      inscricao: 0,
-      processo: "",
+      inscricao: lastid?.id || 0,
+      processo: 0,
       programa: 0,
       telefone2: "",
     },
@@ -143,11 +200,22 @@ const Registerformandos = () => {
 
     return cursos.filter((curso) => curso.programa_id === programaId);
   }, [cursos, formik.values.programa]);
+  useEffect(() => {
+    if (lastid) {
+      formik.setFieldValue("inscricao", lastid.id + 1);
+    }
+   
+
+
+  }, [lastid]);
 
   return (
     <>
       <div className="">
         <div md={12} xs={12} className="p-3 bg-white border-1 rounded h-50">
+          <Row className="d-flex justify-content-center align-items-center mt-2 mb-3">
+            <p className="text-success fw-bolder fs-5 border-2 border-bottom border-success">REGISTO DE FORMANDOS</p>
+          </Row>
           <Cabecalhos formik={formik} />
           <DadosFormandos
             formik={formik}
@@ -164,7 +232,9 @@ const Registerformandos = () => {
               >
                 <Form.Control
                   className="input_left_color p-2"
+                  as={"textarea"}
                   type="text"
+                  rows={4}
                   name="profissao"
                   id="profissao"
                   placeholder="Digite a Formação Profissional"
@@ -187,7 +257,9 @@ const Registerformandos = () => {
               >
                 <Form.Control
                   className="input_left_color p-2"
+                  as={"textarea"}
                   type="text"
+                  rows={4}
                   name="experiencia"
                   id="experiencia"
                   placeholder="Digite a Experiência Profissional"
@@ -210,7 +282,8 @@ const Registerformandos = () => {
               >
                 <Form.Control
                   className="input_left_color p-2"
-                  type="text"
+                  as={"textarea"}
+                  rows={4}
                   name="motivo"
                   id="motivo"
                   placeholder="Digite o Motivo"

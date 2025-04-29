@@ -60,7 +60,7 @@ const Login = () => {
 
   return (
     <div className="d-flex justify-content-center align-items-center min-vh-100">
-      <Row className="bg-white shadow rounded" style={{ width: "35rem" }}>
+      <Row className="glass-effect shadow rounded" style={{ width: "35rem" }}>
         {/* Formulário */}
         <Col className="p-4" sm={12}>
           <div className="text-center mb-2">

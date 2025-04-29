@@ -14,6 +14,10 @@ const DadosFormandos = ({ formik, preview, setPreview }) => {
       setPreview(formik.values.arquivo_foto); // Pode ser URL vinda do back-end
     }
   }, [formik.values.arquivo_foto]);
+  useEffect(() => {
+    const bi = formik.values.numero_bi;
+    formik.setFieldValue("processo", bi ? `CFP${bi}` : "");
+  }, [formik.values.numero_bi]);
 
   // Quando usuário seleciona nova imagem
   const handleFileChange = (event) => {
@@ -131,7 +135,7 @@ const DadosFormandos = ({ formik, preview, setPreview }) => {
             <FloatingLabel
               controlId="formBasiNome"
               className="mb-4 w-auto"
-              label="Número do BI"
+              label="Número do Identificação"
             >
               <Form.Control
                 className="input_left_color p-2"
@@ -142,6 +146,7 @@ const DadosFormandos = ({ formik, preview, setPreview }) => {
                 value={formik.values.numero_bi}
                 onChange={formik.handleChange}
                 isInvalid={formik.touched.numero_bi && formik.errors.numero_bi}
+                maxLength={9}
               />
               <Form.Control.Feedback type="invalid">
                 {formik.errors.numero_bi}
@@ -151,7 +156,7 @@ const DadosFormandos = ({ formik, preview, setPreview }) => {
             <FloatingLabel
               controlId="formBasiNome"
               className="mb-4 w-auto"
-              label="arquivo de Identificação"
+              label="Arquivo de Identificação"
             >
               <Form.Select
                 className="input_left_color p-2"
@@ -230,6 +235,7 @@ const DadosFormandos = ({ formik, preview, setPreview }) => {
                 value={formik.values.nif}
                 onChange={formik.handleChange}
                 isInvalid={formik.touched.nif && formik.errors.nif}
+                maxLength={9}
               />
               <Form.Control.Feedback type="invalid">
                 {formik.errors.nif}
@@ -318,6 +324,7 @@ const DadosFormandos = ({ formik, preview, setPreview }) => {
                 value={formik.values.telefone}
                 onChange={formik.handleChange}
                 isInvalid={formik.touched.telefone && formik.errors.telefone}
+                maxLength={13}
               />
               <Form.Control.Feedback type="invalid">
                 {formik.errors.telefone}
@@ -371,7 +378,7 @@ const DadosFormandos = ({ formik, preview, setPreview }) => {
             <FloatingLabel
               controlId="formBasiNome"
               className="mb-4 w-auto"
-              label="ocupação"
+              label="Ocupação"
             >
               <Form.Control
                 className="input_left_color p-2"
@@ -417,7 +424,7 @@ const DadosFormandos = ({ formik, preview, setPreview }) => {
             <FloatingLabel
               controlId="formBasiNome"
               className="mb-4 w-auto"
-              label="nacionalidade"
+              label="Nacionalidade"
             >
               <Form.Select
                 className="input_left_color p-2"
@@ -473,6 +480,7 @@ const DadosFormandos = ({ formik, preview, setPreview }) => {
                 name="telefone2"
                 id="telefone2"
                 type="number"
+                maxLength={13}
                 value={formik.values.telefone2}
                 onChange={formik.handleChange}
                 isInvalid={formik.touched.telefone2 && formik.errors.telefone2}

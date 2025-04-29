@@ -5,18 +5,19 @@ import { Col, FloatingLabel, Form, Row } from "react-bootstrap";
 const Cabecalhos = ({ formik }) => {
   return (
     <>
-      <Row md={12} xs={12} className="mt-2">
+      <Row md={12} xs={12} className="mt-2 mb-2">
           <Col md={3}>
-            <FloatingLabel
+           <FloatingLabel
               controlId="formBasiNome"
               className="mb-3 w-auto"
-              label="inscrição"
+              label="Inscrição"
             >
               <Form.Control
-                className="input_left_color "
-                type="text"
+                cl assName="input_left_color"
+                type="number"
                 name="inscricao"
                 id="inscricao"
+                disabled
                 placeholder="Digite a Inscrição"
                 value={formik.values.inscricao}
                 onChange={formik.handleChange}
@@ -59,6 +60,7 @@ const Cabecalhos = ({ formik }) => {
                 type="text"
                 name="processo"
                 id="processo"
+                disabled
                 placeholder="Digite o Número do Processo"
                 value={formik.values.processo}
                 onChange={formik.handleChange}

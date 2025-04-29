@@ -69,7 +69,7 @@ carregarCurso,
   };
 
   return (
-    <Card className="shadow rounded p-2 mb-2">
+    <Card className=" card-glassshadow rounded p-2 mb-2">
       <div className="d-flex hstack gap-3 p-1">
         <Dropdown onSelect={(eventKey) => handleItemsPerPageChange(eventKey)}>
           <Dropdown.Toggle variant="outline-success" id="dropdown-basic">

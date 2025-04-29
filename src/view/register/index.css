@@ -101,7 +101,6 @@
     transform: scale(1) translateY(-1.6rem) translateX(0.15rem);
     margin-left: .5rem;
     color: #000000;
-    
   
     padding: 0rem 0rem;
   
@@ -110,7 +109,7 @@
   
   
   .input_left_color {
-    border-left: 3px solid #007bff;
+    border-left: 3px solid #068f24;
   }
   
   .logoLogin {

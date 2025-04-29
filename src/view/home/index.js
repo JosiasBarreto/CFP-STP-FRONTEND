@@ -42,7 +42,7 @@ const DashboardLayout = () => {
       >
         <Container fluid>
           <Row style={{ width: "100%" }}>
-            <Col md={2} className="logo-container d-flex align-items-center">
+            <Col md={4} className="logo-container d-flex align-items-center">
               <Image src="/logo.png" alt="Logo do Centro" fluid />{" "}
               <div className="text-light ms-2 text-wrap logo-text">
                 <strong>CENTRO DE FORMAÇÃO</strong>
@@ -50,8 +50,8 @@ const DashboardLayout = () => {
                 <strong>PROFISSIONAL DE STP</strong>
               </div>
             </Col>
-            <Col md={8}></Col>
-            <Col md={2} className="user-info text-white">
+            <Col md={4}></Col>
+            <Col md={4} className="user-info text-white">
               <span>Usuário: João Silva</span>
             </Col>
           </Row>
@@ -126,6 +126,32 @@ const DashboardLayout = () => {
                   <span className="sidebar-text">Registrar Formandos</span>
                 )}
               </Nav.Link>
+              {sidebarOpen && (
+                <div className="sidebar-group-title">Candidatura</div>
+              )}
+              <Nav.Link
+                className={`sidebar-link ${getNavLinkClass(
+                  "listar-inscricoes"
+                )}`}
+                onClick={() => navigate("list-formandos")}
+              >
+                <FaClipboard className="sidebar-icon" />
+                {sidebarOpen && (
+                  <span className="sidebar-text">Listagem Inscrições</span>
+                )}
+              </Nav.Link>
+
+              <Nav.Link
+                className={`sidebar-link ${getNavLinkClass(
+                  "selecionar-candidatura"
+                )}`}
+                onClick={() => navigate("selecionar-candidatura")}
+              >
+                <FaUserTie className="sidebar-icon" />
+                {sidebarOpen && (
+                  <span className="sidebar-text">Selecionar Candidatura</span>
+                )}
+              </Nav.Link>
             </Nav>
           </Col>
 
@@ -133,7 +159,6 @@ const DashboardLayout = () => {
             <Outlet />
           </Col>
         </Row>
-       
       </Container>
     </div>
   );

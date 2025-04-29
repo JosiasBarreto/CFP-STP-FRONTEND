@@ -236,11 +236,7 @@ function RegisterCursos() {
 
   return (
     <>
-      <div className="bg-white shadow rounded p-1 mb-2">
-        
-          
-       
-      </div>
+     
       <div className="bg-white shadow rounded p-3 mb-2">
         <Row mb={12} className="w-100">
           <Col md={3}>

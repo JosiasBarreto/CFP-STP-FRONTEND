@@ -12,6 +12,11 @@ export const useEditarFormando = (token, setPreview) => {
       // ID do formando
       // O ID do formando deve ser enviado no corpo da requisição, não na URL
       formData.append("id", valores.inscricao);
+      formData.append("inscricao_id", valores.inscricao);
+      formData.append("agregado", valores.agregadofamiliar);
+      formData.append("ano_execucao", valores.anoexecucao);
+      formData.append("arquivo_identificacao", valores.arquivo_indentficacao);
+      formData.append("observacao", valores.observacao);
 
       // Demais campos
       formData.append("processo", valores.processo);
@@ -26,7 +31,7 @@ export const useEditarFormando = (token, setPreview) => {
       formData.append("nacionalidade", valores.nacionalidade);
       formData.append("naturalidade", valores.naturalidade);
       formData.append("distrito", valores.distrito);
-      formData.append("zona", "zona default");
+      formData.append("zona",  valores.morada);
       formData.append("contacto", valores.telefone);
       formData.append("contacto_opcional", valores.telefone2);
       formData.append("formacao_profissional", valores.profissao);
@@ -40,12 +45,13 @@ export const useEditarFormando = (token, setPreview) => {
       formData.append("opcao", "1");
       formData.append("ano", valores.anoexecucao);
 
-      if (valores.arquivo_foto && valores.arquivo_foto instanceof File) {
-        formData.append("foto", valores.arquivo_foto);
+      if (valores.arquivo_foto instanceof File) {
+        formData.append("arquivo_foto", valores.arquivo_foto);
       }
+      
 
       const response = await axios.put(
-        API_URL + PutFormandos, // ✅ sem ID na URL
+        API_URL + PutFormandos,
         formData,
         {
           headers: {
