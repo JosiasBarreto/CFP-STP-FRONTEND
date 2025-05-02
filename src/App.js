@@ -17,6 +17,9 @@ import Main from "./component/Menu/Menu.js";
 import ContextRegister from "./view/register/ContextRegister.js";
 import TableFormandos from "./view/sing/table/tableformandos.js";
 import ListFormandos from "./view/page/indexformandos.js";
+import ConfirmsAcounts from "./view/login/confirmacounts.js";
+import RecuperarConta from "./view/register/RecuperarConta.js";
+import RedefinirSenha from "./view/register/RedefinirSenha.js";
 
 // Componente de Rota Protegida (para páginas que precisam de autenticação)
 const ProtectedRoute = ({ children }) => {
@@ -36,7 +39,11 @@ function App() {
       <Routes>
         {/* Rota pública: Se o usuário não estiver autenticado, exibe o login */}
         <Route path="/" element={<PublicRoute element={<Login />} />} />
-        <Route path="/register" element={<PublicRoute element={<ContextRegister />} />} />
+        <Route path="/ativacao" element={<PublicRoute element={<ConfirmsAcounts />} />} />
+        <Route path="/register" element={<PublicRoute element={<RegisterUser />} />} />
+        <Route path="/recuperar-conta" element={<RecuperarConta />} />
+        <Route path="/redefinir-senha" element={<RedefinirSenha />} />
+        
         
         {/* Rota protegida: Só acessa se tiver token */}
         <Route path="/auth" element={<ProtectedRoute><DashboardLayout /> </ProtectedRoute>}>

@@ -91,7 +91,7 @@ function RegisterUser() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: Quser });
       toast.success(
-        `Usuário ${
+        `Utilizador ${
           button === "REGISTAR" ? "registrado" : "editado"
         } com sucesso`
       );

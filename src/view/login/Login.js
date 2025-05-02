@@ -18,45 +18,41 @@ const Login = () => {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Previne o comportamento padrão do form, caso o evento seja de um form
-  
-    setLoad(true); // Define a variável de loading como true
+    e.preventDefault();
+    setLoad(true);
   
     try {
-      // Envia a requisição para o backend
       const response = await axios.post(`${API_URL}${login_routes}`, {
-        email: email,
-        senha: password, // Certifique-se de que o backend espera "senha"
+        email,
+        senha: password,
       });
   
-      // Verifica se a resposta foi bem-sucedida
       if (response.status === 200) {
-        const { token, user } = response.data; // Desestruturação da resposta para obter token e user
-  
-        // Armazenamento seguro no localStorage (considerando que o "user" não é sensível)
+        const { token, user } = response.data;
         localStorage.setItem("token", token);
-        localStorage.setItem("user", JSON.stringify(user)); // Armazena o usuário como string JSON
-  
-        // Notificação de sucesso
+        localStorage.setItem("user", JSON.stringify(user));
         toast.success("Login bem-sucedido!");
-  
-        // Redirecionamento para a dashboard
         navigate("/auth");
       }
     } catch (error) {
-      // Se a resposta foi um erro da API, trata a mensagem
       if (error.response) {
-        // Caso o backend tenha retornado um erro, exibe a mensagem
-        toast.error(error.response.data.message || "Erro ao fazer login");
+        const { message, redirect } = error.response.data;
+  
+        if (redirect) {
+          toast.warn(message);
+          navigate(redirect, { state: { email, senha: password } }); // Redireciona para ativação se necessário
+
+        } else {
+          toast.error(message || "Erro ao fazer login");
+        }
       } else {
-        // Se não houve resposta do servidor (erro de rede ou algo do tipo)
         toast.error("Erro na conexão com o servidor");
       }
     } finally {
-      // Finaliza o loading, independente de sucesso ou falha
       setLoad(false);
     }
   };
+  
 
   return (
     <div className="d-flex justify-content-center align-items-center min-vh-100">
@@ -104,7 +100,7 @@ const Login = () => {
               />
             </Stack>
             <Col className="d-flex align-items-end justify-content-end">
-              <Link to="/emailrecuperar">
+              <Link to="/recuperar-conta" className="text-decoration-none text-primary">
                 <p>Esqueceu a sua senha?</p>
               </Link>
             </Col>

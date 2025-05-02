@@ -39,7 +39,7 @@ export const registarUser = async (uses, token) => {
       return response;
       
     } catch (error) {
-      console.error("Erro ao atualizar distrito:", error);
+      console.error("Erro ao atualizar utilizador:", error);
       throw error;
     }
   };

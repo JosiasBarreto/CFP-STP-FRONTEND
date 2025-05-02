@@ -59,7 +59,7 @@
     pointer-events: none;
     border: 1px solid transparent;
     transform-origin: 0 0;
-  
+    
   }
   
   .form-control {
@@ -73,7 +73,6 @@
     line-height: 1.5;
     color: #000000;
     background-color: #fff;
-  
     border: 1px solid #ced4da;
     appearance: none;
     border-radius: .375rem;
@@ -101,8 +100,9 @@
     transform: scale(1) translateY(-1.6rem) translateX(0.15rem);
     margin-left: .5rem;
     color: #000000;
-  
+    
     padding: 0rem 0rem;
+
   
     height: 40%;
   }
