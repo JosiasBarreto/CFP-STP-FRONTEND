@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState} from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import "./index.css";
@@ -7,15 +7,15 @@ import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { ButtonS } from "../../component/Buttons.js/CustomButton";
 import { API_URL } from "../../api/urls";
-import { login_routes } from "../../api/routes";
+
 import { FaUserLock } from "react-icons/fa";
 
-const ConfirmsAcounts = ({ emails }) => {
+const ConfirmsAcounts = () => {
   const location = useLocation(); // Pega os dados enviados na navegação
   const [email, setEmail] = useState(location.state?.email || ""); // Preenche automaticamente
-  const [password, setPassword] = useState(location.state?.senha || "");
+  const [password, setPassword] = useState("");
   const [password1, setPassword1] = useState("");
-  const [codigo, setCodigo] = useState("");
+  const [codigo, setCodigo] = useState(location.state?.senha || ""); // Preenche automaticamente
   const [load, setLoad] = useState(false);
   const navigate = useNavigate();
 
@@ -37,7 +37,7 @@ const ConfirmsAcounts = ({ emails }) => {
 
       if (response.status === 200) {
         toast.success("Conta ativada com sucesso! Faça login.");
-        navigate("/login");
+        navigate("/");
       }
     } catch (error) {
       toast.error(error.response?.data?.message || "Erro na ativação");

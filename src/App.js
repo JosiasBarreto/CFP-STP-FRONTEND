@@ -20,6 +20,7 @@ import ListFormandos from "./view/page/indexformandos.js";
 import ConfirmsAcounts from "./view/login/confirmacounts.js";
 import RecuperarConta from "./view/register/RecuperarConta.js";
 import RedefinirSenha from "./view/register/RedefinirSenha.js";
+import Selectsformandos from "./view/page/selectformandos.js";
 
 // Componente de Rota Protegida (para páginas que precisam de autenticação)
 const ProtectedRoute = ({ children }) => {
@@ -54,6 +55,9 @@ function App() {
           <Route path="register-cursos" element={<RegisterCursos />} />
           <Route path="register-formandos" element={<Registerformandos />} />
           <Route path="list-formandos" element={<ListFormandos />} />
+          <Route path="table-formandos" element={<TableFormandos />} />
+          <Route path="selecionar-candidatura" element={<Selectsformandos />} />
+
         </Route>
 
         {/* Página de erro para rotas inválidas */}

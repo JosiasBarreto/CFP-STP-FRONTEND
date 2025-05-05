@@ -7,8 +7,11 @@ import { ToastContainer } from "react-toastify";
 
 import { BuscarInscricao, LastIdFormando } from "../sing/function";
 import TableFormandos from "../sing/table/tableformandos";
+import SelectField from "../../component/Selects/Index";
+import SelectFieldCurso from "../../component/Selects/selectcursos";
+import ListSelets from "../sing/table/listselectsformandos";
 
-function ListFormandos() {
+function Selectsformandos() {
   const token = localStorage.getItem("token");
   const queryClient = useQueryClient();
 
@@ -81,24 +84,8 @@ function ListFormandos() {
     <>
       <div className="bg-white shadow rounded p-2 mb-2">
         <Row className="align-items-stretch">
-          <Col md={2}>
-            <Card className="border_tops shadow h-100">
-              <Card.Body className="d-flex flex-column justify-content-center text-center p-2">
-                <FontAwesomeIcon
-                  icon={faUser}
-                  size="2x"
-                  className="text-success mb-1"
-                />
-                <span className="fw-bold fs-6">Formandos</span>
-                <p className="fs-5 fw-semibold m-0">{contagem}</p>
-              </Card.Body>
-            </Card>
-          </Col>
-
           <Col md={10}>
             <Row className="gx-2 gy-2">
-  
-
               <Col md={12}>
                 <p className="text-muted mb-1">
                   <FontAwesomeIcon icon={faSearch} className="me-1" />
@@ -108,22 +95,25 @@ function ListFormandos() {
 
               <Form className="w-100">
                 <Row className="gx-2 gy-2">
+                  
                   <Col md={4}>
-                    <Form.Control
-                      type="text"
-                      name="nome_curso"
-                      value={searchParams.nome_curso}
+                    <SelectField
+                      value={searchParams.nome_programa}
                       onChange={handleChange}
-                      placeholder="Nome do curso"
+                      isInvalid={false}
+                      feedback=""
+                      token={token}
                     />
                   </Col>
                   <Col md={4}>
-                    <Form.Control
-                      type="text"
-                      name="nome_programa"
-                      value={searchParams.nome_programa}
+                    <SelectFieldCurso
+                      value={searchParams.nome_curso}
                       onChange={handleChange}
-                      placeholder="Programa"
+                      isInvalid={false}
+                      feedback=""
+                      token={token}
+                      anoExecucao={searchParams.ano_execucao}
+                      programaId={searchParams.nome_programa}
                     />
                   </Col>
                   <Col md={2}>
@@ -135,7 +125,7 @@ function ListFormandos() {
                       placeholder="Ano"
                     />
                   </Col>
-                  
+
                   <Col md={2}>
                     <Form.Control
                       type="text"
@@ -158,7 +148,6 @@ function ListFormandos() {
                       ) : (
                         <FontAwesomeIcon icon={faSearch} className="ms-1" />
                       )}
-                       
                     </Button>
                   </Col>
                   <Col md={1}>
@@ -169,7 +158,6 @@ function ListFormandos() {
                       className="w-100"
                     >
                       <FontAwesomeIcon icon={faUndo} className="me-1" />
-                     
                     </Button>
                   </Col>
                 </Row>
@@ -187,7 +175,7 @@ function ListFormandos() {
 
       <ToastContainer />
 
-      <TableFormandos
+      <ListSelets
         data={resultados}
         pagination={datas?.pagination}
         isLoading={isLoading}
@@ -203,4 +191,4 @@ function ListFormandos() {
   );
 }
 
-export default ListFormandos;
+export default Selectsformandos;

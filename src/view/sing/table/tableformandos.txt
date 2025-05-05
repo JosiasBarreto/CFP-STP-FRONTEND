@@ -77,7 +77,7 @@ function TableFormandos({
   const handleSearch = (event) => {
     const searchTerm = event.target.value.toLowerCase();
     const filtered = data?.filter((f) =>
-      f.nome.toLowerCase().includes(searchTerm)
+      f.nome_completo.toLowerCase().includes(searchTerm)
     );
     setFormandos(filtered || []);
   };
@@ -131,7 +131,7 @@ function TableFormandos({
           <Form>
             <Form.Control
               type="text"
-              placeholder="Pesquisar Candidato"
+              placeholder="Pesquisar Formando"
               className="me-3"
               aria-label="Search"
               onChange={handleSearch}
