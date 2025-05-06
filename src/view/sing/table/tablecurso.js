@@ -10,6 +10,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import { PaginatedList } from "../../../component/Panilist";
+import { formatarData } from "../configureData";
 
 function TableCurso({
 carregarCurso,
@@ -108,9 +109,9 @@ carregarCurso,
         responsive
         hover
         table-bordered
-        className="text-center table table-sm"
+        className=" table table-sm"
       >
-        <thead className="bg-success text-light">
+        <thead className="bg-success text-light text-center">
           <tr>
             <th>Acção</th>
             <th>Nome</th>
@@ -123,16 +124,16 @@ carregarCurso,
             <th>Eliminar</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="text-size-sm text-start">
           {currentItems.length > 0 ? (
             currentItems.map((user, index) => (
               <tr key={index}>
                 <td>{user.acao}</td>
                 <td>{user.nome}</td>
                 <td>{user.horario} ás {user.horario_termino}</td>
-                <td>{user.duracao}</td>
-                <td>{user.data_inicio}</td>
-                <td>{user.data_termino}</td>
+                <td>{user.duracao} meses</td>
+                <td>{formatarData(user.data_inicio)}</td>
+                <td>{formatarData(user.data_termino)}</td>
                 <td>{user.ano_execucao}</td>
                 <td>{user.programa_nome}</td>
                 <td>

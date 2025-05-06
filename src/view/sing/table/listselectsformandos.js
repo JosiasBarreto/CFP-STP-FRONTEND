@@ -27,7 +27,7 @@ import { useNavigate } from "react-router-dom";
 function ListSelets({ data, pagination, isLoading, isFetching }) {
   const [formandos, setFormandos] = useState([]);
   const [order, setOrder] = useState(null);
-  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [itemsPerPage, setItemsPerPage] = useState(20);
   const [currentPage, setCurrentPage] = useState(1);
   const [formandoSelecionado, setFormandoSelecionado] = useState(null);
   const [mostrarModal, setMostrarModal] = useState(false);
@@ -71,8 +71,15 @@ function ListSelets({ data, pagination, isLoading, isFetching }) {
   const currentItems = formandos.slice(startIndex, endIndex);
 
   const OrderName = () => {
-    const sorted = [...formandos].sort((a, b) =>
-      a.nome_completo.localeCompare(b.nome_completo)
+    const sorted = [...currentItems].sort((a, b) =>
+      a.nome.localeCompare(b.nome)
+    );
+    setFormandos(order === "asc" ? sorted.reverse() : sorted);
+    setOrder(order === "asc" ? "desc" : "asc");
+  };
+  const Orderdistrito = () => {
+    const sorted = [...currentItems].sort((a, b) =>
+      a.distrito.localeCompare(b.distrito)
     );
     setFormandos(order === "asc" ? sorted.reverse() : sorted);
     setOrder(order === "asc" ? "desc" : "asc");
@@ -115,10 +122,10 @@ function ListSelets({ data, pagination, isLoading, isFetching }) {
 
   return (
     <Card className="shadow rounded p-2 mb-2">
-      <div className="d-flex hstack gap-3 p-1">
+      <div className="d-flex hstack gap-2 p-1">
         <Dropdown onSelect={handleItemsPerPageChange}>
           <Dropdown.Toggle variant="outline-success" id="dropdown-basic">
-            Itens
+            Items Pág.
           </Dropdown.Toggle>
           <Dropdown.Menu>
             <Dropdown.Item eventKey="20">20</Dropdown.Item>
@@ -137,6 +144,13 @@ function ListSelets({ data, pagination, isLoading, isFetching }) {
           />{" "}
           Nome
         </Button>
+        <Button variant="outline-success" onClick={Orderdistrito}>
+          <FontAwesomeIcon
+            icon={order === "asc" ? faSortAlphaDown : faArrowDownZA}
+          />{" "}
+         Distrito
+        </Button>
+        
 
         {isFetching && <p className="text-success m-0">Carregando...</p>}
 
@@ -152,97 +166,105 @@ function ListSelets({ data, pagination, isLoading, isFetching }) {
           </Form>
         </Col>
       </div>
-      <div className="table-responsive">
-      <Table striped bordered hover size="sm" className="align-middle small">
-        <thead className="table-success text-center">
-          <tr>
-            <th></th>
-            <th>Inscrição</th>
-            <th>Nome</th>
-            <th>Idade</th>
-            <th>Sexo</th>
-            <th>Distrito</th>
-            <th>Morada</th>
-            <th>Contacto</th>
-            <th>Curso 1ª Opção</th>
-            <th>Curso 2ª Opção</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {formandos.length > 0 ? (
-            formandos.map((item) => (
-              <tr key={item.incricao_id}>
-                <td className="text-center">
-                  <Form.Check
-                    type="checkbox"
-                    id={`formando-${item.incricao_id}`}
-                    value={item.incricao_id}
-                    checked={formandosSelecionados.includes(item.incricao_id)}
-                    onChange={(e) => handleCheckboxChange(e, item.incricao_id)}
-                  />
-                </td>
-                <td>{item.incricao_id}</td>
-                <td>{item.nome}</td>
-                <td>
-                  {(() => {
-                    const birth = new Date(item.data_nascimento);
-                    const today = new Date();
-                    let age = today.getFullYear() - birth.getFullYear();
-                    const m = today.getMonth() - birth.getMonth();
-                    if (
-                      m < 0 ||
-                      (m === 0 && today.getDate() < birth.getDate())
-                    ) {
-                      age--;
-                    }
-                    return age;
-                  })()}
-                </td>
-                <td>{item.sexo}</td>
-                <td>{item.distrito}</td>
-                <td>{item.zona}</td>
-                <td>
-                  {item.contacto}
-                  {item.contacto_opcional && ` / ${item.contacto_opcional}`}
-                </td>
-                <td>
-                  {item.cursos_inscritos
-                    ?.filter((c) => c.opcao === "1")
-                    .map((c) => c.nome_curso)
-                    .join(", ") || "---"}
-                </td>
-                <td>
-                  {item.cursos_inscritos
-                    ?.filter((c) => c.opcao === "2")
-                    .map((c) => c.nome_curso)
-                    .join(", ") || "---"}
-                </td>
-                <td className="text-center">
-                  <Button
-                    size="sm"
-                    variant="outline-success"
-                    onClick={() => handleVerFormando(item.incricao_id)}
-                  >
-                    Ver
-                  </Button>
-                </td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="11" className="text-center">
-                Nenhum formando encontrado.
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </Table>
-    </div>
+     <div className="table-responsive">
+             <Table
+               striped
+               bordered
+               hover
+               size="sm"
+               className=" align-middle table table-striped table-bordered small"
+             >
+               <thead className="table-success text-center ">
+                 <tr>
+                   <th>Inscr.</th>
+                   <th>Nome</th>
+                   <th>Idade</th>
+                   <th>Sexo</th>
+                   <th>Identif</th>
+                   <th>Distrito</th>
+                   <th>Morada</th>
+                   <th>Contacto</th>
+                   <th>Curso 1ª Opção</th>
+                   <th>Curso 2ª Opção</th>
+                   <th>Opção</th>
+                 </tr>
+               </thead>
+               <tbody className="table-group-divider text-size-sm text-start">
+                 {currentItems.length > 0 ? (
+                   currentItems.map((item, index) => (
+                     <tr key={item.incricao_id}>
+                       <td>{item.incricao_id}</td>
+                       <td>{item.nome}</td>
+                       <td>
+                         {(() => {
+                           const birth = new Date(item.data_nascimento);
+                           const today = new Date();
+                           let age = today.getFullYear() - birth.getFullYear();
+                           const m = today.getMonth() - birth.getMonth();
+                           if (
+                             m < 0 ||
+                             (m === 0 && today.getDate() < birth.getDate())
+                           ) {
+                             age--;
+                           }
+                           return age;
+                         })()}
+                       </td>
+                       <td>{item.sexo}</td>
+                       <td>{item.bi}</td>
+                       <td>{item.distrito}</td>
+                       <td>{item.zona}</td>
+                       <td>
+                         <>
+                           {item.contacto && item.contacto.length >= 7 && (
+                             <span>{item.contacto}</span>
+                           )}
+                           {item.contacto_opcional &&
+                             item.contacto_opcional.length >= 7 && (
+                               <span>{" / " + item.contacto_opcional}</span>
+                             )}
+                         </>
+                       </td>
+     
+                       <td>
+                         {item.cursos_inscritos.length > 0
+                           ? item.cursos_inscritos
+                               .filter((c) => c.opcao === "1")
+                               .map((c) => c.nome_curso)
+                               .join(", ")
+                           : "---"}
+                       </td>
+                       <td>
+                         {item.cursos_inscritos.length > 0
+                           ? item.cursos_inscritos
+                               .filter((c) => c.opcao === "2")
+                               .map((c) => c.nome_curso)
+                               .join(", ")
+                           : "---"}
+                       </td>
+     
+                       <td>
+                         <Button
+                           variant="outline-success"
+                           onClick={() => handleVerFormando(item.incricao_id)}
+                         >
+                           Ver
+                         </Button>
+                       </td>
+                     </tr>
+                   ))
+                 ) : (
+                   <tr>
+                     <td colSpan="16">Nenhum formando encontrado.</td>
+                   </tr>
+                 )}
+               </tbody>
+             </Table>
+           </div>
 
       <Col>
         <PaginatedList
-          totalPages={pagination?.totalPages || totalPages}
+          totalPages={totalPages}
           currentPage={currentPage}
           handlePageChange={handlePageChange}
         />

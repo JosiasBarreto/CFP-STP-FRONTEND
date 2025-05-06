@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Button, Form, Card, Row, Col, Spinner } from "react-bootstrap";
+import {
+  Button,
+  Form,
+  Card,
+  Row,
+  Col,
+  Spinner,
+  FloatingLabel,
+} from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faSearch, faUndo } from "@fortawesome/free-solid-svg-icons";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -82,21 +90,11 @@ function Selectsformandos() {
 
   return (
     <>
-      <div className="bg-white shadow rounded p-2 mb-2">
-        <Row className="align-items-stretch">
-          <Col md={10}>
-            <Row className="gx-2 gy-2">
-              <Col md={12}>
-                <p className="text-muted mb-1">
-                  <FontAwesomeIcon icon={faSearch} className="me-1" />
-                  <strong>Filtros</strong>
-                </p>
-              </Col>
-
-              <Form className="w-100">
-                <Row className="gx-2 gy-2">
-                  
-                  <Col md={4}>
+     
+      <div>
+      <div className="bg-white shadow rounded p-4 mb-2 align-items-center">
+            <Row>
+                  <Col md={3} className="">
                     <SelectField
                       value={searchParams.nome_programa}
                       onChange={handleChange}
@@ -116,24 +114,38 @@ function Selectsformandos() {
                       programaId={searchParams.nome_programa}
                     />
                   </Col>
-                  <Col md={2}>
+                  <Col md={1}>
+                  <FloatingLabel
+                      controlId="formBasiNome"
+                      className="mb- w-auto"
+                      label="ANO"
+                    >
                     <Form.Control
                       type="number"
                       name="ano_execucao"
                       value={searchParams.ano_execucao}
                       onChange={handleChange}
                       placeholder="Ano"
+                      className="input_left_color p-2 mb-"
                     />
+                    </FloatingLabel>
                   </Col>
 
-                  <Col md={2}>
-                    <Form.Control
-                      type="text"
-                      name="acao"
-                      value={searchParams.acao}
-                      onChange={handleChange}
-                      placeholder="Ação"
-                    />
+                  <Col md={1}>
+                    <FloatingLabel
+                      controlId="formBasiNome"
+                      className="mb-4 w-auto"
+                      label="AÇÃO Nº"
+                    >
+                      <Form.Control
+                        type="text"
+                        name="acao"
+                        value={searchParams.acao}
+                        onChange={handleChange}
+                        placeholder="Ação"
+                        className="input_left_color p-2"
+                      />
+                    </FloatingLabel>
                   </Col>
 
                   <Col md={1}>
@@ -160,33 +172,36 @@ function Selectsformandos() {
                       <FontAwesomeIcon icon={faUndo} className="me-1" />
                     </Button>
                   </Col>
-                </Row>
+                
 
                 {datas?.resultados && (
                   <div className="text-muted mt-2 text-end pe-1 fs-7">
                     Total: <strong>{datas.resultados.length}</strong>
                   </div>
                 )}
-              </Form>
-            </Row>
-          </Col>
+              
+            
         </Row>
-      </div>
+        </div>
 
+      
+
+      <Row md={12} xs={12}>
+        <ListSelets
+          data={resultados}
+          pagination={datas?.pagination}
+          isLoading={isLoading}
+          searchParams={searchParams}
+          handleChange={handleChange}
+          handleSearch={handleSearch}
+          handleLimpar={handleLimpar}
+          contagem={contagem}
+          loading={loading}
+          setLoading={setLoading}
+        />
+      </Row>
       <ToastContainer />
-
-      <ListSelets
-        data={resultados}
-        pagination={datas?.pagination}
-        isLoading={isLoading}
-        searchParams={searchParams}
-        handleChange={handleChange}
-        handleSearch={handleSearch}
-        handleLimpar={handleLimpar}
-        contagem={contagem}
-        loading={loading}
-        setLoading={setLoading}
-      />
+      </div>
     </>
   );
 }
