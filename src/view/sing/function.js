@@ -1,6 +1,6 @@
 import axios from "axios";
 import { API_URL } from "../../api/urls";
-import { DeleteUser, FiltroInscricao, GetCurso, GetCursof, GetPrograma, Getuser, LastFormandosID, PostCurso, PostPrograma, PostUser, PutCurso, PutPrograma, PutUser } from "../../api/urls/rotes_query";
+import { DeleteUser, FiltroInscricao, GetCurso, GetCursof, GetPrograma, Getuser, LastFormandosID, PostCurso, PostPrograma, PostUser, PutCurso, PutPrograma, PutUser, SelectInscrito } from "../../api/urls/rotes_query";
 
 export const registarUser = async (uses, token) => {
     try {
@@ -232,4 +232,13 @@ export function formatarNomeReducaoProgressiva(nomeCompleto, limite = 40) {
 
   return resultado;
 }
+
+export const Selecaomassa = async (data, token) => {
+  try {
+    const response = await axios.post(API_URL + SelectInscrito, data);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
  

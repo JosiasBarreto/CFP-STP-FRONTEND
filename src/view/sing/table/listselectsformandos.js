@@ -28,17 +28,29 @@ import { PaginatedList } from "../../../component/Panilist";
 import axios from "axios";
 import { API_URL } from "../../../api/urls";
 import { useNavigate } from "react-router-dom";
+import SituacaoCandidatura from "../../../component/Selects/SelectionInscrits";
 
-function ListSelets({ data, pagination, isLoading, isFetching }) {
+function ListSelets({
+  data,
+  searchParams,
+  isLoading,
+  isFetching,
+  situacoes,
+  setSituacao,
+  ToggleStatusFilter,
+  filtros,
+  setFiltros,
+}) {
   const [formandos, setFormandos] = useState([]);
   const [order, setOrder] = useState(null);
   const [itemsPerPage, setItemsPerPage] = useState(20);
   const [currentPage, setCurrentPage] = useState(1);
   const [formandoSelecionado, setFormandoSelecionado] = useState(null);
   const [mostrarModal, setMostrarModal] = useState(false);
+
   const navigate = useNavigate();
 
-  const [formandosSelecionados, setFormandosSelecionados] = useState([]);
+  const [setFormandosSelecionados] = useState([]);
 
   useEffect(() => {
     if (data && Array.isArray(data)) {
@@ -75,14 +87,12 @@ function ListSelets({ data, pagination, isLoading, isFetching }) {
   const currentItems = formandos.slice(startIndex, endIndex);
 
   const OrderName = () => {
-    const sorted = [...currentItems].sort((a, b) =>
-      a.nome.localeCompare(b.nome)
-    );
+    const sorted = [...formandos].sort((a, b) => a.nome.localeCompare(b.nome));
     setFormandos(order === "asc" ? sorted.reverse() : sorted);
     setOrder(order === "asc" ? "desc" : "asc");
   };
   const Orderdistrito = () => {
-    const sorted = [...currentItems].sort((a, b) =>
+    const sorted = [...formandos].sort((a, b) =>
       a.distrito.localeCompare(b.distrito)
     );
     setFormandos(order === "asc" ? sorted.reverse() : sorted);
@@ -175,7 +185,7 @@ function ListSelets({ data, pagination, isLoading, isFetching }) {
           </Row>
         </CardHeader>
 
-        <div className="table-responsive" style={{ minHeight: '20rem' }}>
+        <div className="table-responsive" style={{ minHeight: "20rem" }}>
           <Table
             striped
             bordered
@@ -196,10 +206,10 @@ function ListSelets({ data, pagination, isLoading, isFetching }) {
                 <th>Curso 1ª Opção</th>
                 <th>Curso 2ª Opção</th>
                 <th>Opção</th>
-                <th>Situação</th>
+                {!filtros && <th>Situação</th>}
               </tr>
             </thead>
-            <tbody className="table-group-divider text-size-sm text-start" >
+            <tbody className="table-group-divider text-size-sm text-start">
               {currentItems.length > 0 ? (
                 currentItems.map((item, index) => (
                   <tr key={item.incricao_id}>
@@ -261,24 +271,30 @@ function ListSelets({ data, pagination, isLoading, isFetching }) {
                         Ver
                       </Button>
                     </td>
-                    <td>
-                    <Form.Select aria-label="Default select example"
-                    name="situacao"
-                    id="situacao"
-                    value={item.cursos_inscritos.length > 0
-                      ? item.cursos_inscritos
-                          .filter((c) => c.opcao === "1")
-                          .map((c) => c.status)
-                          .join(", ")
-                      : "---"}>
-                      <option>Escolha</option>
-                      <option value="inscrito">inscrito</option>
-                      <option value="Selecionado">Selecionado</option>
-                      <option value="Suplente">Suplente</option>
-                      <option value="Não Selecionado">Não Selecionado</option>
-                      <option value="Desistiu">Desistiu</option>
-                    </Form.Select>
-                    </td>
+                    {!filtros && (
+                      <td>
+                        {(() => {
+                          const cursoSelecionado = item.cursos_inscritos.find(
+                            (c) =>
+                              String(c.curso_id) ===
+                              String(searchParams.id_curso)
+                          );
+
+                          return (
+                            <SituacaoCandidatura
+                              items={item}
+                              idCurso={cursoSelecionado?.curso_id ?? null}
+                              status={cursoSelecionado?.status ?? ""}
+                              id_curso_incricao={
+                                cursoSelecionado?.id_curso_incricao ?? ""
+                              }
+                              situacoes={situacoes}
+                              setSituacoes={setSituacao}
+                            />
+                          );
+                        })()}
+                      </td>
+                    )}
                   </tr>
                 ))
               ) : (
@@ -293,9 +309,6 @@ function ListSelets({ data, pagination, isLoading, isFetching }) {
                       <h5 className="text-warning fw-bold">
                         Nenhum Candidato encontrado
                       </h5>
-                      <p className="text-muted">
-                        Tente ajustar os filtros ou pesquisar novamente.
-                      </p>
                     </div>
                   </td>
                 </tr>
@@ -319,9 +332,36 @@ function ListSelets({ data, pagination, isLoading, isFetching }) {
         centered
       >
         <Modal.Header closeButton className="bg-success text-white">
-          <Modal.Title className="text-white">
-            <Modal.Title>Ficha de Inscrição Formando</Modal.Title>
-          </Modal.Title>
+          
+        <Modal.Title className="w-100">
+  <Row className="align-items-center">
+    <Col>
+      <h5 className="mb-0">Ficha de Inscrição do Formando</h5>
+    </Col>
+    {!filtros && (
+      <Col xs="auto" className="d-flex align-items-center gap-2">
+        <span className="fs-6 mb-0">Situação:</span>
+        {(() => {
+          const cursoSelecionado = formandoSelecionado?.cursos_inscritos.find(
+            (c) => String(c.curso_id) === String(searchParams.id_curso)
+          );
+
+          return (
+            <SituacaoCandidatura
+              items={formandoSelecionado}
+              idCurso={cursoSelecionado?.curso_id ?? null}
+              status={cursoSelecionado?.status ?? ""}
+              id_curso_incricao={cursoSelecionado?.id_curso_incricao ?? ""}
+              situacoes={situacoes}
+              setSituacoes={setSituacao}
+            />
+          );
+        })()}
+      </Col>
+    )}
+  </Row>
+</Modal.Title>
+
         </Modal.Header>
         <Modal.Body>
           {formandoSelecionado ? (
@@ -373,6 +413,7 @@ function ListSelets({ data, pagination, isLoading, isFetching }) {
                         valor={formandoSelecionado.observacao}
                       />
                     </Col>
+                    <Col></Col>
                   </Row>
                 </Card.Body>
               </Card>
@@ -563,6 +604,7 @@ function ListSelets({ data, pagination, isLoading, isFetching }) {
             <p>Carregando informações...</p>
           )}
         </Modal.Body>
+
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setMostrarModal(false)}>
             <BsTrash className="me-1" /> Fechar

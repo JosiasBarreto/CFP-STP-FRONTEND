@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Col, FloatingLabel, Form } from "react-bootstrap";
 import { useQuery } from "@tanstack/react-query";
 import PropTypes from "prop-types";
@@ -13,11 +13,13 @@ function SelectFieldCurso({
   isInvalid,
   feedback,
   token,
-  anoExecucao, // ano de execução como prop
-  programaId,  // programa selecionado como prop
-  acao
+  anoExecucao,
+  programaId,
+  acao,
+  setDtcursos,
+ 
 }) {
-const [searchParams, setSearchParams] = useState({
+  const [searchParams, setSearchParams] = useState({
     nome_formando: "",
     ano_execucao: anoExecucao,
     nome_programa: programaId,
@@ -26,20 +28,30 @@ const [searchParams, setSearchParams] = useState({
   });
 
   const { data: cursos, isLoading } = useQuery({
-    queryKey: ["cursos", anoExecucao],
+    queryKey: ["cursos", anoExecucao, acao],
     queryFn: () => fetchCursosAno(token, searchParams),
     enabled: anoExecucao?.toString().length >= 4,
   });
 
-  const cursosFiltrados = React.useMemo(() => {
+
+  const cursosFiltrados = useMemo(() => {
+    
+    setDtcursos(cursos);
     if (!cursos || !programaId) return cursos || [];
 
-    return cursos.filter((curso) => curso.programa_nome === (programaId));
-  }, [cursos, programaId]);
+    return cursos.filter(
+      (curso) =>
+        curso.programa_nome === programaId && (!acao || curso.acao === acao)
+    );
+  }, [cursos, programaId, acao]);
 
   return (
     <Col>
-      <FloatingLabel controlId={controlId} className="mb-3 w-auto" label={label}>
+      <FloatingLabel
+        controlId={controlId}
+        className="mb-3 w-auto"
+        label={label}
+      >
         <Form.Select
           className="input_left_color p-2"
           name={name}
@@ -52,13 +64,11 @@ const [searchParams, setSearchParams] = useState({
           {!isLoading &&
             cursosFiltrados.map((item) => (
               <option key={item.id} value={item.nome}>
-                {item.nome}
+                {item.nome} - {item.acao}
               </option>
             ))}
         </Form.Select>
-        <Form.Control.Feedback type="invalid">
-          {feedback}
-        </Form.Control.Feedback>
+        <Form.Control.Feedback type="invalid">{feedback}</Form.Control.Feedback>
       </FloatingLabel>
     </Col>
   );
@@ -73,8 +83,11 @@ SelectFieldCurso.propTypes = {
   isInvalid: PropTypes.bool,
   feedback: PropTypes.string,
   token: PropTypes.string.isRequired,
-  anoExecucao: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-  programaId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  anoExecucao: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+    .isRequired,
+  programaId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+    .isRequired,
+  acao: PropTypes.string,
 };
 
 export default SelectFieldCurso;

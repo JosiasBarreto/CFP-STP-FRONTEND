@@ -39,4 +39,12 @@
     padding: 15px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
   }
+  .cards-superiores {
+   
+    top: 9em;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+  }
+  
   
