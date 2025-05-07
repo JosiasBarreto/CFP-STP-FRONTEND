@@ -1,10 +1,31 @@
 import { useState } from "react";
-import { Button, Modal, ToastContainer, Row, Col, Spinner, Badge, Container } from "react-bootstrap";
+import {
+  Button,
+  Modal,
+  ToastContainer,
+  Row,
+  Col,
+  Spinner,
+  Badge,
+  Container,
+} from "react-bootstrap";
 import { Selecaomassa } from "../sing/function";
 import { toast } from "react-toastify";
-import { FaCheckCircle, FaTimesCircle, FaClock, FaUserSlash } from "react-icons/fa";
+import {
+  FaCheckCircle,
+  FaTimesCircle,
+  FaClock,
+  FaUserSlash,
+} from "react-icons/fa";
 
-function Finalizar({ situacoes, selecionados, nselecionados, suplentes, desistidos, total }) {
+function Finalizar({
+  situacoes,
+  selecionados,
+  nselecionados,
+  suplentes,
+  desistidos,
+  total,
+}) {
   const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -33,72 +54,86 @@ function Finalizar({ situacoes, selecionados, nselecionados, suplentes, desistid
 
       <Modal show={showConfirm} onHide={() => setShowConfirm(false)} centered>
         <Modal.Header closeButton className="bg-success text-white">
-          <Modal.Title className="w-100 ">
-            🔒 Confirmar Seleção Final
+          <Modal.Title className="w-100 fs-5">
+            CONFIRMAR A SELECÇÃO DOS CANDIDATOS
           </Modal.Title>
         </Modal.Header>
 
-        <Modal.Body>
-          
+        <Modal.Body className="d-flex justify-content-center align-items-center">
+          <div>
+            <p className="text-center mb-3">
+              Tem certeza que deseja <strong>finalizar a seleção</strong> dos
+              formandos?
+              <br /> Esta ação atualizará o <strong>status</strong> conforme
+              abaixo.
+            </p>
 
-          <Container>
-          <Row className="mb-3 text-center">
+            <Row className="mb-3 text-center gap-3">
               <Col
-                md={6}
                 className="rounded p-3 text-white"
                 style={{ backgroundColor: "#198754" }} // Verde (Bootstrap success)
               >
-                <FaCheckCircle size={26} className="mb-2" />
-                <div>Selecionados</div>
-                <Badge bg="light" text="dark">{selecionados}</Badge>
+                <div>
+                  <FaCheckCircle size={33} className="mb-2 ml-2" /> Selecionados
+                </div>
+                <Badge bg="light" text="success" className="fs-6">
+                  {selecionados}
+                </Badge>
               </Col>
 
               <Col
-                md={6}
                 className="rounded p-3 text-white"
                 style={{ backgroundColor: "#ffc107" }} // Amarelo (Bootstrap warning)
               >
-                <FaClock size={26} className="mb-2" />
-                <div>Suplentes</div>
-                <Badge bg="light" text="dark">{suplentes}</Badge>
+                <div>
+                  <FaClock size={33} className="mb-2 ml-2" /> Suplentes
+                </div>
+                <Badge bg="light" text="warning" className="fs-6">
+                  {suplentes}
+                </Badge>
               </Col>
             </Row>
 
-            <Row className="mb-3 text-center">
+            <Row className="mb-3 text-center gap-3">
               <Col
-                md={6}
                 className="rounded p-3 text-white"
                 style={{ backgroundColor: "#dc3545" }} // Vermelho (Bootstrap danger)
               >
-                <FaTimesCircle size={26} className="mb-2" />
-                <div>Não Selecionados</div>
-                <Badge bg="light" text="dark">{nselecionados}</Badge>
+                <div>
+                  {" "}
+                  <FaTimesCircle size={33} className="mb-2 ml-2" />
+                  Não Selec.
+                </div>
+                <Badge bg="light" text="danger" className="fs-6">
+                  {nselecionados}
+                </Badge>
               </Col>
 
               <Col
-                md={6}
                 className="rounded p-3 text-white"
                 style={{ backgroundColor: "#6c757d" }} // Cinza (Bootstrap secondary)
               >
-                <FaUserSlash size={26} className="mb-2" />
-                <div>Desistentes</div>
-                <Badge bg="light" text="dark">{desistidos}</Badge>
+                <div>
+                  <FaUserSlash size={33} className="mb-2 ml-2" />
+                  Desistentes
+                </div>
+                <Badge bg="light" text="secondary" className="fs-6">
+                  {desistidos}
+                </Badge>
               </Col>
             </Row>
-            <p className="text-center mb-4">
-            Tem certeza que deseja <strong>finalizar a seleção</strong> dos formandos?
-            <br /> Esta ação atualizará o <strong>status</strong> conforme abaixo.
-          </p>
-
             <hr />
-            <div className="text-center">
-              Total de Formandos: <Badge bg="dark">{total}</Badge>
+            <div className="text-center mt-0">
+              Total dos Candidatos: <Badge bg="dark">{total}</Badge>
             </div>
-          </Container>
+          </div>
         </Modal.Body>
 
         <Modal.Footer className="justify-content-center">
-          <Button variant="outline-secondary" onClick={() => setShowConfirm(false)}>
+          <Button
+            variant="outline-secondary"
+            onClick={() => setShowConfirm(false)}
+          >
             Cancelar
           </Button>
           <Button

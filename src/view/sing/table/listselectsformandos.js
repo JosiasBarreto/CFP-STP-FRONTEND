@@ -58,15 +58,6 @@ function ListSelets({
     }
   }, [data]);
 
-  const handleCheckboxChange = (event, id) => {
-    const { checked } = event.target;
-    setFormandosSelecionados((prevSelecionados) =>
-      checked
-        ? [...prevSelecionados, id]
-        : prevSelecionados.filter((fid) => fid !== id)
-    );
-  };
-
   const handleEditar = () => {
     navigate("/auth/register-formandos", {
       state: { dadosFormando: formandoSelecionado },
@@ -116,7 +107,32 @@ function ListSelets({
     setFormandos(filtered || []);
   };
 
-  if (isLoading) return <div>Carregando...</div>;
+  if (isLoading)
+    return (
+      <div className="d-flex flex-column align-items-center min-vh-100">
+        <div
+          className="skeleton-box"
+          style={{
+            width: "80%",
+            height: "20px",
+            backgroundColor: "#e0e0e0",
+            borderRadius: "5px",
+          }}
+        ></div>
+        <div
+          className="skeleton-box mt-2"
+          style={{
+            width: "60%",
+            height: "20px",
+            backgroundColor: "#e0e0e0",
+            borderRadius: "5px",
+          }}
+        ></div>
+        <p className="mt-3 text-muted">
+          Carregando dados, aguarde um instante...
+        </p>
+      </div>
+    );
 
   const handleVerFormando = async (id) => {
     try {
@@ -250,7 +266,7 @@ function ListSelets({
                       {item.cursos_inscritos.length > 0
                         ? item.cursos_inscritos
                             .filter((c) => c.opcao === "1")
-                            .map((c) => c.nome_curso)
+                            .map((c) => `${c.nome_curso} (${c.status})`)
                             .join(", ")
                         : "---"}
                     </td>
@@ -258,7 +274,7 @@ function ListSelets({
                       {item.cursos_inscritos.length > 0
                         ? item.cursos_inscritos
                             .filter((c) => c.opcao === "2")
-                            .map((c) => c.nome_curso)
+                            .map((c) => `${c.nome_curso} (${c.status})`)
                             .join(", ")
                         : "---"}
                     </td>
@@ -332,36 +348,38 @@ function ListSelets({
         centered
       >
         <Modal.Header closeButton className="bg-success text-white">
-          
-        <Modal.Title className="w-100">
-  <Row className="align-items-center">
-    <Col>
-      <h5 className="mb-0">Ficha de Inscrição do Formando</h5>
-    </Col>
-    {!filtros && (
-      <Col xs="auto" className="d-flex align-items-center gap-2">
-        <span className="fs-6 mb-0">Situação:</span>
-        {(() => {
-          const cursoSelecionado = formandoSelecionado?.cursos_inscritos.find(
-            (c) => String(c.curso_id) === String(searchParams.id_curso)
-          );
+          <Modal.Title className="w-100">
+            <Row className="align-items-center">
+              <Col>
+                <h5 className="mb-0">Ficha de Inscrição do Formando</h5>
+              </Col>
+              {!filtros && (
+                <Col xs="auto" className="d-flex align-items-center gap-2">
+                  <span className="fs-6 mb-0">Situação:</span>
+                  {(() => {
+                    const cursoSelecionado =
+                      formandoSelecionado?.cursos_inscritos.find(
+                        (c) =>
+                          String(c.curso_id) === String(searchParams.id_curso)
+                      );
 
-          return (
-            <SituacaoCandidatura
-              items={formandoSelecionado}
-              idCurso={cursoSelecionado?.curso_id ?? null}
-              status={cursoSelecionado?.status ?? ""}
-              id_curso_incricao={cursoSelecionado?.id_curso_incricao ?? ""}
-              situacoes={situacoes}
-              setSituacoes={setSituacao}
-            />
-          );
-        })()}
-      </Col>
-    )}
-  </Row>
-</Modal.Title>
-
+                    return (
+                      <SituacaoCandidatura
+                        items={formandoSelecionado}
+                        idCurso={cursoSelecionado?.curso_id ?? null}
+                        status={cursoSelecionado?.status ?? ""}
+                        id_curso_incricao={
+                          cursoSelecionado?.id_curso_incricao ?? ""
+                        }
+                        situacoes={situacoes}
+                        setSituacoes={setSituacao}
+                      />
+                    );
+                  })()}
+                </Col>
+              )}
+            </Row>
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {formandoSelecionado ? (

@@ -19,7 +19,11 @@ import { faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ToastContainer } from "react-toastify";
 
-import { BuscarInscricao, LastIdFormando, Selecaomassa } from "../sing/function";
+import {
+  BuscarInscricao,
+  LastIdFormando,
+  Selecaomassa,
+} from "../sing/function";
 
 import SelectField from "../../component/Selects/Index";
 import SelectFieldCurso from "../../component/Selects/selectcursos";
@@ -98,9 +102,7 @@ function Selectsformandos() {
             ano_execucao: cursoSelecionado.ano_execucao,
             acao: cursoSelecionado.acao,
             id_curso: cursoSelecionado.id,
-            
           };
-         
         }
       }
 
@@ -198,17 +200,21 @@ function Selectsformandos() {
   const { selecionados, nselecionados, suplentes, desistidos, total } =
     contarSituacoes();
 
-  
+  function Cancelar() {
+    setSituacoes([]);
+    setFiltros(!filtros);
+    handleLimpar();
+  }
 
   return (
     <>
-      <div>
-        <div className="bg-white shadow rounded p-3 mb-2 align-items-center">
+      
+        <Row className="bg-white shadow rounded p-3 mb-2 align-items-center">
           {filtros ? (
             <>
               <Row
                 md={12}
-                className="d-flex flex-wrap align-items-center mb-2 "
+                className="d-flex flex-wrap align-items-center mb-2 mt-3 "
               >
                 <Col md={3} className="">
                   <SelectField
@@ -299,29 +305,31 @@ function Selectsformandos() {
             <Row
               md={12}
               xs={12}
-              className="d-flex align-items-end bg-light rounded p-2 mt-2"
+              className="d-flex align-items-end rounded p-2 mt-2"
             >
-              <Col md={8}>
-                <div className="d-flex gap-2 ">
-                  {[
-                    {
-                      label: "Inscrições Selecionadas",
-                      name: "selecionados",
-                      value: selecionados,
-                    },
-                    {
-                      label: "Não Selecionados",
-                      name: "nselecionados",
-                      value: nselecionados,
-                    },
-                    { label: "Suplentes", name: "suplentes", value: suplentes },
-                    {
-                      label: "Desistidos",
-                      name: "desistidos",
-                      value: desistidos,
-                    },
-                    { label: "Total Inscritos", name: "total", value: total },
-                  ].map(({ label, name, value }) => (
+              <Col md={9}>
+              <Row md={12}
+              xs={12} className="d-flex gap-2 ">
+                {[
+                  {
+                    label: "Selecionados",
+                    name: "selecionados",
+                    value: selecionados,
+                  },
+                  {
+                    label: "Não Selecionados",
+                    name: "nselecionados",
+                    value: nselecionados,
+                  },
+                  { label: "Suplentes", name: "suplentes", value: suplentes },
+                  {
+                    label: "Desistidos",
+                    name: "desistidos",
+                    value: desistidos,
+                  },
+                  { label: "Total Inscritos", name: "total", value: total },
+                ].map(({ label, name, value }) => (
+                  <Col md={2}>
                     <FloatingLabel
                       key={name}
                       controlId={`formBasic${name}`}
@@ -336,13 +344,25 @@ function Selectsformandos() {
                         value={value}
                       />
                     </FloatingLabel>
-                  ))}
-                </div>
+                  </Col>
+                ))}
+              </Row>
               </Col>
 
-              <Col md={4} className="d-flex align-items-center gap-2 ">
-              <Finalizar situacoes={situacoes}  selecionados={selecionados} nselecionados={nselecionados} suplentes={suplentes} desistidos={desistidos} total={total}   />
-                <Button variant="outline-warning" className="btn p-2">
+              <Col md={3} className="d-flex align-items-center gap-2 ">
+                <Finalizar
+                  situacoes={situacoes}
+                  selecionados={selecionados}
+                  nselecionados={nselecionados}
+                  suplentes={suplentes}
+                  desistidos={desistidos}
+                  total={total}
+                />
+                <Button
+                  variant="outline-warning"
+                  className="btn p-2"
+                  onClick={Cancelar}
+                >
                   CANCELAR
                 </Button>
               </Col>
@@ -390,7 +410,7 @@ function Selectsformandos() {
               </Col>
             </Row>
           )}
-        </div>
+        </Row>
 
         <Row md={12} xs={12}>
           <ListSelets
@@ -411,7 +431,7 @@ function Selectsformandos() {
           />
         </Row>
         <ToastContainer />
-      </div>
+      
     </>
   );
 }
