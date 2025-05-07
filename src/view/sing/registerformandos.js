@@ -127,7 +127,8 @@ const dadosEditaveis = location.state?.dadosFormando || null;
       .min(2001, "Ano de Execução inválido")
       .max(new Date().getFullYear(), "Ano de Execução inválido"),
     curso_primeiraopcao: Yup.number().required("Curso é obrigatório"),
-    curso_segundaopcao: Yup.number(),
+    curso_segundaopcao: Yup.number()
+    .notOneOf([Yup.ref("curso_primeiraopcao")], "A segunda opção não pode ser igual à primeira"),
     situacao: Yup.string(),
     ocupacao: Yup.string(),
     motivo: Yup.string(),

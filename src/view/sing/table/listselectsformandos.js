@@ -11,12 +11,17 @@ import {
   Row,
   Image,
   Badge,
+  CardHeader,
+  CardBody,
+  CardFooter,
 } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faSortAlphaDown,
   faArrowDownZA,
   faList,
+  faExclamationTriangle,
+  faUserSlash,
 } from "@fortawesome/free-solid-svg-icons";
 
 import { PaginatedList } from "../../../component/Panilist";
@@ -49,7 +54,6 @@ function ListSelets({ data, pagination, isLoading, isFetching }) {
         : prevSelecionados.filter((fid) => fid !== id)
     );
   };
-
 
   const handleEditar = () => {
     navigate("/auth/register-formandos", {
@@ -121,154 +125,193 @@ function ListSelets({ data, pagination, isLoading, isFetching }) {
   );
 
   return (
-    <Card className="shadow rounded p-2 mb-2">
-      <div className="d-flex hstack gap-2 p-1">
-        <Dropdown onSelect={handleItemsPerPageChange}>
-          <Dropdown.Toggle variant="outline-success" id="dropdown-basic">
-            Items Pág.
-          </Dropdown.Toggle>
-          <Dropdown.Menu>
-            <Dropdown.Item eventKey="20">20</Dropdown.Item>
-            <Dropdown.Item eventKey="30">30</Dropdown.Item>
-            <Dropdown.Item eventKey="60">60</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
+    <>
+      <Card className="shadow rounded p-1 mb-2">
+        <CardHeader>
+          <Row md={12} xs={12}>
+            <Col md={7} className="d-flex gap-3">
+              <Dropdown onSelect={handleItemsPerPageChange}>
+                <Dropdown.Toggle variant="outline-success" id="dropdown-basic">
+                  Items Pág.
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  <Dropdown.Item eventKey="20">20</Dropdown.Item>
+                  <Dropdown.Item eventKey="30">30</Dropdown.Item>
+                  <Dropdown.Item eventKey="60">60</Dropdown.Item>
+                  <Dropdown.Item eventKey="100">100</Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
 
-        <Button variant="outline-success" onClick={ListAll}>
-          <FontAwesomeIcon icon={faList} /> Todos
-        </Button>
+              <Button variant="outline-success" onClick={ListAll}>
+                <FontAwesomeIcon icon={faList} /> Resultados
+              </Button>
 
-        <Button variant="outline-success" onClick={OrderName}>
-          <FontAwesomeIcon
-            icon={order === "asc" ? faSortAlphaDown : faArrowDownZA}
-          />{" "}
-          Nome
-        </Button>
-        <Button variant="outline-success" onClick={Orderdistrito}>
-          <FontAwesomeIcon
-            icon={order === "asc" ? faSortAlphaDown : faArrowDownZA}
-          />{" "}
-         Distrito
-        </Button>
-        
+              <Button variant="outline-success" onClick={OrderName}>
+                <FontAwesomeIcon
+                  icon={order === "asc" ? faSortAlphaDown : faArrowDownZA}
+                />{" "}
+                Nome
+              </Button>
+              <Button variant="outline-success" onClick={Orderdistrito}>
+                <FontAwesomeIcon
+                  icon={order === "asc" ? faSortAlphaDown : faArrowDownZA}
+                />{" "}
+                Distrito
+              </Button>
 
-        {isFetching && <p className="text-success m-0">Carregando...</p>}
+              {isFetching && <p className="text-success m-0">Carregando...</p>}
+            </Col>
+            <Col className="">
+              <Form>
+                <Form.Control
+                  type="text"
+                  placeholder="Pesquisar Candidato por Nome"
+                  className=" w-100"
+                  aria-label="Search"
+                  onChange={handleSearch}
+                />
+              </Form>
+            </Col>
+          </Row>
+        </CardHeader>
 
-        <Col>
-          <Form>
-            <Form.Control
-              type="text"
-              placeholder="Pesquisar Candidato"
-              className="me-3"
-              aria-label="Search"
-              onChange={handleSearch}
-            />
-          </Form>
-        </Col>
-      </div>
-     <div className="table-responsive">
-             <Table
-               striped
-               bordered
-               hover
-               size="sm"
-               className=" align-middle table table-striped table-bordered small"
-             >
-               <thead className="table-success text-center ">
-                 <tr>
-                   <th>Inscr.</th>
-                   <th>Nome</th>
-                   <th>Idade</th>
-                   <th>Sexo</th>
-                   <th>Identif</th>
-                   <th>Distrito</th>
-                   <th>Morada</th>
-                   <th>Contacto</th>
-                   <th>Curso 1ª Opção</th>
-                   <th>Curso 2ª Opção</th>
-                   <th>Opção</th>
-                 </tr>
-               </thead>
-               <tbody className="table-group-divider text-size-sm text-start">
-                 {currentItems.length > 0 ? (
-                   currentItems.map((item, index) => (
-                     <tr key={item.incricao_id}>
-                       <td>{item.incricao_id}</td>
-                       <td>{item.nome}</td>
-                       <td>
-                         {(() => {
-                           const birth = new Date(item.data_nascimento);
-                           const today = new Date();
-                           let age = today.getFullYear() - birth.getFullYear();
-                           const m = today.getMonth() - birth.getMonth();
-                           if (
-                             m < 0 ||
-                             (m === 0 && today.getDate() < birth.getDate())
-                           ) {
-                             age--;
-                           }
-                           return age;
-                         })()}
-                       </td>
-                       <td>{item.sexo}</td>
-                       <td>{item.bi}</td>
-                       <td>{item.distrito}</td>
-                       <td>{item.zona}</td>
-                       <td>
-                         <>
-                           {item.contacto && item.contacto.length >= 7 && (
-                             <span>{item.contacto}</span>
-                           )}
-                           {item.contacto_opcional &&
-                             item.contacto_opcional.length >= 7 && (
-                               <span>{" / " + item.contacto_opcional}</span>
-                             )}
-                         </>
-                       </td>
-     
-                       <td>
-                         {item.cursos_inscritos.length > 0
-                           ? item.cursos_inscritos
-                               .filter((c) => c.opcao === "1")
-                               .map((c) => c.nome_curso)
-                               .join(", ")
-                           : "---"}
-                       </td>
-                       <td>
-                         {item.cursos_inscritos.length > 0
-                           ? item.cursos_inscritos
-                               .filter((c) => c.opcao === "2")
-                               .map((c) => c.nome_curso)
-                               .join(", ")
-                           : "---"}
-                       </td>
-     
-                       <td>
-                         <Button
-                           variant="outline-success"
-                           onClick={() => handleVerFormando(item.incricao_id)}
-                         >
-                           Ver
-                         </Button>
-                       </td>
-                     </tr>
-                   ))
-                 ) : (
-                   <tr>
-                     <td colSpan="16">Nenhum formando encontrado.</td>
-                   </tr>
-                 )}
-               </tbody>
-             </Table>
-           </div>
+        <div className="table-responsive" style={{ minHeight: '20rem' }}>
+          <Table
+            striped
+            bordered
+            hover
+            size="sm"
+            className=" align-middle table table-striped table-bordered small"
+          >
+            <thead className="table-success text-center ">
+              <tr>
+                <th>Inscr.</th>
+                <th>Nome</th>
+                <th>Idade</th>
+                <th>Sexo</th>
+                <th>Identif</th>
+                <th>Distrito</th>
+                <th>Morada</th>
+                <th>Contacto</th>
+                <th>Curso 1ª Opção</th>
+                <th>Curso 2ª Opção</th>
+                <th>Opção</th>
+                <th>Situação</th>
+              </tr>
+            </thead>
+            <tbody className="table-group-divider text-size-sm text-start" >
+              {currentItems.length > 0 ? (
+                currentItems.map((item, index) => (
+                  <tr key={item.incricao_id}>
+                    <td>{item.incricao_id}</td>
+                    <td>{item.nome}</td>
+                    <td>
+                      {(() => {
+                        const birth = new Date(item.data_nascimento);
+                        const today = new Date();
+                        let age = today.getFullYear() - birth.getFullYear();
+                        const m = today.getMonth() - birth.getMonth();
+                        if (
+                          m < 0 ||
+                          (m === 0 && today.getDate() < birth.getDate())
+                        ) {
+                          age--;
+                        }
+                        return age;
+                      })()}
+                    </td>
+                    <td>{item.sexo}</td>
+                    <td>{item.bi}</td>
+                    <td>{item.distrito}</td>
+                    <td>{item.zona}</td>
+                    <td>
+                      <>
+                        {item.contacto && item.contacto.length >= 7 && (
+                          <span>{item.contacto}</span>
+                        )}
+                        {item.contacto_opcional &&
+                          item.contacto_opcional.length >= 7 && (
+                            <span>{" / " + item.contacto_opcional}</span>
+                          )}
+                      </>
+                    </td>
 
-      <Col>
-        <PaginatedList
-          totalPages={totalPages}
-          currentPage={currentPage}
-          handlePageChange={handlePageChange}
-        />
-      </Col>
+                    <td>
+                      {item.cursos_inscritos.length > 0
+                        ? item.cursos_inscritos
+                            .filter((c) => c.opcao === "1")
+                            .map((c) => c.nome_curso)
+                            .join(", ")
+                        : "---"}
+                    </td>
+                    <td>
+                      {item.cursos_inscritos.length > 0
+                        ? item.cursos_inscritos
+                            .filter((c) => c.opcao === "2")
+                            .map((c) => c.nome_curso)
+                            .join(", ")
+                        : "---"}
+                    </td>
+
+                    <td>
+                      <Button
+                        variant="outline-success"
+                        onClick={() => handleVerFormando(item.incricao_id)}
+                      >
+                        Ver
+                      </Button>
+                    </td>
+                    <td>
+                    <Form.Select aria-label="Default select example"
+                    name="situacao"
+                    id="situacao"
+                    value={item.cursos_inscritos.length > 0
+                      ? item.cursos_inscritos
+                          .filter((c) => c.opcao === "1")
+                          .map((c) => c.status)
+                          .join(", ")
+                      : "---"}>
+                      <option>Escolha</option>
+                      <option value="inscrito">inscrito</option>
+                      <option value="Selecionado">Selecionado</option>
+                      <option value="Suplente">Suplente</option>
+                      <option value="Não Selecionado">Não Selecionado</option>
+                      <option value="Desistiu">Desistiu</option>
+                    </Form.Select>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="11" className="text-center">
+                    <div className="d-flex flex-column align-items-center py-3">
+                      <FontAwesomeIcon
+                        icon={faUserSlash}
+                        size="2x"
+                        className="text-warning mb-2"
+                      />
+                      <h5 className="text-warning fw-bold">
+                        Nenhum Candidato encontrado
+                      </h5>
+                      <p className="text-muted">
+                        Tente ajustar os filtros ou pesquisar novamente.
+                      </p>
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </Table>
+        </div>
+
+        <div className="m-none p-none ">
+          <PaginatedList
+            totalPages={totalPages}
+            currentPage={currentPage}
+            handlePageChange={handlePageChange}
+          />
+        </div>
+      </Card>
       <Modal
         show={mostrarModal}
         onHide={() => setMostrarModal(false)}
@@ -530,7 +573,7 @@ function ListSelets({ data, pagination, isLoading, isFetching }) {
           </Button>
         </Modal.Footer>
       </Modal>
-    </Card>
+    </>
   );
 }
 
