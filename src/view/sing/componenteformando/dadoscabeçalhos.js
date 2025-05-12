@@ -5,10 +5,10 @@ import { Col, FloatingLabel, Form, Row } from "react-bootstrap";
 const Cabecalhos = ({ formik }) => {
   return (
     <>
-      <Row md={12} xs={12} className="mt-2 mb-2">
+      <Row md={12} xs={12} className="bg-light d-flex justify-content-center  ">
           <Col md={3}>
            <FloatingLabel
-              controlId="formBasiNome"
+             
               className="mb-3 w-auto"
               label="Inscrição"
             >
@@ -30,30 +30,9 @@ const Cabecalhos = ({ formik }) => {
           </Col>
           <Col md={3}>
             <FloatingLabel
-              controlId="formBasiNome"
+           
               className="mb-3 w-auto"
-              label="Data de Inscrição"
-            >
-              <Form.Control
-                className="input_left_color p-2"
-                type="date"
-                name="data"
-                id="data"
-                placeholder="Digite a Data de Inscrição"
-                value={formik.values.data}
-                onChange={formik.handleChange}
-                isInvalid={formik.touched.data && formik.errors.data}
-              />
-              <Form.Control.Feedback type="invalid">
-                {formik.errors.data}
-              </Form.Control.Feedback>
-            </FloatingLabel>
-          </Col>
-          <Col md={3}>
-            <FloatingLabel
-              controlId="formBasiNome"
-              className="mb-3 w-auto"
-              label="Número do Processo"
+              label="Processo"
             >
               <Form.Control
                 className="input_left_color p-2"
@@ -73,9 +52,31 @@ const Cabecalhos = ({ formik }) => {
           </Col>
           <Col md={3}>
             <FloatingLabel
-              controlId="formBasiNome"
+             
               className="mb-3 w-auto"
-              label="Ano de Execução"
+              label="Data de Inscrição"
+            >
+              <Form.Control
+                className="input_left_color p-2"
+                type="date"
+                name="data"
+                id="data"
+                placeholder="Digite a Data de Inscrição"
+                value={formik.values.data}
+                onChange={formik.handleChange}
+                isInvalid={formik.touched.data && formik.errors.data}
+              />
+              <Form.Control.Feedback type="invalid">
+                {formik.errors.data}
+              </Form.Control.Feedback>
+            </FloatingLabel>
+          </Col>
+          
+          <Col md={3}>
+            <FloatingLabel
+             
+              className="mb-3 w-auto"
+              label="Ano de Lectivo"
             >
               <Form.Control
                 className="input_left_color p-2"

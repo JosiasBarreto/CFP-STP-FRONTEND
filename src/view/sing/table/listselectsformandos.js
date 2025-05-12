@@ -271,6 +271,7 @@ function ListSelets({
                         : "---"}
                     </td>
                     <td>
+                      
                       {item.cursos_inscritos.length > 0
                         ? item.cursos_inscritos
                             .filter((c) => c.opcao === "2")
@@ -362,6 +363,7 @@ function ListSelets({
                         (c) =>
                           String(c.curso_id) === String(searchParams.id_curso)
                       );
+                      console.log(cursoSelecionado)
 
                     return (
                       <SituacaoCandidatura

@@ -25,6 +25,7 @@ function Finalizar({
   suplentes,
   desistidos,
   total,
+  funcaoresert,
 }) {
   const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -33,7 +34,14 @@ function Finalizar({
     setLoading(true);
     try {
       const response = await Selecaomassa(situacoes);
-      toast.success("Atualizado com sucesso");
+      
+      toast.success("Candidatos selecionados com sucesso!!"); // Mostra a mensagem imediatamente
+  
+      // Aguarda 2 segundos e só depois reseta o formulário
+      setTimeout(() => {
+        funcaoresert();
+      }, 2000); // 2000ms = 2 segundos
+  
     } catch (error) {
       toast.error("Erro ao atualizar");
     } finally {
@@ -41,6 +49,7 @@ function Finalizar({
       setShowConfirm(false);
     }
   };
+  
 
   return (
     <>

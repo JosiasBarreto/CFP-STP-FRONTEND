@@ -105,7 +105,7 @@ function TablePrograma({
         {currentItems.length > 0 ? (
           currentItems.map((user, index) => (
             <Col key={user.id}>
-              <Card className="card-glass h-100 text-success-emphasis">
+              <Card className="card-glass h-100 text-success-emphasis shadow border border-2">
                 <Card.Body>
                   <Card.Title>{user.nome}</Card.Title>
                   <Card.Text>
@@ -139,13 +139,7 @@ function TablePrograma({
                   >
                     <BsPencilSquare /> Editar
                   </Button>
-                  <Button
-                    variant="light"
-                    size="sm"
-                    onClick={() => deletarPrograma(user.id)}
-                  >
-                    <BsTrash /> Eliminar
-                  </Button>
+                 
                 </Card.Footer>
               </Card>
             </Col>

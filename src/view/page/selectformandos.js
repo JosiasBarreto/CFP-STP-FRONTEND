@@ -7,6 +7,7 @@ import {
   Spinner,
   FloatingLabel,
   Alert,
+  Badge,
 } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -208,108 +209,106 @@ function Selectsformandos() {
 
   return (
     <>
-      
-        <Row className="bg-white shadow rounded p-3 mb-2 align-items-center">
-          {filtros ? (
-            <>
-              <Row
-                md={12}
-                className="d-flex flex-wrap align-items-center mb-2 mt-3 "
-              >
-                <Col md={3} className="">
-                  <SelectField
-                    value={searchParams.nome_programa}
-                    onChange={handleChange}
-                    isInvalid={false}
-                    feedback=""
-                    token={token}
-                  />
-                </Col>
-                <Col md={4}>
-                  <SelectFieldCurso
-                    value={searchParams.nome_curso}
-                    onChange={handleChange}
-                    isInvalid={false}
-                    feedback=""
-                    token={token}
-                    anoExecucao={searchParams.ano_execucao}
-                    programaId={searchParams.nome_programa}
-                    setDtcursos={setDtcursos}
-                    disabled={!searchParams.nome_programa}
-                  />
-                </Col>
-                <Col md={1}>
-                  <FloatingLabel
-                    controlId="formBasiNome"
-                    className="mb- w-auto"
-                    label="ANO"
-                  >
-                    <Form.Control
-                      type="number"
-                      name="ano_execucao"
-                      value={searchParams.ano_execucao}
-                      onChange={handleChange}
-                      placeholder="Ano"
-                      className="input_left_color p-2 mb-3"
-                    />
-                  </FloatingLabel>
-                </Col>
-
-                <Col md={2}>
-                  <FloatingLabel
-                    controlId="formBasiNome"
-                    className="mb-3 w-auto"
-                    label="AÇÃO Nº"
-                  >
-                    <Form.Control
-                      type="text"
-                      name="acao"
-                      value={searchParams.acao}
-                      onChange={handleChange}
-                      placeholder="Ação"
-                      className="input_left_color p-2"
-                    />
-                  </FloatingLabel>
-                </Col>
-                <Col md="2" className="d-flex gap-1">
-                  <Button
-                    variant="success"
-                    onClick={handleSearch}
-                    disabled={loading}
-                    className="w-50"
-                  >
-                    {loading ? (
-                      <Spinner animation="border" size="sm" />
-                    ) : (
-                      <FontAwesomeIcon icon={faSearch} className="" />
-                    )}
-                  </Button>
-
-                  <Button
-                    variant="outline-secondary"
-                    onClick={handleLimpar}
-                    disabled={loading}
-                    className="w-50"
-                  >
-                    <FontAwesomeIcon icon={faUndo} className="" />
-                  </Button>
-                </Col>
-              </Row>
-            </>
-          ) : (
-            <Row className="t-0">
-              <MyComponent searchParams={searchParams} />
-            </Row>
-          )}
-          {!filtros ? (
+      <Row className="bg-white shadow rounded p-3 mb-2 align-items-center">
+        {filtros ? (
+          <>
             <Row
               md={12}
-              xs={12}
-              className="d-flex align-items-end rounded p-2 mt-2"
+              className="d-flex flex-wrap align-items-center mb-2 mt-3 "
             >
-              <Col md={9}>
-              <Row md={12}
-              xs={12} className="d-flex gap-2 ">
+              <Col md={3} className="">
+                <SelectField
+                  value={searchParams.nome_programa}
+                  onChange={handleChange}
+                  isInvalid={false}
+                  feedback=""
+                  token={token}
+                />
+              </Col>
+              <Col md={4}>
+                <SelectFieldCurso
+                  value={searchParams.nome_curso}
+                  onChange={handleChange}
+                  isInvalid={false}
+                  feedback=""
+                  token={token}
+                  anoExecucao={searchParams.ano_execucao}
+                  programaId={searchParams.nome_programa}
+                  setDtcursos={setDtcursos}
+                  disabled={!searchParams.nome_programa}
+                />
+              </Col>
+              <Col md={1}>
+                <FloatingLabel
+                  controlId="formBasiNome"
+                  className="mb- w-auto"
+                  label="ANO"
+                >
+                  <Form.Control
+                    type="number"
+                    name="ano_execucao"
+                    value={searchParams.ano_execucao}
+                    onChange={handleChange}
+                    placeholder="Ano"
+                    className="input_left_color p-2 mb-3"
+                  />
+                </FloatingLabel>
+              </Col>
+
+              <Col md={2}>
+                <FloatingLabel
+                  controlId="formBasiNome"
+                  className="mb-3 w-auto"
+                  label="AÇÃO Nº"
+                >
+                  <Form.Control
+                    type="text"
+                    name="acao"
+                    value={searchParams.acao}
+                    onChange={handleChange}
+                    placeholder="Ação"
+                    className="input_left_color p-2"
+                  />
+                </FloatingLabel>
+              </Col>
+              <Col md="2" className="d-flex gap-1">
+                <Button
+                  variant="success"
+                  onClick={handleSearch}
+                  disabled={loading}
+                  className="w-50"
+                >
+                  {loading ? (
+                    <Spinner animation="border" size="sm" />
+                  ) : (
+                    <FontAwesomeIcon icon={faSearch} className="" />
+                  )}
+                </Button>
+
+                <Button
+                  variant="outline-secondary"
+                  onClick={handleLimpar}
+                  disabled={loading}
+                  className="w-50"
+                >
+                  <FontAwesomeIcon icon={faUndo} className="" />
+                </Button>
+              </Col>
+            </Row>
+          </>
+        ) : (
+          <Row className="t-0">
+            <MyComponent searchParams={searchParams} />
+          </Row>
+        )}
+        {!filtros ? (
+          <Row
+            md={12}
+            xs={12}
+            className="d-flex align-items-end rounded p-2 mt-2"
+          >
+            <Col md={9}>
+              <Row md={12} xs={12} className="d-flex gap-2 ">
                 {[
                   {
                     label: "Selecionados",
@@ -347,91 +346,113 @@ function Selectsformandos() {
                   </Col>
                 ))}
               </Row>
-              </Col>
+            </Col>
 
-              <Col md={3} className="d-flex align-items-center gap-2 ">
-                <Finalizar
-                  situacoes={situacoes}
-                  selecionados={selecionados}
-                  nselecionados={nselecionados}
-                  suplentes={suplentes}
-                  desistidos={desistidos}
-                  total={total}
-                />
-                <Button
-                  variant="outline-warning"
-                  className="btn p-2"
-                  onClick={Cancelar}
+            <Col md={3} className="d-flex align-items-center gap-2 ">
+              <Finalizar
+                situacoes={situacoes}
+                selecionados={selecionados}
+                nselecionados={nselecionados}
+                suplentes={suplentes}
+                desistidos={desistidos}
+                total={total}
+                funcaoresert={Cancelar}
+              />
+              <Button
+                variant="outline-warning"
+                className="btn p-2"
+                onClick={Cancelar}
+              >
+                CANCELAR
+              </Button>
+            </Col>
+          </Row>
+        ) : (
+          <Row md={12} xs={12} className="align-items-center ">
+            <Col md={3} className="text-center">
+              <Button
+                variant="outline-success"
+                onClick={ToggleStatusFilter}
+                disabled={loading}
+                className="w-75 shadow-sm d-flex align-items-center justify-content-center gap-1"
+              >
+                <FontAwesomeIcon icon={faCheckCircle} />
+                Selecionar os Candidatos
+              </Button>
+            </Col>
+
+            <Col md={7}>
+              {showinfo && (
+                <Alert
+                  variant="warning"
+                  className="text-center p-1 d-flex align-items-center justify-content-center"
                 >
-                  CANCELAR
-                </Button>
-              </Col>
-            </Row>
-          ) : (
-            <Row md={12} xs={12} className="align-items-center ">
-              <Col md={3} className="text-center">
-                <Button
-                  variant="outline-success"
-                  onClick={ToggleStatusFilter}
-                  disabled={loading}
-                  className="w-75 shadow-sm d-flex align-items-center justify-content-center gap-1"
-                >
-                  <FontAwesomeIcon icon={faCheckCircle} />
-                  Selecionar os Candidatos
-                </Button>
-              </Col>
+                  <FontAwesomeIcon
+                    icon={faInfoCircle}
+                    className="text-warning me-2"
+                  />
+                  Selecione o curso que desejas fazer na seleção dos candidatos
+                  primeiro!!
+                </Alert>
+              )}
+            </Col>
 
-              <Col md={7}>
-                {showinfo && (
-                  <Alert
-                    variant="warning"
-                    className="text-center p-1 d-flex align-items-center justify-content-center"
-                  >
-                    <FontAwesomeIcon
-                      icon={faInfoCircle}
-                      className="text-warning me-2"
-                    />
-                    Selecione o curso que desejas fazer na seleção dos
-                    candidatos primeiro!!
-                  </Alert>
-                )}
-              </Col>
-
-              <Col md={2} className="text-end">
-                {datas?.resultados && (
-                  <div className="text-muted mt-2 pe-1 fs-6">
-                    <p className="mb-0 fw-light">
-                      <FontAwesomeIcon icon={faSearch} className="me-2" />
-                      Resultados Encontrados:
-                    </p>
-                    <strong>{datas.resultados.length}</strong>
+            <Col md={2} className="text-end">
+              {datas?.resultados && (
+                <div className="text-muted mt-2 pe-1 fs-6">
+                  <p className="mb-0 fw-light">
+                    <FontAwesomeIcon icon={faSearch} className="me-2" />
+                    Resultados Encontrados:
+                  </p>
+                  <div className="d-flex justify-content-evenly">
+                    <Badge bg="primary" className="px-3 py-2">
+                      T: <strong>{datas.resultados.length}</strong>
+                    </Badge>
+                    <Badge bg="success" className="px-3 py-2">
+                      M:{" "}
+                      <strong>
+                        {
+                          datas.resultados.filter((c) => c.sexo === "Masculino")
+                            .length
+                        }
+                      </strong>
+                    </Badge>
+                    <Badge bg="warning" className="px-3 py-2">
+                      F:{" "}
+                      <strong>
+                        {
+                          datas.resultados.filter((c) => c.sexo === "Feminino")
+                            .length
+                        }
+                      </strong>
+                    </Badge>
                   </div>
-                )}
-              </Col>
-            </Row>
-          )}
-        </Row>
+                </div>
+              )}
+            </Col>
+          </Row>
+        )}
+      </Row>
 
-        <Row md={12} xs={12}>
-          <ListSelets
-            data={resultados}
-            pagination={datas?.pagination}
-            isLoading={isLoading}
-            searchParams={searchParams}
-            handleChange={handleChange}
-            handleSearch={handleSearch}
-            handleLimpar={handleLimpar}
-            contagem={contagem}
-            loading={loading}
-            setLoading={setLoading}
-            situacoes={situacoes}
-            setSituacao={setSituacoes}
-            filtros={filtros}
-            ToggleStatusFilter={ToggleStatusFilter}
-          />
-        </Row>
-        <ToastContainer />
-      
+      <Row md={12} xs={12}>
+        <ListSelets
+          data={resultados}
+          pagination={datas?.pagination}
+          isLoading={isLoading}
+          searchParams={searchParams}
+          handleChange={handleChange}
+          handleSearch={handleSearch}
+          handleLimpar={handleLimpar}
+          contagem={contagem}
+          loading={loading}
+          setLoading={setLoading}
+          situacoes={situacoes}
+          setSituacao={setSituacoes}
+          filtros={filtros}
+          ToggleStatusFilter={ToggleStatusFilter}
+        />
+      </Row>
+      <ToastContainer />
     </>
   );
 }

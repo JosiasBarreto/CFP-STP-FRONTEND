@@ -152,6 +152,17 @@ const DashboardLayout = () => {
                   <span className="sidebar-text">Selecionar Candidatura</span>
                 )}
               </Nav.Link>
+              <Nav.Link
+                className={`sidebar-link ${getNavLinkClass(
+                  "selecionado-turma"
+                )}`}
+                onClick={() => navigate("selecionado-turma")}
+              >
+                <FaUserTie className="sidebar-icon" />
+                {sidebarOpen && (
+                  <span className="sidebar-text">Turmas</span>
+                )}
+              </Nav.Link>
             </Nav>
           </Col>
 

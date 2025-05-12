@@ -1,7 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-
 // Páginas
 import Home from "./view/main/home.js";
 import ErrorPage from "./view/Err/index.js";
@@ -10,24 +9,20 @@ import RegisterUser from "./view/sing/registouser.js";
 import RegisterProgramas from "./view/sing/registerprogramas.js";
 import RegisterCursos from "./view/sing/registercurso.js";
 import Registerformandos from "./view/sing/registerformandos.js";
-
 // Layout
 import DashboardLayout from "./view/home/index.js";
-import Main from "./component/Menu/Menu.js";
-import ContextRegister from "./view/register/ContextRegister.js";
 import TableFormandos from "./view/sing/table/tableformandos.js";
 import ListFormandos from "./view/page/indexformandos.js";
 import ConfirmsAcounts from "./view/login/confirmacounts.js";
 import RecuperarConta from "./view/register/RecuperarConta.js";
 import RedefinirSenha from "./view/register/RedefinirSenha.js";
 import Selectsformandos from "./view/page/selectformandos.js";
-
+import TurmaDashboard from "./view/page/turmadashboard.js";
 // Componente de Rota Protegida (para páginas que precisam de autenticação)
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("token");
   return token ? children : <Navigate to="/" replace />;
 };
-
 // Componente para impedir login de usuários autenticados
 const PublicRoute = ({ element }) => {
   const token = localStorage.getItem("token");
@@ -57,7 +52,8 @@ function App() {
           <Route path="list-formandos" element={<ListFormandos />} />
           <Route path="table-formandos" element={<TableFormandos />} />
           <Route path="selecionar-candidatura" element={<Selectsformandos />} />
-
+          <Route path="selecionado-turma" element={<TurmaDashboard />} />
+         
         </Route>
 
         {/* Página de erro para rotas inválidas */}

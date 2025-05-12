@@ -17,7 +17,7 @@ export const GetCurso="/curso/busca";
 export const GetCursof="/curso/buscaf";
 
 export const PostFormandos="/formando/";
-export const PutFormandos="/formando/";
+export const PutFormandos="/formando/atualizar";
 export const LastFormandosID="/formando/ultimo";
 export const FiltroInscricao="/formando/filtro";
 

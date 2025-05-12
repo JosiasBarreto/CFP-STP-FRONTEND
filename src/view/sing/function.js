@@ -160,6 +160,7 @@ export const registarUser = async (uses, token) => {
         throw error; // Rejeita a promessa para permitir tratamento do erro no código que chamar a função
       });
   }
+  
   export function fetchCursos(token, data) {
     return axios
       .post(API_URL + GetCurso, data, {
@@ -204,34 +205,49 @@ export const registarUser = async (uses, token) => {
 export function formatarNomeReducaoProgressiva(nomeCompleto, limite = 40) {
   if (!nomeCompleto || typeof nomeCompleto !== "string") return "";
 
-  const partes = nomeCompleto.trim().split(/\s+/);
-  if (partes.length === 0) return "";
+  // Separar qualquer conteúdo entre parênteses para preservar
+  const matchParenteses = nomeCompleto.match(/\(.*?\)$/);
+  const sufixoParenteses = matchParenteses ? matchParenteses[0] : "";
+  const nomeBase = matchParenteses ? nomeCompleto.replace(sufixoParenteses, "").trim() : nomeCompleto;
 
-  let resultado = partes[0]; // Sempre manter o primeiro nome completo
-  let i = 1;
+  // Lista de palavras que devem ser mantidas (preposições, conjunções comuns)
+  const manterInteiras = ["DE", "DO", "DA", "E", "EM", "DOS", "DAS"];
 
-  while (i < partes.length) {
-    const tentativa = resultado + " " + partes.slice(1, i).map(p => p).join(" ") + " " + partes[i][0] + ".";
-    if (tentativa.length <= limite) {
+  // Começa a construir o nome abreviado
+  const partes = nomeBase.trim().split(/\s+/);
+  const partesAbreviadas = partes.map(palavra => {
+    const upper = palavra.toUpperCase();
+
+    if (manterInteiras.includes(upper)) {
+      return upper;
+    }
+
+    if (upper.length <= 3) {
+      return upper;
+    }
+
+    // Abreviação por padrão: 3 primeiras letras + ponto
+    return upper.slice(0, 3) + ".";
+  });
+
+  let resultado = "";
+  for (let i = 0; i < partesAbreviadas.length; i++) {
+    const tentativa = (resultado + " " + partesAbreviadas[i]).trim();
+    if ((tentativa + " " + sufixoParenteses).length <= limite) {
       resultado = tentativa;
     } else {
       break;
     }
-    i++;
   }
 
-  // Se ainda estiver grande, aplicar redução progressiva
-  for (let j = i + 1; j < partes.length; j++) {
-    const tentativa = resultado + " " + partes[j][0] + ".";
-    if (tentativa.length <= limite) {
-      resultado = tentativa;
-    } else {
-      break;
-    }
+  // Adiciona o sufixo (ex: "(inscrito)") se couber no limite
+  if ((resultado + " " + sufixoParenteses).length <= limite) {
+    resultado += " " + sufixoParenteses;
   }
 
-  return resultado;
+  return resultado.trim();
 }
+
 
 export const Selecaomassa = async (data, token) => {
   try {

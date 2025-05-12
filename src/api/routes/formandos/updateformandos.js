@@ -3,8 +3,9 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { API_URL } from "../../urls";
 import { PutFormandos } from "../../urls/rotes_query";
+import { formatarData } from "../../../view/sing/configureData";
 
-export const useEditarFormando = (token, setPreview) => {
+export const useEditarFormando = (token, setPreview, formik, setDadosEditaveis) => {
   return useMutation({
     mutationFn: async ({ valores }) => {
       const formData = new FormData();
@@ -44,9 +45,12 @@ export const useEditarFormando = (token, setPreview) => {
       formData.append("status", "inscrito");
       formData.append("opcao", "1");
       formData.append("ano", valores.anoexecucao);
+      formData.append( "id_curso_incricao1", valores.id_curso_inscricao1);
+      formData.append("id_curso_incricao2", valores.id_curso_inscricao2);
+      formData.append("observacao", valores.observacao);
 
       if (valores.arquivo_foto instanceof File) {
-        formData.append("arquivo_foto", valores.arquivo_foto);
+        formData.append("foto", valores.arquivo_foto);
       }
       
 
@@ -66,6 +70,8 @@ export const useEditarFormando = (token, setPreview) => {
     onSuccess: () => {
       toast.success("Formando editado com sucesso!");
       setPreview(null);
+      setDadosEditaveis({})
+      formik.resetForm()
     },
     onError: (error) => {
       toast.error(error.response?.data?.erro || "Erro ao editar formando.");
