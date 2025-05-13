@@ -76,7 +76,7 @@ const TurmaInfo = ({ turma, show }) => (
             <div className="fw-semibold fs-6">
               {turma?.estatisticas_inscricoes.total_inscritos}
             </div>
-            <div className="small text-muted">Inscritos</div>
+            <div className="small text-muted">Inscrito</div>
           </div>
         </Col>
         <Col md={3} xs={6}>
@@ -84,7 +84,7 @@ const TurmaInfo = ({ turma, show }) => (
             <div className="fw-semibold fs-6">
               {turma?.estatisticas_inscricoes.selecionados}
             </div>
-            <div className="small text-muted">Selecionados</div>
+            <div className="small text-muted">Selecionado</div>
           </div>
         </Col>
         <Col md={3} xs={6}>
@@ -92,7 +92,7 @@ const TurmaInfo = ({ turma, show }) => (
             <div className="fw-semibold fs-6">
               {turma?.estatisticas_inscricoes.desistidos}
             </div>
-            <div className="small text-muted">Desistentes</div>
+            <div className="small text-muted">Desistente</div>
           </div>
         </Col>
         <Col md={3} xs={6}>
