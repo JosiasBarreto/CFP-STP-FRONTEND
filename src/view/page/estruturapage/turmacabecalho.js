@@ -14,9 +14,15 @@ import { faSearch, faUndo } from "@fortawesome/free-solid-svg-icons";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ToastContainer } from "react-toastify";
 
-import { BuscarInscricao, LastIdFormando } from "../../sing/function";
+import {
+  BuscarInscricao,
+  BuscarTurma,
+  LastIdFormando,
+} from "../../sing/function";
 import SelectField from "../../../component/Selects/Index";
 import SelectFieldCurso from "../../../component/Selects/selectcursos";
+import TurmasList from "../../sing/Cardlist/cardturma";
+import TurmasLists from "./turmalist";
 
 function Turmacabecalho() {
   const token = localStorage.getItem("token");
@@ -44,12 +50,12 @@ function Turmacabecalho() {
   });
 
   const { data: datas, isLoading } = useQuery({
-    queryKey: ["Qformandos", searchParams],
-    queryFn: () => BuscarInscricao(token, searchParams),
+    queryKey: ["Qturma", searchParams],
+    queryFn: () => BuscarTurma(token, searchParams),
   });
 
   useEffect(() => {
-    queryClient.invalidateQueries({ queryKey: ["Qformandos"] });
+    queryClient.invalidateQueries({ queryKey: ["Qturma"] });
   }, []);
   useEffect(() => {
     const handleBeforeUnload = (e) => {
@@ -215,18 +221,9 @@ function Turmacabecalho() {
           </Col>
         </Row>
 
-        <ListGroup as="ul">
-          <ListGroup.Item as="li" active>
-            Cras justo odio
-          </ListGroup.Item>
-          <ListGroup.Item as="li">Dapibus ac facilisis in</ListGroup.Item>
-          <ListGroup.Item as="li" disabled>
-            Morbi leo risus
-          </ListGroup.Item>
-          <ListGroup.Item as="li">Porta ac consectetur ac</ListGroup.Item>
-        </ListGroup>
+        
       </Row>
-
+      <TurmasLists turmas={datas?.turmas} />
       <ToastContainer />
     </>
   );

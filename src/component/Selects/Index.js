@@ -6,7 +6,6 @@ import { fetchProgramas } from "../../view/sing/function";
 
 // Simulação da função de fetch (substitua pela sua real)
 
-
 function SelectField({
   controlId = "programa",
   label = "Programa",
@@ -17,15 +16,13 @@ function SelectField({
   feedback,
   token, // necessário para autenticação
 }) {
-  ;
-
   const { data: programas, isLoading } = useQuery({
     queryKey: ["programas"],
     queryFn: () => fetchProgramas(token),
   });
 
   return (
-    <Col >
+    <Col>
       <FloatingLabel
         controlId={controlId}
         className="mb-3 w-auto"
@@ -41,15 +38,16 @@ function SelectField({
         >
           <option value="">Selecione o Programa</option>
           {!isLoading &&
-            programas?.map((item) => (
-              <option key={item.id} value={item.nome}>
-                {item.nome}
-              </option>
-            ))}
+            programas
+              ?.slice() // Criar uma cópia do array para evitar mutações
+              .sort((a, b) => a.nome.localeCompare(b.nome)) // Ordenar por nome
+              .map((item) => (
+                <option key={item.id} value={item.nome}>
+                  {item.nome}
+                </option>
+              ))}
         </Form.Select>
-        <Form.Control.Feedback type="invalid">
-          {feedback}
-        </Form.Control.Feedback>
+        <Form.Control.Feedback type="invalid">{feedback}</Form.Control.Feedback>
       </FloatingLabel>
     </Col>
   );

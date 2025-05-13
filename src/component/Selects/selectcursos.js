@@ -17,7 +17,6 @@ function SelectFieldCurso({
   programaId,
   acao,
   setDtcursos,
- 
 }) {
   const [searchParams, setSearchParams] = useState({
     nome_formando: "",
@@ -33,9 +32,7 @@ function SelectFieldCurso({
     enabled: anoExecucao?.toString().length >= 4,
   });
 
-
   const cursosFiltrados = useMemo(() => {
-    
     setDtcursos(cursos);
     if (!cursos || !programaId) return cursos || [];
 
@@ -62,11 +59,14 @@ function SelectFieldCurso({
         >
           <option value="">Selecione o Curso</option>
           {!isLoading &&
-            cursosFiltrados.map((item) => (
-              <option key={item.id} value={item.nome}>
-                {item.nome} - {item.acao}
-              </option>
-            ))}
+            cursosFiltrados
+              ?.slice() // Criar uma cópia do array para evitar mutações no original
+              .sort((a, b) => a.nome.localeCompare(b.nome)) // Ordenar por nome
+              .map((item) => (
+                <option key={item.id} value={item.nome}>
+                  {item.nome} - {item.acao}
+                </option>
+              ))}
         </Form.Select>
         <Form.Control.Feedback type="invalid">{feedback}</Form.Control.Feedback>
       </FloatingLabel>

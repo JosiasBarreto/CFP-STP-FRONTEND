@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "proxy": "http://localhost:5000",
-  "allowehost": ["localhost"],
+  "allowehost": [
+    "localhost"
+  ],
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
@@ -13,7 +15,11 @@
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
     "cra-template": "1.2.0",
+    "exceljs": "^4.4.0",
+    "file-saver": "^2.0.5",
     "formik": "^2.4.6",
+    "jspdf": "^3.0.1",
+    "jspdf-autotable": "^5.0.2",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.7",
     "react-dom": "^18.3.1",
@@ -25,6 +31,7 @@
     "recharts": "^2.15.0",
     "sass": "^1.83.4",
     "web-vitals": "^4.2.4",
+    "xlsx": "^0.18.5",
     "yup": "^1.6.1"
   },
   "scripts": {

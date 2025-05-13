@@ -31,7 +31,7 @@ import SelectFieldCurso from "../../component/Selects/selectcursos";
 import ListSelets from "../sing/table/listselectsformandos";
 import MyComponent from "../../component/InfoCard/CardsInfoselects";
 import Finalizar from "./confirmseletc";
-
+import { useLocation } from "react-router-dom";
 function Selectsformandos() {
   const token = localStorage.getItem("token");
   const queryClient = useQueryClient();
@@ -39,15 +39,22 @@ function Selectsformandos() {
   const [dtcursos, setDtcursos] = useState([]);
   const [showinfo, setShowinfo] = useState(false);
   const [situacoes, setSituacoes] = useState([]);
+  const location = useLocation();
+  const formData = location.state || {}; // dados vindos da navegação
 
   const [searchParams, setSearchParams] = useState({
-    nome_formando: "",
-    ano_execucao: new Date().getFullYear(),
-    nome_programa: "",
-    nome_curso: "",
-    acao: "",
-    id_curso: 0,
+    ano_execucao: formData.ano_execucao || new Date().getFullYear(),
+    nome_programa: formData.nome_programa || "",
+    nome_curso: formData.nome_curso || "",
+    acao: formData.acao || "",
+    id_curso: formData.id_curso || 0,
   });
+  useEffect(() => {
+    if (formData && formData.id_curso) {
+      ToggleStatusFilter(); // ou qualquer outra lógica que precise
+    }
+  }, [formData]);
+  
 
   const [contagem, setContagem] = useState(0);
   const [loading, setLoading] = useState(false);

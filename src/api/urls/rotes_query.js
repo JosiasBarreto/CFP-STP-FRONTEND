@@ -24,4 +24,8 @@ export const FiltroInscricao="/formando/filtro";
 
 
 
-export const SelectInscrito = "/formando/selecionar-candidato"
+export const SelectInscrito = "/formando/selecionar-candidato";
+
+
+
+export const FiltroEstatisticoturma="/turma/estatisticas";

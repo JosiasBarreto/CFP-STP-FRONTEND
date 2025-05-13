@@ -1,6 +1,6 @@
 import axios from "axios";
 import { API_URL } from "../../api/urls";
-import { DeleteUser, FiltroInscricao, GetCurso, GetCursof, GetPrograma, Getuser, LastFormandosID, PostCurso, PostPrograma, PostUser, PutCurso, PutPrograma, PutUser, SelectInscrito } from "../../api/urls/rotes_query";
+import { DeleteUser, FiltroEstatisticoturma, FiltroInscricao, GetCurso, GetCursof, GetPrograma, Getuser, LastFormandosID, PostCurso, PostPrograma, PostUser, PutCurso, PutPrograma, PutUser, SelectInscrito } from "../../api/urls/rotes_query";
 
 export const registarUser = async (uses, token) => {
     try {
@@ -200,6 +200,20 @@ export const registarUser = async (uses, token) => {
         console.error("Erro ao buscar inscrição:", error);
         throw error; // Rejeita a promessa para permitir tratamento do erro no código que chamar a função
       });
+}
+export function BuscarTurma(token, data) {
+  return axios
+    .post(API_URL + FiltroEstatisticoturma, data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",  // Garantir que o tipo de conteúdo é JSON
+      },
+    })
+    .then((response) => response.data) // Retorna os dados da resposta
+    .catch((error) => {
+      console.error("Erro ao buscar inscrição:", error);
+      throw error; // Rejeita a promessa para permitir tratamento do erro no código que chamar a função
+    });
 }
 
 export function formatarNomeReducaoProgressiva(nomeCompleto, limite = 40) {

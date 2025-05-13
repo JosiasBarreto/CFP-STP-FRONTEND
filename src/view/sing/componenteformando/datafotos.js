@@ -30,23 +30,37 @@ const DataFotos = ({ formik, preview, setPreview }) => {
   };
   return (
     <>
-      <Col md={3} className="text-center border border-1 rounded-3 p-3">
-        <label htmlFor="arquivo_foto" style={{ cursor: "pointer" }}>
+      <Col md={3} className="text-center">
+        <label
+          htmlFor="arquivo_foto"
+          className="d-block position-relative"
+          style={{ cursor: "pointer" }}
+        >
           {preview ? (
             <img
               src={preview}
               alt="Pré-visualização"
-              className="img-fluid  shadow"
-              style={{ width: 180, height: 180, objectFit: "cover" }}
+              className="img-fluid shadow rounded-circle"
+              style={{
+                width: 200,
+                height: 200,
+                objectFit: "cover",
+                border: "4px solid #198754" /* Cor success */,
+                transition: "transform 0.2s",
+              }}
+              onMouseOver={(e) => (e.target.style.transform = "scale(1.05)")}
+              onMouseOut={(e) => (e.target.style.transform = "scale(1)")}
             />
           ) : (
-            <FaUserCircle size={180} color="#6c757d" />
+            <FaUserCircle
+              size={180}
+              color="#198754"
+              className="shadow rounded-circle"
+            />
           )}
         </label>
 
         <Form.Control
-        
-        controlId="FOTO"
           type="file"
           name="arquivo_foto"
           id="arquivo_foto"
@@ -60,12 +74,10 @@ const DataFotos = ({ formik, preview, setPreview }) => {
           {formik.errors.arquivo_foto}
         </Form.Control.Feedback>
 
-        <small className="text-muted d-block mt-2">
+        <small className=" py-1 px-3 rounded d-block mt-2">
           Clique para carregar foto
         </small>
       </Col>
-
- 
     </>
   );
 };

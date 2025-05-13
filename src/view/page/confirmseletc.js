@@ -9,6 +9,7 @@ import {
   Badge,
   Container,
 } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import { Selecaomassa } from "../sing/function";
 import { toast } from "react-toastify";
 import {
@@ -29,7 +30,8 @@ function Finalizar({
 }) {
   const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
-
+ 
+  const navigate = useNavigate();
   const handleFinalizar = async () => {
     setLoading(true);
     try {
@@ -40,6 +42,7 @@ function Finalizar({
       // Aguarda 2 segundos e só depois reseta o formulário
       setTimeout(() => {
         funcaoresert();
+        navigate("/auth/selecionado-turma")
       }, 2000); // 2000ms = 2 segundos
   
     } catch (error) {

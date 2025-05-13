@@ -86,7 +86,7 @@ const DadosFormandos = ({ formik, preview, setPreview }) => {
           <FloatingLabel
          
             className="mb-4 w-auto"
-            label="Número do Identificação"
+            label="Nº do Identificação(BI)"
           >
             <Form.Control
               className="input_left_color p-2"
@@ -106,7 +106,7 @@ const DadosFormandos = ({ formik, preview, setPreview }) => {
           <FloatingLabel
           
             className="mb-4 w-auto"
-            label="Arquivo de Identificação"
+            label="Arq. de Identificação"
           >
             <Form.Select
               className="input_left_color p-2"
@@ -119,7 +119,7 @@ const DadosFormandos = ({ formik, preview, setPreview }) => {
                 formik.errors.arquivo_indentficacao
               }
             >
-              <option value="">Selecione o Arquivo de Identificação</option>
+              <option value="">Selecione</option>
               <option value="C.I.C.C">C.I.C.C</option>
               <option value="Cédula">Cédula</option>
               <option value="Passaporte">Passaporte</option>

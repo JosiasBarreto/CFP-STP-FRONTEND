@@ -9,3 +9,7 @@ body {
   background-attachment: fixed;
   color: #fff;
 }
+p, label, .col, div {
+  user-select: none;  /* Impede a seleção de texto */
+  cursor: default;  /* Define um cursor padrão */
+}
