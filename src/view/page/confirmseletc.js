@@ -37,7 +37,7 @@ function Finalizar({
     try {
       const response = await Selecaomassa(situacoes);
       
-      toast.success("Candidatos selecionados com sucesso!!"); // Mostra a mensagem imediatamente
+      toast.success("Seleção dos Candidatos com sucesso!!"); // Mostra a mensagem imediatamente
   
       // Aguarda 2 segundos e só depois reseta o formulário
       setTimeout(() => {

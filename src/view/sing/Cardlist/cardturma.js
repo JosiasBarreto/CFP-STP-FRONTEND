@@ -79,20 +79,27 @@ const TurmaInfo = ({ turma, show }) => (
             <div className="small text-muted">Inscritos</div>
           </div>
         </Col>
-        <Col md={3} xs={6}>
+        <Col md={2} xs={6}>
           <div className="bg-primary-subtle text-primary rounded-3 p-2 text-center shadow-sm">
             <div className="fw-semibold fs-6">
               {turma?.estatisticas_inscricoes.selecionados}
             </div>
-            <div className="small text-muted">Selecionados</div>
+            <div className="small text-muted">Selec.</div>
+          </div>
+        </Col> <Col md={2} xs={6}>
+          <div className="bg-info-subtle text-info rounded-3 p-2 text-center shadow-sm">
+            <div className="fw-semibold fs-6">
+              {turma?.estatisticas_inscricoes.suplente}
+            </div>
+            <div className="small text-muted">Suple.</div>
           </div>
         </Col>
-        <Col md={3} xs={6}>
+        <Col md={2} xs={6}>
           <div className="bg-warning-subtle text-warning rounded-3 p-2 text-center shadow-sm">
             <div className="fw-semibold fs-6">
               {turma?.estatisticas_inscricoes.desistidos}
             </div>
-            <div className="small text-muted">Desistentes</div>
+            <div className="small text-muted">Desist.</div>
           </div>
         </Col>
         <Col md={3} xs={6}>
@@ -103,6 +110,7 @@ const TurmaInfo = ({ turma, show }) => (
             <div className="small text-muted">Não Selec.</div>
           </div>
         </Col>
+       
       </Row>
     </Card.Body>
   </>
@@ -311,10 +319,20 @@ const TurmaCard = ({ turma }) => {
               })
             }
           >
-            Selecionar Candidatos
+            Seleção
           </Button>
-          <Button variant="success" onClick={() => alert("Ir para a Turma")}>
-            Ir a Turma
+          <Button variant="success" onClick={() => navigate("/auth/selecionar-matricula", {
+                state: {
+                  ano_execucao: turma?.curso_info.ano,
+                  nome_programa: turma?.curso_info.programa,
+                  nome_curso: turma?.curso_info.nome_curso,
+                  acao: turma?.curso_info.acao,
+                  id_curso: turma?.curso_info.curso_id,
+                },
+              })
+            }
+          >
+            Matriculas
           </Button>
         </Modal.Footer>
       </Modal>

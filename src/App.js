@@ -18,6 +18,7 @@ import RecuperarConta from "./view/register/RecuperarConta.js";
 import RedefinirSenha from "./view/register/RedefinirSenha.js";
 import Selectsformandos from "./view/page/selectformandos.js";
 import TurmaDashboard from "./view/page/turmadashboard.js";
+import ConfirmarMatricula from "./view/page/estruturapage/confirmar_matricula.js";
 // Componente de Rota Protegida (para páginas que precisam de autenticação)
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("token");
@@ -53,6 +54,7 @@ function App() {
           <Route path="table-formandos" element={<TableFormandos />} />
           <Route path="selecionar-candidatura" element={<Selectsformandos />} />
           <Route path="selecionado-turma" element={<TurmaDashboard />} />
+          <Route path="selecionar-matricula" element={<ConfirmarMatricula />} />
          
         </Route>
 

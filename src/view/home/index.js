@@ -31,6 +31,10 @@ const DashboardLayout = () => {
   const getNavLinkClass = (path) => {
     return location.pathname.includes(path) ? "active-nav-link" : "";
   };
+  const handleNavigate = (path) => {
+    navigate(path);
+    setSidebarOpen(!sidebarOpen); // ou handleToggleSidebar();
+  }; 
 
   return (
     <div className="dashboard-container">
@@ -77,7 +81,7 @@ const DashboardLayout = () => {
               </div>
               <Nav.Link
                 className={`sidebar-link ${getNavLinkClass("home")}`}
-                onClick={() => navigate("home")}
+                onClick={() => handleNavigate("home")}
               >
                 <FaHome className="sidebar-icon" />
                 {sidebarOpen && <span className="sidebar-text">Home</span>}
@@ -85,7 +89,7 @@ const DashboardLayout = () => {
 
               <Nav.Link
                 className={`sidebar-link ${getNavLinkClass("register-user")}`}
-                onClick={() => navigate("register-user")}
+                onClick={() => handleNavigate("register-user")}
               >
                 <FaUserPlus className="sidebar-icon" />
                 {sidebarOpen && (
@@ -97,7 +101,7 @@ const DashboardLayout = () => {
                 className={`sidebar-link ${getNavLinkClass(
                   "register-programas"
                 )}`}
-                onClick={() => navigate("register-programas")}
+                onClick={() => handleNavigate("register-programas")}
               >
                 <FaClipboard className="sidebar-icon" />
                 {sidebarOpen && (
@@ -107,7 +111,7 @@ const DashboardLayout = () => {
 
               <Nav.Link
                 className={`sidebar-link ${getNavLinkClass("register-cursos")}`}
-                onClick={() => navigate("register-cursos")}
+                onClick={() => handleNavigate("register-cursos")}
               >
                 <FaBook className="sidebar-icon" />
                 {sidebarOpen && (
@@ -119,7 +123,7 @@ const DashboardLayout = () => {
                 className={`sidebar-link ${getNavLinkClass(
                   "register-formandos"
                 )}`}
-                onClick={() => navigate("register-formandos")}
+                onClick={() => handleNavigate("register-formandos")}
               >
                 <FaUserTie className="sidebar-icon" />
                 {sidebarOpen && (
@@ -133,7 +137,7 @@ const DashboardLayout = () => {
                 className={`sidebar-link ${getNavLinkClass(
                   "listar-inscricoes"
                 )}`}
-                onClick={() => navigate("list-formandos")}
+                onClick={() => handleNavigate("list-formandos")}
               >
                 <FaClipboard className="sidebar-icon" />
                 {sidebarOpen && (
@@ -145,7 +149,7 @@ const DashboardLayout = () => {
                 className={`sidebar-link ${getNavLinkClass(
                   "selecionar-candidatura"
                 )}`}
-                onClick={() => navigate("selecionar-candidatura")}
+                onClick={() => handleNavigate("selecionar-candidatura")}
               >
                 <FaUserTie className="sidebar-icon" />
                 {sidebarOpen && (
@@ -156,17 +160,33 @@ const DashboardLayout = () => {
                 className={`sidebar-link ${getNavLinkClass(
                   "selecionado-turma"
                 )}`}
-                onClick={() => navigate("selecionado-turma")}
+                onClick={() => handleNavigate("selecionado-turma")}
+              >
+                <FaUserTie className="sidebar-icon" />
+                {sidebarOpen && <span className="sidebar-text">Turmas</span>}
+              </Nav.Link>
+              <Nav.Link
+                className={`sidebar-link ${getNavLinkClass(
+                  "selecionar-matricula"
+                )}`}
+                onClick={() => handleNavigate("selecionar-matricula")}
               >
                 <FaUserTie className="sidebar-icon" />
                 {sidebarOpen && (
-                  <span className="sidebar-text">Turmas</span>
+                  <span className="sidebar-text">Matriculas</span>
                 )}
               </Nav.Link>
             </Nav>
           </Col>
 
-          <Col className="content-area mt-3">
+          <Col
+            className="content-area mt-3"
+            onClick={() => {
+              if (window.innerWidth < 768 && sidebarOpen) {
+                setSidebarOpen(false);
+              }
+            }}
+          >
             <Outlet />
           </Col>
         </Row>

@@ -20,6 +20,7 @@ export const PostFormandos="/formando/";
 export const PutFormandos="/formando/atualizar";
 export const LastFormandosID="/formando/ultimo";
 export const FiltroInscricao="/formando/filtro";
+export const FiltroMatricula="/formando/filtro_matricula";
 
 
 

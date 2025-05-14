@@ -20,19 +20,19 @@ import { faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ToastContainer } from "react-toastify";
 
+import { useLocation } from "react-router-dom";
+import MyComponent from "../../../component/InfoCard/CardsInfoselects";
 import {
   BuscarInscricao,
+  Buscarmatricula,
   LastIdFormando,
-  Selecaomassa,
-} from "../sing/function";
-
-import SelectField from "../../component/Selects/Index";
-import SelectFieldCurso from "../../component/Selects/selectcursos";
-import ListSelets from "../sing/table/listselectsformandos";
-import MyComponent from "../../component/InfoCard/CardsInfoselects";
-import Finalizar from "./confirmseletc";
-import { useLocation } from "react-router-dom";
-function Selectsformandos() {
+} from "../../sing/function";
+import SelectField from "../../../component/Selects/Index";
+import SelectFieldCurso from "../../../component/Selects/selectcursos";
+import Finalizar from "../confirmseletc";
+import ListSelets from "../../sing/table/listselectsformandos";
+import ListMatriculas from "../../sing/table/listmatriculas";
+function ConfirmarMatricula() {
   const token = localStorage.getItem("token");
   const queryClient = useQueryClient();
   const [filtros, setFiltros] = useState(true);
@@ -54,7 +54,6 @@ function Selectsformandos() {
       ToggleStatusFilter(); // ou qualquer outra lógica que precise
     }
   }, [formData]);
-  
 
   const [contagem, setContagem] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -65,12 +64,12 @@ function Selectsformandos() {
   });
 
   const { data: datas, isLoading } = useQuery({
-    queryKey: ["Qformandos", searchParams],
-    queryFn: () => BuscarInscricao(token, searchParams),
+    queryKey: ["Qmatriculas", searchParams],
+    queryFn: () => Buscarmatricula(token, searchParams),
   });
 
   useEffect(() => {
-    queryClient.invalidateQueries({ queryKey: ["Qformandos"] });
+    queryClient.invalidateQueries({ queryKey: ["Qmatriculas"] });
   }, []);
   useEffect(() => {
     const handleBeforeUnload = (e) => {
@@ -168,45 +167,70 @@ function Selectsformandos() {
 
   const contarSituacoes = () => {
     const contagem = {
-      selecionados: 0,
-      nselecionados: 0,
-      suplentes: 0,
-      desistidos: 0,
-      total: datas?.resultados?.length || 0,
+      ativo: 0,
+      inativo: 0,
+      desistentes: 0,
+      total: 0,       // apenas com status "selecionado"
+      suplente: 0,    // apenas com status "suplente"
     };
-
-    datas?.resultados?.forEach((item) => {
+  
+    const candidatos = datas?.resultados || [];
+  
+    candidatos.forEach((item) => {
       const id = item.incricao_id;
-      const statusProvisorio = situacoes.find(
-        (s) => s.idInscricao === id
-      )?.status;
-
-      const statusReal =
-        statusProvisorio ||
-        item.cursos_inscritos.find((c) => c.opcao === "1")?.status;
-
-      switch (statusReal) {
-        case "selecionado":
-          contagem.selecionados++;
-          break;
-        case "não selecionado":
-          contagem.nselecionados++;
-          break;
-        case "suplente":
-          contagem.suplentes++;
-          break;
-        case "desistiu":
-          contagem.desistidos++;
-          break;
-        default:
-          break;
+  
+      const temCursoSelecionado = item.cursos_inscritos.some(
+        (curso) => curso.status === "selecionado"
+      );
+  
+      const temCursoSuplente = item.cursos_inscritos.some(
+        (curso) => curso.status === "suplente"
+      );
+  
+      // Conta total se for selecionado
+      if (temCursoSelecionado) {
+        contagem.total++;
+  
+        // Só considera o statusReal se for selecionado
+        const statusProvisorio = situacoes.find(
+          (s) => s.idInscricao === id
+        )?.status_matricula;
+  
+        const statusReal =
+          statusProvisorio ||
+          item.status_matricula ||
+          item.cursos_inscritos.find((c) =>
+            ["1", "2"].includes(c.opcao)
+          )?.status_matricula;
+  
+        switch (statusReal?.toLowerCase()) {
+          case "ativo":
+            contagem.ativo++;
+            break;
+          case "não matriculado":
+          case "nmatriculado":
+            contagem.inativo++;
+            break;
+          case "inativo":
+            contagem.desistentes++;
+            break;
+          default:
+            break;
+        }
+      }
+  
+      // Conta suplente separadamente
+      if (temCursoSuplente) {
+        contagem.suplente++;
       }
     });
-
+  
     return contagem;
   };
-  const { selecionados, nselecionados, suplentes, desistidos, total } =
-    contarSituacoes();
+  
+  
+  const { ativo, inativo, desistentes, total, suplente } = contarSituacoes();
+  
 
   function Cancelar() {
     setSituacoes([]);
@@ -309,62 +333,58 @@ function Selectsformandos() {
           </Row>
         )}
         {!filtros ? (
-          <Row
-            md={12}
-            xs={12}
-            className="d-flex align-items-end rounded "
-          >
+          <Row md={12} xs={12} className="d-flex align-items-end rounded ">
             <Col md={9}>
               <Row md={12} xs={12} className="mt-0 g-2">
                 {[
-                  { label: "Total Inscritos", name: "total", value: total ,variant: "success"},
                   {
-                    label: "Selecionados",
-                    name: "selecionados",
-                    value: selecionados,
-                    variant: "primary",
+                    label: "Total Selecionado",
+                    name: "total",
+                    value: total,
+                    variant: "success",
                   },
-                  { label: "Suplentes", name: "suplentes", value: suplentes,variant: "info" },
                   {
-                    label: "Não Selecionados",
-                    name: "nselecionados",
-                    value: nselecionados,
-                    variant: "danger",
-                  },
-             
-                  {
-                    label: "Desistidos",
-                    name: "desistidos",
-                    value: desistidos,
+                    label: "Suplente",
+                    name: "suplente",
+                    value: suplente,
+
                     variant: "warning",
                   },
+                  {
+                    label: "Matriculado",
+                    name: "matriculado",
+                    value: ativo,
+
+                    variant: "primary",
+                  },
+                  {
+                    label: "Pendente",
+                    name: "pendente",
+                    value: inativo,
+                    variant: "info",
+                  },
                   
+                  {
+                    label: "Desistente",
+                    name: "nmatriculado",
+                    value: desistentes,
+
+                    variant: "danger",
+                  },
                 ].map(({ label, name, value, variant }) => (
                   <Col md={2} xs={12} key={name}>
-                    <div className={`bg-${variant}-subtle text-${variant} rounded-3 p-2 text-center shadow-sm`}>
-                      <div className="fw-semibold fs-6">
-                        {value}
-                      </div>
+                    <div
+                      className={`bg-${variant}-subtle text-${variant} rounded-3 p-2 text-center shadow-sm`}
+                    >
+                      <div className="fw-semibold fs-6">{value}</div>
                       <div className="small text-muted">{label}</div>
                     </div>
                   </Col>
-                
-                   
-                     
                 ))}
               </Row>
             </Col>
 
             <Col md={3} className="d-flex align-items-center gap-2 ">
-              <Finalizar
-                situacoes={situacoes}
-                selecionados={selecionados}
-                nselecionados={nselecionados}
-                suplentes={suplentes}
-                desistidos={desistidos}
-                total={total}
-                funcaoresert={Cancelar}
-              />
               <Button
                 variant="outline-warning"
                 className="btn p-2"
@@ -442,7 +462,7 @@ function Selectsformandos() {
       </Row>
 
       <Row md={12} xs={12}>
-        <ListSelets
+        <ListMatriculas
           data={resultados}
           pagination={datas?.pagination}
           isLoading={isLoading}
@@ -464,4 +484,4 @@ function Selectsformandos() {
   );
 }
 
-export default Selectsformandos;
+export default ConfirmarMatricula;
