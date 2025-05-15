@@ -30,6 +30,12 @@ import { API_URL } from "../../../api/urls";
 import { useNavigate } from "react-router-dom";
 import SituacaoCandidatura from "../../../component/Selects/SelectionInscrits";
 import Confirmarmatricula from "../../../component/Selects/selectsmatriculas";
+import {
+  FaGraduationCap,
+  FaMapMarkerAlt,
+  FaPhone,
+  FaPhoneAlt,
+} from "react-icons/fa";
 
 function ListMatriculas({
   data,
@@ -202,7 +208,7 @@ function ListMatriculas({
           </Row>
         </CardHeader>
 
-        <Row className="g-3 p-1 mt-1">
+        <Row className="g-3 p-0 mt-0 mb-2" md={12} xs={12}>
           {currentItems.length > 0 ? (
             currentItems.map((item) => {
               const birth = new Date(item.data_nascimento);
@@ -215,7 +221,12 @@ function ListMatriculas({
               const curso1 =
                 item.cursos_inscritos
                   .filter((c) => c.opcao === "1" || c.opcao === "2")
-                  .map((c) => `${c.nome_curso} (${c.status})`)
+                  .map(
+                    (c) =>
+                      `${c.nome_curso} ${
+                        c.status === "selecionado" ? "" : `(${c.status})`
+                      }`
+                  )
                   .join(", ") || "---";
 
               const cursoSelecionado = item.cursos_inscritos.find(
@@ -223,11 +234,11 @@ function ListMatriculas({
               );
 
               return (
-                <Col key={item.incricao_id} md={6} lg={4}>
+                <Col key={item.incricao_id} md={6} lg={6}>
                   <Card className="shadow-lg border-0 rounded-3 h-100">
                     <Card.Body className="">
-                      <Row className="g-2 mb-2">
-                        <Col xs={3} className="text-center">
+                      <Row className="g-2 mb-0">
+                        <Col xs={2} className="text-center">
                           <img
                             src={
                               item.foto_url ||
@@ -243,7 +254,7 @@ function ListMatriculas({
                             }}
                           />
                         </Col>
-                        <Col xs={9} className="">
+                        <Col xs={5} className="">
                           <div className="flex-grow-1">
                             <h5 className="text-success fw-bold mb-1">
                               {item.nome}
@@ -305,47 +316,66 @@ function ListMatriculas({
                                 );
                               })}
                             </div>
-                            <p className="text-muted small">
-                              <strong>Distrito:</strong> {item.distrito} |{" "}
-                              <strong>Morada:</strong> {item.zona}
-                            </p>
+                          </div>
+                          <div className="flex-grow-1">
+                            <Badge
+                              bg={"primary-subtle"}
+                              className={`fw-medium px-3 py-1 rounded-pill text-primary`}
+                            >
+                              <strong>
+                                <FaGraduationCap
+                                  className="me-2 text-primary"
+                                  size={19}
+                                />
+                              </strong>{" "}
+                              {curso1}
+                            </Badge>
+                          </div>
+                        </Col>
+                        <Col xs={12} md={6} lg={4}>
+                          <div className="d-flex flex-column gap-2 text-muted small bg-light-subtle p-2 rounded">
+                            {/* Morada */}
+                            <div className="d-flex align-items-center">
+                              <FaMapMarkerAlt className="me-2 text-success" />
+                              <span>
+                                {item.zona} / {item.distrito}
+                              </span>
+                            </div>
+
+                            {/* Contacto */}
+                            <div className="d-flex align-items-center">
+                              <FaPhoneAlt className="me-2 text-success" />
+                              <span>
+                                {[
+                                  item.contacto,
+                                  item.contacto_opcional !== "0"
+                                    ? item.contacto_opcional
+                                    : null,
+                                ]
+                                  .filter(Boolean)
+                                  .join(" / ")}
+                              </span>
+                            </div>
                           </div>
                         </Col>
                       </Row>
 
-                      <div className="flex-grow-1">
-                        <p className="text-muted small">
-                          <strong>Contacto:</strong>{" "}
-                          {[
-                            item.contacto,
-                            item.contacto_opcional !== "0"
-                              ? item.contacto_opcional
-                              : null,
-                          ]
-                            .filter(Boolean)
-                            .join(" / ")}
-                        </p>
-                        <p className="text-muted small">
-                          <strong>Curso:</strong> {curso1}
-                        </p>
-
+                      <div className="d-flex justify-content-end gap-2">
                         {!filtros && (
-                          <div className="mb-2">
-                            <Confirmarmatricula
-                              items={item}
-                              idCurso={cursoSelecionado?.curso_id ?? null}
-                              status_matricula={cursoSelecionado?.status ?? ""}
-                              id_curso_incricao={
-                                cursoSelecionado?.id_curso_incricao ?? ""
-                              }
-                              situacoes={situacoes}
-                              setSituacoes={setSituacao}
-                            />
-                          </div>
+                          <Confirmarmatricula
+                            items={item}
+                            idCurso={cursoSelecionado?.curso_id ?? null}
+                            status_matricula={cursoSelecionado?.status ?? ""}
+                            id_curso_incricao={
+                              cursoSelecionado?.id_curso_incricao ?? ""
+                            }
+                            situacoes={situacoes}
+                            setSituacoes={setSituacao}
+                          />
                         )}
 
                         <Button
-                          variant="success"
+                          variant="outline-success"
                           size="sm"
                           className="rounded-pill px-3 mt-2 shadow-sm"
                           onClick={() => handleVerFormando(item.incricao_id)}

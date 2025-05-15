@@ -7,6 +7,8 @@ const Confirmarmatricula = ({
   situacoes,
   setSituacoes,
   id_curso_incricao,
+  variante,
+  textButton
 }) => {
   const handleChange = (idInscricao, idCurso, status_matricula, id_curso_incricao) => {
     setSituacoes((prevSituacoes) => {
@@ -23,7 +25,9 @@ const Confirmarmatricula = ({
   return (
     <>
     <Button
-        variant="primary"
+    className="rounded-pill px-3 mt-2 shadow-sm"
+        variant={`outline-${variante}`}
+        size="sm"
         onClick={() => {
           handleChange(
             items.incricao_id,
@@ -33,7 +37,7 @@ const Confirmarmatricula = ({
           );
         }}
         >
-        Confirmar Matricula
+        {textButton}  
       </Button>
       
     </>

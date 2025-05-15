@@ -185,6 +185,7 @@ const DashboardLayout = () => {
               if (window.innerWidth < 768 && sidebarOpen) {
                 setSidebarOpen(false);
               }
+           
             }}
           >
             <Outlet />

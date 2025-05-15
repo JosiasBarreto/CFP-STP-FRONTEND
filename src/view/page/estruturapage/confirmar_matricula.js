@@ -32,6 +32,7 @@ import SelectFieldCurso from "../../../component/Selects/selectcursos";
 import Finalizar from "../confirmseletc";
 import ListSelets from "../../sing/table/listselectsformandos";
 import ListMatriculas from "../../sing/table/listmatriculas";
+import DsitribesMatriculas from "../../../component/Tabs/matriculastabs";
 function ConfirmarMatricula() {
   const token = localStorage.getItem("token");
   const queryClient = useQueryClient();
@@ -240,7 +241,7 @@ function ConfirmarMatricula() {
 
   return (
     <>
-      <Row className="bg-white shadow rounded p-3 mb-2 align-items-center">
+      <Row className="bg-white shadow rounded p-1 mb-1 align-items-center">
         {filtros ? (
           <>
             <Row
@@ -462,7 +463,7 @@ function ConfirmarMatricula() {
       </Row>
 
       <Row md={12} xs={12}>
-        <ListMatriculas
+        <DsitribesMatriculas
           data={resultados}
           pagination={datas?.pagination}
           isLoading={isLoading}
