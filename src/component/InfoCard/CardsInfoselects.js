@@ -4,9 +4,9 @@ import { Card, Row, Col } from 'react-bootstrap';
 
 const MyComponent = ({ searchParams }) => {
   return (
-    <Row className="cards-superiores ">
-        <Col md={3}>
-        <Card bg="success" text="white" className="mb-">
+    <Row md={12} xs={12} className="cards-superiores ">
+        <Col md={3} xs={12} >
+        <Card bg="success" text="white" className="mb-0">
           <Card.Body>
             <Card.Text className='fw-bold mb-0'>PROGRAMA/MEDIDA</Card.Text>
             <Card.Text>{searchParams.nome_programa || "Não informado"}</Card.Text>
@@ -14,7 +14,7 @@ const MyComponent = ({ searchParams }) => {
         </Card>
       </Col>
 
-      <Col md={5}>
+      <Col md={5} xs={12} >
         <Card bg="success" text="white" className="mb-">
           <Card.Body>
             <Card.Text className='fw-bold mb-0'>DESIGNAÇÃO DO CURSO</Card.Text>
@@ -22,7 +22,7 @@ const MyComponent = ({ searchParams }) => {
           </Card.Body>
         </Card>
       </Col>
-      <Col md={2}>
+      <Col md={2} xs={12} >
         <Card bg="success" text="white" className="mb-">
           <Card.Body>
             <Card.Text className='fw-bold mb-0'> AÇÃO Nº</Card.Text>
@@ -31,7 +31,7 @@ const MyComponent = ({ searchParams }) => {
         </Card>
       </Col>
      
-      <Col md={2}>
+      <Col md={2} xs={12} >
         <Card bg="success" text="white" className="mb-">
           <Card.Body>
             <Card.Text className='fw-bold mb-0'>ANO</Card.Text>

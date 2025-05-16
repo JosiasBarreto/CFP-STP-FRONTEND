@@ -47,6 +47,8 @@ function ListMatriculas({
   ToggleStatusFilter,
   filtros,
   setFiltros,
+  textButton,
+  variante
 }) {
   const [formandos, setFormandos] = useState([]);
   const [order, setOrder] = useState(null);
@@ -232,13 +234,15 @@ function ListMatriculas({
               const cursoSelecionado = item.cursos_inscritos.find(
                 (c) => String(c.curso_id) === String(searchParams.id_curso)
               );
+             
+       
 
               return (
                 <Col key={item.incricao_id} md={6} lg={6}>
                   <Card className="shadow-lg border-0 rounded-3 h-100">
                     <Card.Body className="">
-                      <Row className="g-2 mb-0">
-                        <Col xs={2} className="text-center">
+                      <Row md={12} xs={12} className="g-2 mb-0">
+                        <Col xs={12}  md={2} className="text-center">
                           <img
                             src={
                               item.foto_url ||
@@ -254,7 +258,7 @@ function ListMatriculas({
                             }}
                           />
                         </Col>
-                        <Col xs={5} className="">
+                        <Col md={5} xs={12} className="">
                           <div className="flex-grow-1">
                             <h5 className="text-success fw-bold mb-1">
                               {item.nome}
@@ -332,7 +336,7 @@ function ListMatriculas({
                             </Badge>
                           </div>
                         </Col>
-                        <Col xs={12} md={6} lg={4}>
+                        <Col md={5} xs={12}  >
                           <div className="d-flex flex-column gap-2 text-muted small bg-light-subtle p-2 rounded">
                             {/* Morada */}
                             <div className="d-flex align-items-center">
@@ -361,7 +365,7 @@ function ListMatriculas({
                       </Row>
 
                       <div className="d-flex justify-content-end gap-2">
-                        {!filtros && (
+                        {!filtros && textButton!=="Todos" &&  (
                           <Confirmarmatricula
                             items={item}
                             idCurso={cursoSelecionado?.curso_id ?? null}
@@ -371,6 +375,9 @@ function ListMatriculas({
                             }
                             situacoes={situacoes}
                             setSituacoes={setSituacao}
+                            textButton={textButton}
+                            variante={variante}
+                            id_matricula={cursoSelecionado?.matricula_id ?? null}
                           />
                         )}
 
@@ -393,10 +400,10 @@ function ListMatriculas({
               <FontAwesomeIcon
                 icon={faUserSlash}
                 size="2x"
-                className="text-danger mb-2"
+                className="text-warning mb-2"
               />
-              <h5 className="text-danger fw-bold">
-                Nenhuma matricula encontrada para o curso selecionado.
+              <h5 className="text-warning fw-bold">
+               Nenhum formando encontrado
                 <br />
               </h5>
             </Col>
@@ -423,7 +430,7 @@ function ListMatriculas({
               <Col>
                 <h5 className="mb-0">Ficha de Inscrição do Formando</h5>
               </Col>
-              {!filtros && (
+              {!filtros && textButton!=="Todos" && (
                 <Col xs="auto" className="d-flex align-items-center gap-2">
                   <span className="fs-6 mb-0">Situação:</span>
                   {(() => {
@@ -432,18 +439,22 @@ function ListMatriculas({
                         (c) =>
                           String(c.curso_id) === String(searchParams.id_curso)
                       );
-                    console.log(cursoSelecionado);
+                   
 
                     return (
                       <Confirmarmatricula
-                        items={formandoSelecionado}
-                        idCurso={cursoSelecionado?.curso_id ?? null}
-                        status_matricula={cursoSelecionado?.status ?? ""}
-                        id_curso_incricao={
-                          cursoSelecionado?.id_curso_incricao ?? ""
-                        }
-                        situacoes={situacoes}
-                        setSituacoes={setSituacao}
+                     
+                      idCurso={cursoSelecionado?.curso_id ?? null}
+                      status_matricula={cursoSelecionado?.status ?? ""}
+                      id_curso_incricao={
+                        cursoSelecionado?.id_curso_incricao ?? ""
+                      }
+                      situacoes={situacoes}
+                      setSituacoes={setSituacao}
+                      textButton={textButton}
+                      variante={variante}
+                      
+                      id_matricula={cursoSelecionado?.matricula_id ?? null}
                       />
                     );
                   })()}

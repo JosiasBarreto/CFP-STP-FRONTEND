@@ -10,6 +10,7 @@ import {
   FaUsers,
 } from "react-icons/fa";
 import "./index.css";
+import { text } from "@fortawesome/fontawesome-svg-core";
 
 const DsitribesMatriculas = ({
   data,
@@ -28,6 +29,8 @@ const DsitribesMatriculas = ({
     nao_matriculados: [],
     pendentes: [],
   });
+  const [textButton, setTextButton] = useState("");
+  const [variante, setVariante] = useState("");
 
   useEffect(() => {
     if (data && Array.isArray(data)) {
@@ -37,16 +40,7 @@ const DsitribesMatriculas = ({
   }, [data]);
 
   const tabsConfig = [
-    {
-      key: "dossier",
-      title: (
-        <>
-          <FaUsers className="me-2" />
-          Dossier
-        </>
-      ),
-      data: null,
-    },
+    
     {
       key: "matriculados",
       title: (
@@ -56,6 +50,9 @@ const DsitribesMatriculas = ({
         </>
       ),
       data: dataClassificada.matriculados,
+      textButton: "Cancelar Matricula",
+      variante: "danger",
+  
     },
     {
       key: "pendentes",
@@ -66,6 +63,8 @@ const DsitribesMatriculas = ({
         </>
       ),
       data: dataClassificada.pendentes,
+      textButton: "Matricular Suplente",
+      variante: "primary",
     },
     {
       key: "nao_matriculados",
@@ -76,6 +75,9 @@ const DsitribesMatriculas = ({
         </>
       ),
       data: dataClassificada.nao_matriculados,
+      textButton: "Confirmar Matricula",
+      variante: "success",
+     
     },
     {
       key: "desistentes",
@@ -86,6 +88,8 @@ const DsitribesMatriculas = ({
         </>
       ),
       data: dataClassificada.desistentes,
+      textButton: "Reintegrar Matricula",
+      variante: "success",
     },
     {
       key: "todos",
@@ -96,14 +100,21 @@ const DsitribesMatriculas = ({
         </>
       ),
       data: data,
+      textButton: "Todos",
     },
   ];
 
   return (
     
     <Tabs defaultActiveKey="dossier" id="tabs-dossier" className="mb-1 bg-white rounded" fill >
+      <Tab eventKey="dossier" title={<>
+          <FaUsers className="me-2" />
+          Dossier
+        </>}>
+     fffffffffffff
+      </Tab>
     {tabsConfig.map((tab) => (
-      <Tab eventKey={tab.key} title={tab.title} key={tab.key} className="mb-1 bg-white  " >
+      <Tab eventKey={tab.key} title={tab.title} key={tab.key} className="mb-1 bg-white text-success " >
         {isFetching ? (
           <div className="d-flex justify-content-center align-items-center" style={{ height: "200px" }}>
             <Spinner animation="border" variant="success" />
@@ -118,10 +129,14 @@ const DsitribesMatriculas = ({
             filtros={filtros}
             ToggleStatusFilter={ToggleStatusFilter}
             setFiltros={setFiltros}
+            textButton={tab.textButton}
+            variante={tab.variante}
           />
         )}
       </Tab>
     ))}
+    
+      
   </Tabs>
   
      

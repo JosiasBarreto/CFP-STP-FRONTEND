@@ -241,7 +241,7 @@ function ConfirmarMatricula() {
 
   return (
     <>
-      <Row className="bg-white shadow rounded p-1 mb-1 align-items-center">
+      <Row md={12} xs={12} className="bg-white shadow rounded p-1 mb-1 align-items-center">
         {filtros ? (
           <>
             <Row
@@ -329,7 +329,7 @@ function ConfirmarMatricula() {
             </Row>
           </>
         ) : (
-          <Row className="t-0">
+          <Row md={12} xs={12} className="t-0">
             <MyComponent searchParams={searchParams} />
           </Row>
         )}

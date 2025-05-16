@@ -1,6 +1,6 @@
 import axios from "axios";
 import { API_URL } from "../../api/urls";
-import { DeleteUser, FiltroEstatisticoturma, FiltroInscricao, FiltroMatricula, GetCurso, GetCursof, GetPrograma, Getuser, LastFormandosID, PostCurso, PostPrograma, PostUser, PutCurso, PutPrograma, PutUser, SelectInscrito } from "../../api/urls/rotes_query";
+import { DeleteUser, FiltroEstatisticoturma, FiltroInscricao, FiltroMatricula, GetCurso, GetCursof, GetPrograma, Getuser, LastFormandosID, Matricula, PostCurso, PostPrograma, PostUser, PutCurso, PutPrograma, PutUser, SelectInscrito } from "../../api/urls/rotes_query";
 
 export const registarUser = async (uses, token) => {
     try {
@@ -285,4 +285,16 @@ export const Selecaomassa = async (data, token) => {
     throw error;
   }
 };
- 
+export const Confirmar_Opcao_Matricula = async (data, token) => {
+  try {
+    const response = await axios.post(API_URL + Matricula, data, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};

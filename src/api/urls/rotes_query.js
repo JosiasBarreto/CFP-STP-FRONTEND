@@ -30,3 +30,6 @@ export const SelectInscrito = "/formando/selecionar-candidato";
 
 
 export const FiltroEstatisticoturma="/turma/estatisticas";
+
+
+export const Matricula = "/turma/matricula";
