@@ -110,8 +110,14 @@ function ConfirmarMatricula() {
             ano_execucao: cursoSelecionado.ano_execucao,
             acao: cursoSelecionado.acao,
             id_curso: cursoSelecionado.id,
+            nome_curso: cursoSelecionado.nome,
+
+         
           };
+          setFiltros(false);
         }
+        
+        
       }
 
       return updatedParams;
@@ -385,15 +391,7 @@ function ConfirmarMatricula() {
               </Row>
             </Col>
 
-            <Col md={3} className="d-flex align-items-center gap-2 ">
-              <Button
-                variant="outline-warning"
-                className="btn p-2"
-                onClick={Cancelar}
-              >
-                CANCELAR
-              </Button>
-            </Col>
+            
           </Row>
         ) : (
           <Row md={12} xs={12} className="align-items-center ">

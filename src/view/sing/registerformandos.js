@@ -38,12 +38,13 @@ const Registerformandos = () => {
 
   useEffect(() => {
     if (dadosEditaveis) {
+      
       // Extrair as opções de cursos antes de definir os valores
       const primeiraOpcao =
         dadosEditaveis.cursos_inscritos?.find((c) => c.opcao === "1") || {};
       const segundaOpcao =
         dadosEditaveis.cursos_inscritos?.find((c) => c.opcao === "2") || {};
-      console.log(primeiraOpcao.id_curso_incricao);
+     
 
       // Criar objeto de valores convertidos
       const valoresConvertidos = {
@@ -478,7 +479,7 @@ const Registerformandos = () => {
               Limpar
             </Button>
           </Col>
-          {dadosEditaveis && (
+          {location.state?.dadosFormando && (
             <Col xs="auto">
               <ButtonS
                 texto={
@@ -499,7 +500,7 @@ const Registerformandos = () => {
               />
             </Col>
           )}
-          {!dadosEditaveis && (
+          {!location.state?.dadosFormando && (
             <Col xs="auto">
               <ButtonS
                 texto={

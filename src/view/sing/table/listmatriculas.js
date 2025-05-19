@@ -52,6 +52,7 @@ function ListMatriculas({
 }) {
   const [formandos, setFormandos] = useState([]);
   const [order, setOrder] = useState(null);
+  const [orderD, setOrderD] = useState(null);
   const [itemsPerPage, setItemsPerPage] = useState(20);
   const [currentPage, setCurrentPage] = useState(1);
   const [formandoSelecionado, setFormandoSelecionado] = useState(null);
@@ -95,8 +96,8 @@ function ListMatriculas({
     const sorted = [...formandos].sort((a, b) =>
       a.distrito.localeCompare(b.distrito)
     );
-    setFormandos(order === "asc" ? sorted.reverse() : sorted);
-    setOrder(order === "asc" ? "desc" : "asc");
+    setFormandos(orderD === "asc" ? sorted.reverse() : sorted);
+    setOrderD(orderD === "asc" ? "desc" : "asc");
   };
 
   const ListAll = () => {
@@ -189,7 +190,7 @@ function ListMatriculas({
               </Button>
               <Button variant="outline-success" onClick={Orderdistrito}>
                 <FontAwesomeIcon
-                  icon={order === "asc" ? faSortAlphaDown : faArrowDownZA}
+                  icon={orderD === "asc" ? faSortAlphaDown : faArrowDownZA}
                 />{" "}
                 Distrito
               </Button>
@@ -452,7 +453,7 @@ function ListMatriculas({
                       situacoes={situacoes}
                       setSituacoes={setSituacao}
                       textButton={textButton}
-                      variante={variante}
+                      variante={"light"}
                       
                       id_matricula={cursoSelecionado?.matricula_id ?? null}
                       />

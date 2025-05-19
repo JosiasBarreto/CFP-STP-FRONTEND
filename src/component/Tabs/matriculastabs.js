@@ -11,6 +11,7 @@ import {
 } from "react-icons/fa";
 import "./index.css";
 import { text } from "@fortawesome/fontawesome-svg-core";
+import TabsCustom from "./tablesdossier";
 
 const DsitribesMatriculas = ({
   data,
@@ -111,7 +112,7 @@ const DsitribesMatriculas = ({
           <FaUsers className="me-2" />
           Dossier
         </>}>
-     fffffffffffff
+        <TabsCustom searchParams={searchParams}/>
       </Tab>
     {tabsConfig.map((tab) => (
       <Tab eventKey={tab.key} title={tab.title} key={tab.key} className="mb-1 bg-white text-success " >
