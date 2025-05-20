@@ -5,6 +5,7 @@ import { API_URL } from "../../urls";
 import { PostFormandos } from "../../urls/rotes_query";
 
 export const useRegistrarFormando = (token, formik, setPreview) => {
+  const datas =0;
   return useMutation({
     mutationFn: async (valores) => {
       const formData = new FormData();
@@ -39,7 +40,7 @@ export const useRegistrarFormando = (token, formik, setPreview) => {
       formData.append("status", "inscrito");
       formData.append("opcao", "1");
       formData.append("ano", valores.anoexecucao);
-
+      
       if (valores.arquivo_foto && valores.arquivo_foto instanceof File) {
         formData.append("foto", valores.arquivo_foto);
       }
@@ -50,11 +51,15 @@ export const useRegistrarFormando = (token, formik, setPreview) => {
           "Content-Type": "multipart/form-data",
         },
       });
-
+      if (response.status === 201) {
+        toast.success("Formando registrado com sucesso!" + response.data.inscricao_id);
+      }
+      
       return response.data;
+      
     },
     onSuccess: () => {
-      toast.success("Formando registrado com sucesso!");
+      
       formik.resetForm();
       setPreview(null);
     },

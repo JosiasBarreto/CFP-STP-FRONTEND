@@ -20,12 +20,11 @@ const TabsCustom = ({searchParams}) => {
   
   const gerarDocumentos = async () => {
       try {
-          const response = await axios.post(API_URL+'/turma/gerar-documentos', searchParams, {
+          const response = await axios.post(API_URL+'/turma/gerar-contratos', searchParams, {
               responseType: 'blob'  // importante!
           });
   
-          const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-          saveAs(blob, 'formandos.xlsx');
+         
       } catch (err) {
           console.error("Erro ao gerar documento:", err);
           alert("Erro ao gerar documento.");

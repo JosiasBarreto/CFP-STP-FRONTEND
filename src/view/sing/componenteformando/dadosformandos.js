@@ -35,7 +35,7 @@ const DadosFormandos = ({ formik, preview, setPreview }) => {
               value={formik.values.nome}
               onChange={formik.handleChange}
               isInvalid={formik.touched.nome && formik.errors.nome}
-              maxLength={9}
+              
               minLength={2}
             />
             <Form.Control.Feedback type="invalid">
@@ -391,6 +391,8 @@ const DadosFormandos = ({ formik, preview, setPreview }) => {
 
               <option value="Lembá">Neves</option>
               <option value="Cantagalo">Caué</option>
+              <option value="Libreville-Gabão">Libreville-Gabão</option>
+              <option value="Ponte Graça - São Tomé">Ponte Graça - São Tomé</option>
             </Form.Select>
             <Form.Control.Feedback type="invalid">
               {formik.errors.naturalidade}

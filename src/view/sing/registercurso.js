@@ -98,16 +98,16 @@ function RegisterCursos() {
   const validationSchema = Yup.object().shape({
     nome: Yup.string().required("Nome do Curso é obrigatório"),
     accao: Yup.string().required("Acção do é obrigatório"),
-    anoexecucao: Yup.string().required("Acção do é obrigatório"),
-    duracao: Yup.string().required("Acção do é obrigatório"),
-    data_inicio: Yup.string().required("Acção do é obrigatório"),
-    data_termino: Yup.string().required("Acção do é obrigatório"),
-    horario: Yup.string().required("Acção do é obrigatório"),
-    horario_termino: Yup.string().required("Acção do é obrigatório"),
-    local_realizacao: Yup.string().required("Acção do é obrigatório"),
-    alunos_por_turma: Yup.string().required("Acção do é obrigatório"),
-    descricao: Yup.string().required("Descrição do Programa é obrigatório"),
-    fk_programa: Yup.number().required("Duração do Programa é obrigatório"),
+    anoexecucao: Yup.string().required("Ano do é obrigatório"),
+    duracao: Yup.string().required("Duração do é obrigatório"),
+    data_inicio: Yup.string().required("Data de Inicio é obrigatório"),
+    data_termino: Yup.string().required("Data de Termino é obrigatório"),
+    horario: Yup.string().required("Hórario de Inicio é obrigatório"),
+    horario_termino: Yup.string().required("horario de Termino é obrigatório"),
+    local_realizacao: Yup.string().required("Local de Realização é obrigatório"),
+    alunos_por_turma: Yup.string().required("Quantidade de Formando é obrigatório"),
+    descricao: Yup.string(),
+    fk_programa: Yup.number().required("Programa é obrigatório"),
   });
 
   const formik = useFormik({
@@ -203,8 +203,8 @@ function RegisterCursos() {
     formik.setFieldValue("duracao", user.duracao);
     formik.setFieldValue("accao", user.acao);
     formik.setFieldValue("anoexecucao", user.ano_execucao);
-    formik.setFieldValue("data_inicio", user.data_inicio);
-    formik.setFieldValue("data_termino", user.data_termino);
+    formik.setFieldValue("data_inicio", user.data_inicio.split("T")[0]);
+    formik.setFieldValue("data_termino", user.data_termino.split("T")[0]);
     formik.setFieldValue("horario", user.horario);
     formik.setFieldValue("horario_termino", user.horario_termino);
     formik.setFieldValue("local_realizacao", user.local_realizacao);
@@ -257,8 +257,8 @@ function RegisterCursos() {
           <Col md={2}>
           <Row className="mb-1">
             <Col className="d-flex justify-content-around">
-              <Button className="fw-bolder" variant="primary" onClick={addUser}>
-                <FontAwesomeIcon icon={faUser} bounce />Adicionar curso
+              <Button className="fw-bolder" variant="outline-success" onClick={addUser}>
+                Adicionar curso
               </Button>
             </Col>
           </Row>
@@ -446,18 +446,18 @@ function RegisterCursos() {
                         placeholder="duracao"
                       >
                         <option>Escolha uma opção</option>
-                        <option value="1">1 Mês</option>
-                        <option value="2">2 Mês</option>
-                        <option value="3">3 Mês</option>
-                        <option value="4">4 Mês</option>
-                        <option value="5">5 Mês</option>
-                        <option value="6">6 Mês</option>
-                        <option value="7">7 Mês</option>
-                        <option value="8">8 Mês</option>
-                        <option value="9">9 Mês</option>
-                        <option value="10">10 Mês</option>
-                        <option value="11">12 Mês</option>
-                        <option value="12">12 Mês</option>
+                        <option value="30">30 Horas</option>
+                        <option value="60">60 Horas</option>
+                        <option value="90">90 Horas</option>
+                        <option value="120">120 Horas</option>
+                        <option value="150">150 Horas</option>
+                        <option value="180">180 Horas</option>
+                        <option value="210">210 Horas</option>
+                        <option value="240">240 Horas</option>
+                        <option value="270">270 Horas</option>
+                        <option value="300">300 Horas</option>
+                        <option value="330">330 Horas</option>
+                        <option value="360">360 Horas</option>
                       </Form.Select>
                       <Form.Control.Feedback type="invalid">
                         {formik.errors.duracao}

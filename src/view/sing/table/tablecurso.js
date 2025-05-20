@@ -22,7 +22,7 @@ carregarCurso,
 }) {
   const [users, setUsers] = useState([]);
   const [order, setOrder] = useState(null);
-  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [itemsPerPage, setItemsPerPage] = useState(15);
   const [currentPage, setCurrentPage] = useState(1);
 
   // Atualiza o estado users quando datas for alterado
@@ -77,9 +77,9 @@ carregarCurso,
             Itens
           </Dropdown.Toggle>
           <Dropdown.Menu>
-            <Dropdown.Item eventKey="5">5</Dropdown.Item>
-            <Dropdown.Item eventKey="10">10</Dropdown.Item>
             <Dropdown.Item eventKey="15">15</Dropdown.Item>
+            <Dropdown.Item eventKey="30">30</Dropdown.Item>
+            <Dropdown.Item eventKey="40">40</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
         <Button variant="outline-success" onClick={ListAll}>
@@ -89,14 +89,14 @@ carregarCurso,
           <FontAwesomeIcon
             icon={order === "asc" ? faSortAlphaDown : faArrowDownZA}
           />{" "}
-          Nome
+          Curso
         </Button>
         {isFetching && <p className="text-success">Carregando...</p>}
         <Col>
           <Form>
             <Form.Control
               type="text"
-              placeholder="Pesquisar Utilizador"
+              placeholder="Pesquisar por nome do curso"
               className="me-3"
               aria-label="Search"
               onChange={handleSearch}
@@ -109,7 +109,11 @@ carregarCurso,
         responsive
         hover
         table-bordered
-        className=" table table-sm"
+        
+        bordered
+        className=" table table-sm table-striped table-hover text-center "
+        style={{ fontSize: "0.9rem"}}
+
       >
         <thead className="bg-success text-light text-center">
           <tr>
@@ -131,7 +135,7 @@ carregarCurso,
                 <td>{user.acao}</td>
                 <td>{user.nome}</td>
                 <td>{user.horario} ás {user.horario_termino}</td>
-                <td>{user.duracao} meses</td>
+                <td>{user.duracao} Horas</td>
                 <td>{formatarData(user.data_inicio)}</td>
                 <td>{formatarData(user.data_termino)}</td>
                 <td>{user.ano_execucao}</td>
