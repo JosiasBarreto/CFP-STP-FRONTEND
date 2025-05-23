@@ -5,7 +5,7 @@ import { API_URL } from "../../urls";
 import { PutFormandos } from "../../urls/rotes_query";
 import { formatarData } from "../../../view/sing/configureData";
 
-export const useEditarFormando = (token, setPreview, formik, setDadosEditaveis) => {
+export const useEditarFormando = (token, setPreview, formik, setDadosEditaveis, resetarDados) => {
   return useMutation({
     mutationFn: async ({ valores }) => {
       const formData = new FormData();
@@ -69,6 +69,7 @@ export const useEditarFormando = (token, setPreview, formik, setDadosEditaveis) 
     },
     onSuccess: () => {
       toast.success("Formando editado com sucesso!");
+      resetarDados()
       setPreview(null);
       setDadosEditaveis({})
       formik.resetForm()

@@ -10,7 +10,7 @@ import {
   Spinner,
 } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { fa0, faGraduationCap} from "@fortawesome/free-solid-svg-icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -30,6 +30,7 @@ import { ButtonS } from "../../component/Buttons.js/CustomButton";
 import TablePrograma from "./table/tableprograma";
 import TableCurso from "./table/tablecurso";
 import axios from "axios";
+import { FaBook } from "react-icons/fa";
 
 function RegisterCursos() {
   const token = localStorage.getItem("token");
@@ -51,7 +52,7 @@ function RegisterCursos() {
   // Atualizado para React Query v5
   const { data, isLoading, isFetching } = useQuery({
     queryKey: Qcurso,
-    queryFn: () => fetchCursos(token,searchParams),
+    queryFn: () => fetchCursos(token, searchParams),
   });
   const { data: datas, isLoading: isloading } = useQuery({
     queryKey: Qprograma,
@@ -69,7 +70,7 @@ function RegisterCursos() {
     setLoading(true);
     queryClient.invalidateQueries({ queryKey: Qcurso });
     try {
-      fetchCursos(token,searchParams)
+      fetchCursos(token, searchParams);
     } catch (error) {
       console.error("Erro ao buscar cursos:", error);
     } finally {
@@ -87,7 +88,7 @@ function RegisterCursos() {
     });
     queryClient.invalidateQueries({ queryKey: Qcurso });
     try {
-      fetchCursos(token,searchParams)
+      fetchCursos(token, searchParams);
     } catch (error) {
       console.error("Erro ao buscar cursos:", error);
     } finally {
@@ -104,8 +105,12 @@ function RegisterCursos() {
     data_termino: Yup.string().required("Data de Termino é obrigatório"),
     horario: Yup.string().required("Hórario de Inicio é obrigatório"),
     horario_termino: Yup.string().required("horario de Termino é obrigatório"),
-    local_realizacao: Yup.string().required("Local de Realização é obrigatório"),
-    alunos_por_turma: Yup.string().required("Quantidade de Formando é obrigatório"),
+    local_realizacao: Yup.string().required(
+      "Local de Realização é obrigatório"
+    ),
+    alunos_por_turma: Yup.string().required(
+      "Quantidade de Formando é obrigatório"
+    ),
     descricao: Yup.string(),
     fk_programa: Yup.number().required("Programa é obrigatório"),
   });
@@ -203,8 +208,17 @@ function RegisterCursos() {
     formik.setFieldValue("duracao", user.duracao);
     formik.setFieldValue("accao", user.acao);
     formik.setFieldValue("anoexecucao", user.ano_execucao);
-    formik.setFieldValue("data_inicio", user.data_inicio.split("T")[0]);
-    formik.setFieldValue("data_termino", user.data_termino.split("T")[0]);
+    if (user.data_inicio) {
+      formik.setFieldValue("data_inicio", user.data_inicio.split("T")[0]);
+    } else {
+      formik.setFieldValue("data_inicio", "");
+    }
+
+    if (user.data_termino) {
+      formik.setFieldValue("data_termino", user.data_termino.split("T")[0]);
+    } else {
+      formik.setFieldValue("data_termino", "");
+    }
     formik.setFieldValue("horario", user.horario);
     formik.setFieldValue("horario_termino", user.horario_termino);
     formik.setFieldValue("local_realizacao", user.local_realizacao);
@@ -236,7 +250,6 @@ function RegisterCursos() {
 
   return (
     <>
-     
       <div className="bg-white shadow rounded p-3 mb-2">
         <Row mb={12} className="w-100">
           <Col md={3}>
@@ -244,9 +257,9 @@ function RegisterCursos() {
               <Card.Body>
                 <Row className="d-flex">
                   <Col className="text-center text-success">
-                    <FontAwesomeIcon icon={faUser} size="3x" />
+                     <FaBook className="sidebar-icon" size={"4rem"} />
                   </Col>
-                  <Col className="text-center">
+                  <Col className="text-center text-capitalize text-success">
                     <span className="fw-bolder fs-5 text-center">CURSOS</span>
                     <p className="fw-bolder fs-5 text-center">{contagem}</p>
                   </Col>
@@ -255,18 +268,23 @@ function RegisterCursos() {
             </Card>
           </Col>
           <Col md={2}>
-          <Row className="mb-1">
-            <Col className="d-flex justify-content-around">
-              <Button className="fw-bolder" variant="outline-success" onClick={addUser}>
-                Adicionar curso
-              </Button>
-            </Col>
-          </Row>
+            <Row className="mb-1">
+              <Col className="d-flex justify-content-around">
+                <Button
+                  className="fw-bolder"
+                  variant="outline-success"
+                  onClick={addUser}
+                >
+                  <FaBook className="sidebar-icon me-2" size={"1rem"}/> 
+                  Adicionar
+                </Button>
+              </Col>
+            </Row>
           </Col>
 
-          <Col md={7} className="border p-2 ">
+          <Col md={7} className=" p-2 ">
             <Row className="g-3 ">
-              <Col xs={12} md={5} >
+              <Col xs={12} md={5}>
                 <Form.Control
                   type="text"
                   name="nome"
@@ -276,7 +294,7 @@ function RegisterCursos() {
                   className="form-control-lg"
                 />
               </Col>
-              <Col xs={12} md={3} >
+              <Col xs={12} md={3}>
                 <Form.Control
                   type="number"
                   name="ano_execucao"
@@ -286,7 +304,7 @@ function RegisterCursos() {
                   className="form-control-lg"
                 />
               </Col>
-              <Col xs={12} md={2}  className="d-flex align-items-center">
+              <Col xs={12} md={2} className="d-flex align-items-center">
                 <Button
                   variant="primary"
                   onClick={handleSearch}
@@ -300,7 +318,7 @@ function RegisterCursos() {
                   )}
                 </Button>
               </Col>
-              <Col xs={12} md={5} >
+              <Col xs={12} md={5}>
                 <Form.Control
                   type="text"
                   name="programa"
@@ -310,8 +328,8 @@ function RegisterCursos() {
                   className="form-control-lg"
                 />
               </Col>
-            
-              <Col xs={12} md={3} >
+
+              <Col xs={12} md={3}>
                 <Form.Control
                   type="text"
                   name="acao"
@@ -321,8 +339,8 @@ function RegisterCursos() {
                   className="form-control-lg"
                 />
               </Col>
-              
-              <Col xs={12} md={2}  className="d-flex align-items-center">
+
+              <Col xs={12} md={2} className="d-flex align-items-center">
                 <Button
                   variant="primary"
                   onClick={handleLimpar}
@@ -340,21 +358,26 @@ function RegisterCursos() {
           </Col>
 
           <Modal
-            size="lg"
-            aria-labelledby="example-modal-sizes-title-lg"
+            size="xl"
+            aria-labelledby="example-modal-sizes-title-xl"
             show={show}
             onHide={addUser}
             backdrop="static"
             keyboard={false}
+            
+
           >
             <Modal.Header
-              className={`text-white bg-${variant} rounded-3 w-100 mb-3`}
+              className={`text-white bg-${variant}  w-100 mb-2 rounded-top`}
+              closeButton
             >
               <div>
                 <Modal.Title className="text-center">
+                  <FaBook className="sidebar-icon me-2" size={"1.5rem"}/>
                   {funcao} CURSO
                 </Modal.Title>
               </div>
+              
             </Modal.Header>
 
             <Modal.Body>

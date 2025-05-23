@@ -17,10 +17,10 @@ import {
   FaUserTie,
 } from "react-icons/fa";
 import "./index.css";
-import Footer from "../../component/Footer/Footer";
+
 
 const DashboardLayout = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(true); // Sidebar control
+  const [sidebarOpen, setSidebarOpen] = useState(false); // Sidebar control
   const navigate = useNavigate();
   const location = useLocation();
 

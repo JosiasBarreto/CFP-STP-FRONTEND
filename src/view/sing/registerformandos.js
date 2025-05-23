@@ -33,6 +33,9 @@ const Registerformandos = () => {
 
     queryFn: () => LastIdFormando(token),
   });
+  const resetarDados = () => {
+    setDadosEditaveis(location.state?.dadosFormando.current);
+  };
 
   // Quando formik tem uma foto existente (edição)
 
@@ -187,12 +190,12 @@ const Registerformandos = () => {
         await mutation.mutateAsync(values);
       } finally {
         setSubmitting(false);
-        resetForm()
+        
       }
     },
   });
   const mutation = useRegistrarFormando(token, formik, setPreview);
-  const editarMutation = useEditarFormando(token, setPreview, formik, setDadosEditaveis);
+  const editarMutation = useEditarFormando(token, setPreview, formik, setDadosEditaveis, resetarDados);
   const {
     data: cursos,
     isLoadingcurso,

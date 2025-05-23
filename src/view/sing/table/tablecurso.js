@@ -70,7 +70,7 @@ carregarCurso,
   };
 
   return (
-    <Card className=" card-glassshadow rounded p-2 mb-2">
+    <Card className="card-glass shadow rounded p-2 mb-2">
       <div className="d-flex hstack gap-3 p-1">
         <Dropdown onSelect={(eventKey) => handleItemsPerPageChange(eventKey)}>
           <Dropdown.Toggle variant="outline-success" id="dropdown-basic">
@@ -113,6 +113,8 @@ carregarCurso,
         bordered
         className=" table table-sm table-striped table-hover text-center "
         style={{ fontSize: "0.9rem"}}
+        striped
+        size="sm"
 
       >
         <thead className="bg-success text-light text-center">
@@ -120,7 +122,7 @@ carregarCurso,
             <th>Acção</th>
             <th>Nome</th>
             <th>Horario</th>
-            <th>Duração</th>
+            <th>Carga Hor.</th>
             <th>Data Inicio</th>
             <th>Data Término</th>
             <th>Ano</th>
@@ -134,7 +136,7 @@ carregarCurso,
               <tr key={index}>
                 <td>{user.acao}</td>
                 <td>{user.nome}</td>
-                <td>{user.horario} ás {user.horario_termino}</td>
+                <td>{user.horario} - {user.horario_termino}</td>
                 <td>{user.duracao} Horas</td>
                 <td>{formatarData(user.data_inicio)}</td>
                 <td>{formatarData(user.data_termino)}</td>
@@ -164,7 +166,11 @@ carregarCurso,
             ))
           ) : (
             <tr>
-              <td colSpan="6">Nenhum Programa encontrado.</td>
+              <td colSpan="9" className="text-center text-warning">
+                <FontAwesomeIcon icon={faList} />{" "}
+                <strong>Nenhum curso encontrado</strong>
+               
+              </td>
             </tr>
           )}
         </tbody>
