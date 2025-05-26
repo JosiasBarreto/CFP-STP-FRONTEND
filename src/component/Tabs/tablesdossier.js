@@ -20,7 +20,7 @@ const TabsCustom = ({searchParams}) => {
   
   const gerarDocumentos = async () => {
       try {
-          const response = await axios.post(API_URL+'/documents/gerar-documentos', searchParams, {
+          const response = await axios.post(API_URL+'/documents/gerar-crachas', searchParams, {
               responseType: 'blob'  // importante!
           });
   
@@ -64,6 +64,9 @@ const TabsCustom = ({searchParams}) => {
       </Tab>
       <Tab eventKey="avaliacao" title="Quadros de Avaliação">
         Conteúdo dos Quadros de Avaliação
+      </Tab>
+      <Tab eventKey="crachar" title="Crachár">
+       Crachar 
       </Tab>
       <Tab eventKey="relatorio" title="Relatório">
         Conteúdo do Relatório
