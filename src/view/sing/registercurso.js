@@ -113,6 +113,7 @@ function RegisterCursos() {
     ),
     descricao: Yup.string(),
     fk_programa: Yup.number().required("Programa é obrigatório"),
+    duracao_mes: Yup.number().required("Duração em Mês é Obrigratório"),
   });
 
   const formik = useFormik({
@@ -129,6 +130,7 @@ function RegisterCursos() {
       alunos_por_turma: "18 Formandos",
       descricao: "",
       fk_programa: 0,
+      duracao_mes:0,
     },
     validationSchema: validationSchema,
     onSubmit: async (values, { setSubmitting, resetForm }) => {
@@ -148,6 +150,7 @@ function RegisterCursos() {
           alunos_por_turma: values.alunos_por_turma,
           descricao: values.descricao,
           fk_programa: values.fk_programa,
+          duracao_mes: values.duracao_mes,
         };
         await mutation.mutateAsync(user);
       } finally {
@@ -224,6 +227,7 @@ function RegisterCursos() {
     formik.setFieldValue("local_realizacao", user.local_realizacao);
     formik.setFieldValue("alunos_por_turma", user.alunos_por_turma);
     formik.setFieldValue("fk_programa", user.programa_id);
+    formik.setFieldValue("duracao_mes", user.duracao_mes);
   };
 
   const reset = () => {
@@ -411,7 +415,7 @@ function RegisterCursos() {
                   </Form.Control.Feedback>
                 </FloatingLabel>
                 <Row xs={12} md={12}>
-                  <Col md={8}>
+                  <Col md={6}>
                     <FloatingLabel
                       controlId="formPrograma"
                       className="mb-3"
@@ -452,11 +456,11 @@ function RegisterCursos() {
                       </Form.Control.Feedback>
                     </FloatingLabel>
                   </Col>
-                  <Col md={4}>
+                  <Col md={3}>
                     <FloatingLabel
                       controlId="formDataN"
                       className="mb-4"
-                      label="Duração do Curso"
+                      label="Duração em Horas"
                     >
                       <Form.Select
                         name="duracao"
@@ -484,6 +488,41 @@ function RegisterCursos() {
                       </Form.Select>
                       <Form.Control.Feedback type="invalid">
                         {formik.errors.duracao}
+                      </Form.Control.Feedback>
+                    </FloatingLabel>
+                  </Col>
+                  <Col md={3}>
+                    <FloatingLabel
+                     
+                      className="mb-4"
+                      label="Duração em Mês"
+                    >
+                      <Form.Select
+                        name="duracao_mes"
+                        onChange={formik.handleChange}
+                        value={formik.values.duracao_mes}
+                        isInvalid={
+                          formik.touched.duracao_mes && formik.errors.duduracao_mesracao
+                        }
+                        className="input_left_color shadow-sm"
+                        placeholder="duracao_mes"
+                      >
+                        <option>Escolha uma opção</option>
+                        <option value="1">1 Mês</option>
+                        <option value="2">2 Meses</option>
+                        <option value="3">3 Meses</option>
+                        <option value="4">4 Meses</option>
+                        <option value="5">5 Meses</option>
+                        <option value="6">6 Meses</option>
+                        <option value="7">7 Meses</option>
+                        <option value="8">8 Meses</option>
+                        <option value="9">9 Meses</option>
+                        <option value="10">10 Meses</option>
+                        <option value="11">11 Meses</option>
+                        <option value="12">12 Meses</option>
+                      </Form.Select>
+                      <Form.Control.Feedback type="invalid">
+                        {formik.errors.duracao_mes}
                       </Form.Control.Feedback>
                     </FloatingLabel>
                   </Col>

@@ -20,7 +20,7 @@ const TabsCustom = ({searchParams}) => {
   
   const gerarDocumentos = async () => {
       try {
-          const response = await axios.post(API_URL+'/turma/gerar-contratos', searchParams, {
+          const response = await axios.post(API_URL+'/documents/gerar-documentos', searchParams, {
               responseType: 'blob'  // importante!
           });
   

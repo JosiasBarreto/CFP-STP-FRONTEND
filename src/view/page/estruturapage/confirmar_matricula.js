@@ -49,6 +49,7 @@ function ConfirmarMatricula() {
     nome_curso: formData.nome_curso || "",
     acao: formData.acao || "",
     id_curso: formData.id_curso || 0,
+    gerar:"",
   });
   useEffect(() => {
     if (formData && formData.id_curso) {

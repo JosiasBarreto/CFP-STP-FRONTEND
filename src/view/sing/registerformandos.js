@@ -16,13 +16,20 @@ import { Qprograma } from "../../api/urls/nameQuery";
 import DadosFormandos from "./componenteformando/dadosformandos";
 import { useRegistrarFormando } from "../../api/routes/formandos/registerformandos";
 import { useEditarFormando } from "../../api/routes/formandos/updateformandos";
+import { useNavigate } from 'react-router-dom';
 
+
+  
 const Registerformandos = () => {
   const token = localStorage.getItem("token");
   const [preview, setPreview] = useState(null);
   const location = useLocation();
   const [dadosEditaveis, setDadosEditaveis] = useState(location.state?.dadosFormando || {});
+const navigate = useNavigate();
 
+  const resetarLocation = () => {
+    navigate('.', { state: { dadosFormando: {} }, replace: true });
+  };
   // Atualizado para React Query v5
   const { data, isLoading, isFetching } = useQuery({
     queryKey: Qprograma,
@@ -34,6 +41,7 @@ const Registerformandos = () => {
     queryFn: () => LastIdFormando(token),
   });
   const resetarDados = () => {
+    
     setDadosEditaveis(location.state?.dadosFormando.current);
   };
 
@@ -476,6 +484,8 @@ const Registerformandos = () => {
               className="d-flex align-items-center gap-2 px-3"
               onClick={() => {
                 formik.resetForm();
+                resetarDados();
+                resetarLocation();
               }}
             >
               <FiXCircle size={18} />
