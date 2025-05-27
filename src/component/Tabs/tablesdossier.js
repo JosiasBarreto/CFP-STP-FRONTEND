@@ -6,6 +6,8 @@ import TurmaDetalhesBootstrap from './ComponentesTabs/Estatistica';
 import axios from 'axios';
 import { saveAs } from 'file-saver';
 import { API_URL } from '../../api/urls';
+import BadgeDisplay from './ComponentesTabs/gerarcrachar';
+import DocumentosPorTurma from './ComponentesTabs/gerarcrachar';
 
 const TabsCustom = ({searchParams}) => {
   const [key, setKey] = useState('estatistica');
@@ -43,6 +45,7 @@ const TabsCustom = ({searchParams}) => {
       <Button variant="primary" onClick={gerarDocumentos}>
          Quadro dos formandos
         </Button>
+        <DocumentosPorTurma turmaId={3}/>
       </Tab>
       <Tab eventKey="frequencia" title="Listagem de Frequência">
         Conteúdo da Listagem de Frequência
@@ -66,7 +69,7 @@ const TabsCustom = ({searchParams}) => {
         Conteúdo dos Quadros de Avaliação
       </Tab>
       <Tab eventKey="crachar" title="Crachár">
-       Crachar 
+      
       </Tab>
       <Tab eventKey="relatorio" title="Relatório">
         Conteúdo do Relatório
