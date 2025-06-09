@@ -9,27 +9,24 @@ import {
   Modal,
   Spinner,
 } from "react-bootstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { fa0, faGraduationCap} from "@fortawesome/free-solid-svg-icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast, ToastContainer } from "react-toastify";
-
 import {
   atualizarCurso,
-  atualizarPrograma,
+
   deleteCurso,
-  deletePrograma,
+
   fetchCursos,
   fetchProgramas,
   registarCurso,
 } from "./function";
 import { Qcurso, Qprograma } from "../../api/urls/nameQuery";
 import { ButtonS } from "../../component/Buttons.js/CustomButton";
-import TablePrograma from "./table/tableprograma";
+
 import TableCurso from "./table/tablecurso";
-import axios from "axios";
+
 import { FaBook } from "react-icons/fa";
 
 function RegisterCursos() {
@@ -58,7 +55,7 @@ function RegisterCursos() {
     queryKey: Qprograma,
     queryFn: () => fetchProgramas(token),
   });
-  const [cursos, setCursos] = useState([]);
+  
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -100,11 +97,13 @@ function RegisterCursos() {
     nome: Yup.string().required("Nome do Curso é obrigatório"),
     accao: Yup.string().required("Acção do é obrigatório"),
     anoexecucao: Yup.string().required("Ano do é obrigatório"),
-    duracao: Yup.string().required("Duração do é obrigatório"),
-    data_inicio: Yup.string().required("Data de Inicio é obrigatório"),
-    data_termino: Yup.string().required("Data de Termino é obrigatório"),
-    horario: Yup.string().required("Hórario de Inicio é obrigatório"),
-    horario_termino: Yup.string().required("horario de Termino é obrigatório"),
+    duracao: Yup.number().required("Duração do é obrigatório"),
+    data_inicio: Yup.date().required("Data de Inicio é obrigatório"),
+    data_termino: Yup.date().required("Data de Termino é obrigatório"),
+    horario: Yup.string().required('Hora é obrigatória')
+    .matches(/^([01]\d|2[0-3]):([0-5]\d)$/, 'Hora inválida'),
+    horario_termino: Yup.string().required('Hora é obrigatória')
+    .matches(/^([01]\d|2[0-3]):([0-5]\d)$/, 'Hora inválida'),
     local_realizacao: Yup.string().required(
       "Local de Realização é obrigatório"
     ),
@@ -112,7 +111,7 @@ function RegisterCursos() {
       "Quantidade de Formando é obrigatório"
     ),
     descricao: Yup.string(),
-    fk_programa: Yup.number().required("Programa é obrigatório"),
+    fk_programa: Yup.number(),
     duracao_mes: Yup.number().required("Duração em Mês é Obrigratório"),
   });
 
@@ -121,11 +120,11 @@ function RegisterCursos() {
       nome: "",
       accao: "",
       anoexecucao: new Date().getFullYear(),
-      duracao: "",
+      duracao: 0,
       data_inicio: "",
       data_termino: "",
-      horario: "",
-      horario_termino: "",
+      horario: '',
+      horario_termino: '',
       local_realizacao: "",
       alunos_por_turma: "18 Formandos",
       descricao: "",
@@ -208,7 +207,7 @@ function RegisterCursos() {
     setVariant("success");
     formik.setFieldValue("nome", user.nome);
     formik.setFieldValue("descricao", user.descricao);
-    formik.setFieldValue("duracao", user.duracao);
+    formik.setFieldValue("duracao", user.duracao==="nan" ? 0: user.duracao);
     formik.setFieldValue("accao", user.acao);
     formik.setFieldValue("anoexecucao", user.ano_execucao);
     if (user.data_inicio) {
@@ -227,7 +226,10 @@ function RegisterCursos() {
     formik.setFieldValue("local_realizacao", user.local_realizacao);
     formik.setFieldValue("alunos_por_turma", user.alunos_por_turma);
     formik.setFieldValue("fk_programa", user.programa_id);
-    formik.setFieldValue("duracao_mes", user.duracao_mes);
+    if(user.duracao_mes==="nan"){
+      formik.setFieldValue("duracao_mes", user.duracao_mes);
+    }
+   
   };
 
   const reset = () => {
@@ -396,7 +398,6 @@ function RegisterCursos() {
                   />
                 </Form.Group>
                 <FloatingLabel
-                  controlId="formBasiCurso"
                   className="mb-4 w-auto"
                   label="Nome do Curso"
                 >
@@ -417,7 +418,6 @@ function RegisterCursos() {
                 <Row xs={12} md={12}>
                   <Col md={6}>
                     <FloatingLabel
-                      controlId="formPrograma"
                       className="mb-3"
                       label="Programa do Curso"
                     >
@@ -458,12 +458,13 @@ function RegisterCursos() {
                   </Col>
                   <Col md={3}>
                     <FloatingLabel
-                      controlId="formDataN"
+                     
                       className="mb-4"
                       label="Duração em Horas"
                     >
                       <Form.Select
                         name="duracao"
+                        id="duracao"
                         onChange={formik.handleChange}
                         value={formik.values.duracao}
                         isInvalid={
@@ -499,6 +500,8 @@ function RegisterCursos() {
                     >
                       <Form.Select
                         name="duracao_mes"
+                        id="duracao_mes"
+                        
                         onChange={formik.handleChange}
                         value={formik.values.duracao_mes}
                         isInvalid={
@@ -530,7 +533,7 @@ function RegisterCursos() {
                 <Row md={12}>
                   <Col md={3}>
                     <FloatingLabel
-                      controlId="formBasiAccao"
+                     
                       className="mb-4 w-auto"
                       label="Acção do Curso"
                     >
@@ -538,6 +541,7 @@ function RegisterCursos() {
                         className="input_left_color p-2"
                         type="text"
                         name="accao"
+                        id="accao"
                         placeholder=""
                         value={formik.values.accao}
                         onChange={formik.handleChange}
@@ -550,7 +554,6 @@ function RegisterCursos() {
                   </Col>
                   <Col md={3}>
                     <FloatingLabel
-                      controlId="formBasiIncico"
                       className="mb-4 w-auto"
                       label="Data de Inicio"
                     >
@@ -558,6 +561,7 @@ function RegisterCursos() {
                         className="input_left_color p-2"
                         type="date"
                         name="data_inicio"
+                        id="data_inicio"
                         placeholder="Data de Inicio"
                         value={formik.values.data_inicio}
                         onChange={formik.handleChange}
@@ -573,13 +577,13 @@ function RegisterCursos() {
                   </Col>
                   <Col md={3}>
                     <FloatingLabel
-                      controlId="formBasiTermino"
                       className="mb-4 w-auto"
                       label="Data Termino"
                     >
                       <Form.Control
                         className="input_left_color p-2"
                         type="date"
+                        id="data_termino"
                         name="data_termino"
                         placeholder="Data Termino"
                         value={formik.values.data_termino}
@@ -596,7 +600,7 @@ function RegisterCursos() {
                   </Col>
                   <Col md={3}>
                     <FloatingLabel
-                      controlId="formBasicAno"
+                   
                       className="mb-4 w-auto"
                       label="Ano de Realização"
                     >
@@ -604,6 +608,7 @@ function RegisterCursos() {
                         className="input_left_color p-2"
                         type="number"
                         name="anoexecucao"
+                        id="anoexecucao"
                         placeholder="Ano"
                         //min={new Date().getFullYear()} // Ano mínimo = atual (ex: 2024)
                         max={new Date().getFullYear() + 10} // Permite até 10 anos no futuro (ex: 2034)
@@ -623,7 +628,6 @@ function RegisterCursos() {
                 <Row>
                   <Col md={3}>
                     <FloatingLabel
-                      controlId="formBasiHora"
                       className="mb-4 w-auto"
                       label="Hora de Inicio"
                     >
@@ -631,6 +635,7 @@ function RegisterCursos() {
                         className="input_left_color p-2"
                         type="time"
                         name="horario"
+                        id="horario"
                         placeholder=""
                         value={formik.values.horario}
                         onChange={formik.handleChange}
@@ -645,13 +650,13 @@ function RegisterCursos() {
                   </Col>
                   <Col md={3}>
                     <FloatingLabel
-                      controlId="formBasiIncico"
                       className="mb-4 w-auto"
                       label="Hora Termino"
                     >
                       <Form.Control
                         className="input_left_color p-2"
                         type="time"
+                        id="horario_termino"
                         name="horario_termino"
                         placeholder=""
                         value={formik.values.horario_termino}
@@ -668,13 +673,13 @@ function RegisterCursos() {
                   </Col>
                   <Col md={3}>
                     <FloatingLabel
-                      controlId="formBasiRealização"
                       className="mb-4 w-auto"
                       label="Local de Realização"
                     >
                       <Form.Control
                         className="input_left_color p-2"
                         type="text"
+                        id="local_realizacao"
                         name="local_realizacao"
                         placeholder="Digite o Local de Realização"
                         value={formik.values.local_realizacao}
@@ -692,13 +697,13 @@ function RegisterCursos() {
 
                   <Col md={3}>
                     <FloatingLabel
-                      controlId="formBasiCurso"
                       className="mb-4 w-auto"
                       label="Quant. de Formandos"
                     >
                       <Form.Control
                         className="input_left_color p-2"
                         type="text"
+                        id="alunos_por_turma"
                         name="alunos_por_turma"
                         placeholder="Digite a Quantidade de Formandos"
                         value={formik.values.alunos_por_turma}
@@ -715,13 +720,13 @@ function RegisterCursos() {
                   </Col>
                 </Row>
                 <FloatingLabel
-                  controlId="formBasicSigla"
                   className="mb-4 w-auto"
                   label="Descrição do Curso"
                 >
                   <Form.Control
                     className="input_left_color p-2"
                     name="descricao"
+                    id="descricao"
                     as="textarea"
                     style={{ height: "90px" }}
                     placeholder="Digite a Descrição"

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { API_URL } from "../../api/urls";
-import { DeleteUser, FiltroEstatisticoturma, FiltroInscricao, FiltroMatricula, GetCurso, GetCursof, GetPrograma, Getuser, LastFormandosID, Matricula, PostCurso, PostPrograma, PostUser, PutCurso, PutPrograma, PutUser, SelectInscrito } from "../../api/urls/rotes_query";
+import { Buscardocuemntos, DeleteUser, FiltroEstatisticoturma, FiltroInscricao, FiltroMatricula, GetCurso, GetCursof, GetPrograma, Getuser, LastFormandosID, Matricula, PostCurso, PostPrograma, PostUser, PutCurso, PutPrograma, PutUser, SelectInscrito } from "../../api/urls/rotes_query";
 
 export const registarUser = async (uses, token) => {
     try {
@@ -225,7 +225,21 @@ export function BuscarTurma(token, data) {
     })
     .then((response) => response.data) // Retorna os dados da resposta
     .catch((error) => {
-      console.error("Erro ao buscar inscrição:", error);
+      console.error("Erro ao buscar turma:", error);
+      throw error; // Rejeita a promessa para permitir tratamento do erro no código que chamar a função
+    });
+}
+export function BuscarTurmadocumentos(token, data) {
+  return axios
+    .post(API_URL + Buscardocuemntos, data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",  // Garantir que o tipo de conteúdo é JSON
+      },
+    })
+    .then((response) => response.data) // Retorna os dados da resposta
+    .catch((error) => {
+      console.error("Erro ao buscar documento:", error);
       throw error; // Rejeita a promessa para permitir tratamento do erro no código que chamar a função
     });
 }

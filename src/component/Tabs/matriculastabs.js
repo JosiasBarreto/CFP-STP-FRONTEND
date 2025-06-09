@@ -30,7 +30,7 @@ const DsitribesMatriculas = ({
     nao_matriculados: [],
     pendentes: [],
   });
-  const [textButton, setTextButton] = useState("");
+  const [turma, setTurma] = useState(1);
   const [variante, setVariante] = useState("");
 
   useEffect(() => {
@@ -38,6 +38,7 @@ const DsitribesMatriculas = ({
       const classificados = classificarFormandos(data);
       setDataClassificada(classificados);
     }
+    
   }, [data]);
 
   const tabsConfig = [

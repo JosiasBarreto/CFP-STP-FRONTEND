@@ -209,7 +209,7 @@ const TurmaCard = ({ turma }) => {
             <Col md={3} xs={6}>
               <div className="bg-success-subtle text-success rounded-3 p-2 text-center shadow-sm">
                 <div className="fw-semibold fs-6">
-                  {turma?.estatisticas_inscricoes.faixa_mais_50 || 0}
+                  {turma?.faixa_etaria.faixa_mais_50 || 0}
                 </div>
                 <div className="small text-muted">+ de 50 anos</div>
               </div>

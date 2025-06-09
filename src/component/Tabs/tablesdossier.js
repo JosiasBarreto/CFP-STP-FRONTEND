@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Tabs, Tab, Button } from 'react-bootstrap';
-import { BuscarTurma } from '../../view/sing/function';
+import { BuscarTurma, BuscarTurmadocumentos } from '../../view/sing/function';
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import TurmaDetalhesBootstrap from './ComponentesTabs/Estatistica';
 import axios from 'axios';
@@ -14,10 +14,7 @@ const TabsCustom = ({searchParams}) => {
     const token = localStorage.getItem('token');
     
   
-  const { data: datas, isLoading } = useQuery({
-    queryKey: ["Qturmas", searchParams],
-    queryFn: () => BuscarTurma(token, searchParams),
-  });
+ 
  
   
   const gerarDocumentos = async () => {
@@ -45,7 +42,7 @@ const TabsCustom = ({searchParams}) => {
       <Button variant="primary" onClick={gerarDocumentos}>
          Quadro dos formandos
         </Button>
-        <DocumentosPorTurma turmaId={3}/>
+       
       </Tab>
       <Tab eventKey="frequencia" title="Listagem de Frequência">
         Conteúdo da Listagem de Frequência
@@ -60,7 +57,7 @@ const TabsCustom = ({searchParams}) => {
         Conteúdo do Contrato
       </Tab>
       <Tab eventKey="seguro" title="Seguro">
-        Conteúdo do Seguro
+      <DocumentosPorTurma turmaId={4} datas={searchParams}/>
       </Tab>
       <Tab eventKey="ficha-sumario" title="Ficha Sumário">
         Conteúdo da Ficha Sumário

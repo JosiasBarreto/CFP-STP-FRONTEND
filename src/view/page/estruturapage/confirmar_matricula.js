@@ -69,6 +69,7 @@ function ConfirmarMatricula() {
     queryKey: ["Qmatriculas", searchParams],
     queryFn: () => Buscarmatricula(token, searchParams),
   });
+  
 
   useEffect(() => {
     queryClient.invalidateQueries({ queryKey: ["Qmatriculas"] });
@@ -79,6 +80,7 @@ function ConfirmarMatricula() {
         e.preventDefault();
         e.returnValue = ""; // Requerido para funcionar no Chrome
       }
+      
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);

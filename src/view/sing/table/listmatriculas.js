@@ -74,11 +74,7 @@ function ListMatriculas({
     });
   };
 
-  useEffect(() => {
-    if (data && Array.isArray(data)) {
-      setFormandos(data);
-    }
-  }, [data]);
+ 
 
   const totalPages = Math.ceil(formandos.length / itemsPerPage);
   const handlePageChange = (page) => setCurrentPage(page);

@@ -33,3 +33,5 @@ export const FiltroEstatisticoturma="/turma/estatisticas";
 
 
 export const Matricula = "/turma/matricula";
+
+export const Buscardocuemntos="/documents/buscar-documentos";
