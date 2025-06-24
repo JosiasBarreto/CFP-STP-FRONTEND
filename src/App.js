@@ -16,19 +16,18 @@ import ListFormandos from "./view/page/indexformandos.js";
 import ConfirmsAcounts from "./view/login/confirmacounts.js";
 import RecuperarConta from "./view/register/RecuperarConta.js";
 import RedefinirSenha from "./view/register/RedefinirSenha.js";
-import Selectsformandos from "./view/page/selectformandos.js";
-import TurmaDashboard from "./view/page/turmadashboard.js";
-import ConfirmarMatricula from "./view/page/estruturapage/confirmar_matricula.js";
+import Selectsformandos from "./view/page/Seleccao/selectformandos.js";
+import TurmaDashboard from "./view/page/Turma/turmadashboard.js";
+import ConfirmarMatricula from "./view/page/Matricula/confirmar_matricula.js";
+import ProtectedRoute from "./api/routes/protected_routes.js";
 // Componente de Rota Protegida (para páginas que precisam de autenticação)
-const ProtectedRoute = ({ children }) => {
-  const token = localStorage.getItem("token");
-  return token ? children : <Navigate to="/" replace />;
-};
+
 // Componente para impedir login de usuários autenticados
 const PublicRoute = ({ element }) => {
   const token = localStorage.getItem("token");
   return token ? <Navigate to="/auth" /> : element;
 };
+
 
 function App() {
   return (
@@ -45,6 +44,7 @@ function App() {
         {/* Rota protegida: Só acessa se tiver token */}
         <Route path="/auth" element={<ProtectedRoute><DashboardLayout /> </ProtectedRoute>}>
           {/* Rotas dentro do DashboardLayout */}
+          <Route index element={<Navigate to="home" replace />} />
           <Route path="home" element={<Home />} />
           <Route path="register-user" element={<RegisterUser />} />
           <Route path="register-programas" element={<RegisterProgramas />} />

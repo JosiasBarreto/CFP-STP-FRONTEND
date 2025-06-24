@@ -24,13 +24,13 @@ import {
   BuscarInscricao,
   LastIdFormando,
   Selecaomassa,
-} from "../sing/function";
+} from "../../sing/function";
 
-import SelectField from "../../component/Selects/Index";
-import SelectFieldCurso from "../../component/Selects/selectcursos";
-import ListSelets from "../sing/table/listselectsformandos";
-import MyComponent from "../../component/InfoCard/CardsInfoselects";
-import Finalizar from "./confirmseletc";
+import SelectField from "../../../component/Selects/Index";
+import SelectFieldCurso from "../../../component/Selects/selectcursos";
+import ListSelets from "../../sing/table/listselectsformandos";
+import MyComponent from "../../../component/InfoCard/CardsInfoselects";
+import Finalizar from "../Turma/confirmseletc";
 import { useLocation } from "react-router-dom";
 function Selectsformandos() {
   const token = localStorage.getItem("token");
@@ -86,12 +86,11 @@ function Selectsformandos() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
+  
     setSearchParams((prev) => {
       let updatedParams = { ...prev, [name]: value };
-
+  
       if (name === "nome_programa") {
-        // Ao mudar o programa, resetar curso, ano e ação
         updatedParams = {
           ...updatedParams,
           nome_curso: "",
@@ -100,23 +99,27 @@ function Selectsformandos() {
           id_curso: 0,
         };
       }
-
+  
       if (name === "nome_curso") {
-        const cursoSelecionado = dtcursos.find((curso) => curso.nome === value);
+        // Agora value é o ID do curso
+        const cursoSelecionado = dtcursos.find((curso) => curso.id.toString() === value);
+  
         if (cursoSelecionado) {
           updatedParams = {
             ...updatedParams,
             nome_programa: cursoSelecionado.programa_nome,
+            nome_curso: cursoSelecionado.nome, // se ainda precisar salvar o nome
             ano_execucao: cursoSelecionado.ano_execucao,
             acao: cursoSelecionado.acao,
             id_curso: cursoSelecionado.id,
           };
         }
       }
-
+  
       return updatedParams;
     });
   };
+  
 
   const handleSearch = async () => {
     setLoading(true);
@@ -234,7 +237,7 @@ function Selectsformandos() {
               </Col>
               <Col md={4}>
                 <SelectFieldCurso
-                  value={searchParams.nome_curso}
+                  value={searchParams.curso_id}
                   onChange={handleChange}
                   isInvalid={false}
                   feedback=""

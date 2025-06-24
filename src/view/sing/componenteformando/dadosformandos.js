@@ -22,10 +22,11 @@ const DadosFormandos = ({ formik, preview, setPreview }) => {
         <Col md={7}>
           <Cabecalhos formik={formik} />
           <FloatingLabel
-            
             className="mb-4 w-auto"
             label="Nome do Completo"
+         
           >
+            
             <Form.Control
               className="input_left_color p-2"
               type="text"

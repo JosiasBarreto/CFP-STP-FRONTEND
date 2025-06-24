@@ -174,6 +174,21 @@ export const registarUser = async (uses, token) => {
         throw error; // Rejeita a promessa para permitir tratamento do erro no código que chamar a função
       });
   }
+  
+  export function fetchCursosQuantidade(token) {
+    return axios
+      .get(`${API_URL}/curso/quantidade`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => res.data)
+      .catch((error) => {
+        console.error("Erro ao buscar quantidade de cursos:", error);
+        throw error;
+      });
+  }
+  
   export function fetchCursosAno(token, data) {
     return axios
       .post(API_URL + GetCursof, data, {

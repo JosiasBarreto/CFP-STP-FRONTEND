@@ -34,8 +34,15 @@ const navigate = useNavigate();
   const { data, isLoading, isFetching } = useQuery({
     queryKey: Qprograma,
     queryFn: () => fetchProgramas(token),
+    refetchInterval: 300000, // 5 minutos
+    refetchOnWindowFocus: false, // Recarrega quando a janela ganha foco
+    refetchOnReconnect: true, // Recarrega quando a conexão é restabelecida
+    refetchOnMount: false, // Não recarrega ao montar o componente
+    
+   
   });
-  const { data: lastid } = useQuery({
+  
+  const { data: lastid  } = useQuery({
     queryKey: "lastid",
 
     queryFn: () => LastIdFormando(token),
@@ -102,8 +109,8 @@ const navigate = useNavigate();
       Object.keys(valoresConvertidos).forEach((campo) => {
         formik.setFieldValue(campo, valoresConvertidos[campo]);
       });
-    } else if (lastid) {
-      formik.setFieldValue("inscricao", lastid.id + 1);
+    } else {
+      formik.setFieldValue("inscricao", lastid + 1);
     }
   }, [dadosEditaveis, lastid]);
 
@@ -183,7 +190,7 @@ const navigate = useNavigate();
       motivo: "",
       arquivo_foto: "",
       data: new Date().toISOString().split("T")[0],
-      inscricao: lastid?.id || 0,
+
       processo: 0,
       programa: 0,
       telefone2: "",
@@ -222,20 +229,21 @@ const navigate = useNavigate();
 
     return cursos.filter((curso) => curso.programa_id === programaId);
   }, [cursos, formik.values.programa]);
-  useEffect(() => {
-    if (!dadosEditaveis) {
-      if (lastid) {
-        formik.setFieldValue("inscricao", lastid.id + 1);
-      }
-    }
-  }, [lastid]);
+ useEffect(() => {
+  if (!dadosEditaveis && lastid?.id) {
+    const novaInscricao = lastid;
+    console.log("Setando inscrição:", novaInscricao);
+    formik.setFieldValue("inscricao", novaInscricao);
+  }
+}, [lastid, dadosEditaveis, formik]);
+
 
   return (
     <>
       <div md={12} xs={12} className="p-3 bg-white border-1 rounded shadow ">
-        <Row className="d-flex justify-content-center align-items-center  mt-2 mb-3">
+        <Row className="d-flex justify-content-center align-items-center  mt-1 mb-3 " >
           <p className="text-success fw-bolder fs-5 border-2 border-bottom border-success">
-            INSCRIÇÃO DOS FORMANDOS
+            REGISTOS DOS FORMANDOS
           </p>
         </Row>
 
@@ -248,7 +256,7 @@ const navigate = useNavigate();
         <Row md={12} xs={12}>
           <Col md={4}>
             <FloatingLabel
-              controlId="formBasiNome"
+              
               className="mb-4 w-auto"
               label="Formação Profissional"
             >
@@ -271,7 +279,7 @@ const navigate = useNavigate();
           </Col>
           <Col md={4}>
             <FloatingLabel
-              controlId="formBasiNome"
+              
               className="mb-4 w-auto"
               label="Experiência Profissional"
             >
@@ -296,7 +304,7 @@ const navigate = useNavigate();
           </Col>
           <Col>
             <FloatingLabel
-              controlId="formBasiNome"
+              
               className="mb-4 w-auto"
               label="Motivo"
             >
@@ -320,7 +328,7 @@ const navigate = useNavigate();
         <Row md={12} xs={12}>
           <Col md={4}>
             <FloatingLabel
-              controlId="formBasiNome"
+              
               className="mb-4 w-auto"
               label="Programa"
             >
@@ -347,7 +355,7 @@ const navigate = useNavigate();
           </Col>
           <Col md={4}>
             <FloatingLabel
-              controlId="formBasiNome"
+              
               className="mb-4 w-auto"
               label="Curso Primeira Opção"
             >
@@ -401,7 +409,7 @@ const navigate = useNavigate();
           </Col>
           <Col md={4}>
             <FloatingLabel
-              controlId="formBasiNome"
+              
               className="mb-4 w-auto"
               label="Curso Segunda Opção"
             >
@@ -456,7 +464,7 @@ const navigate = useNavigate();
         <Row>
           <Col>
             <FloatingLabel
-              controlId="formBasiNome"
+              
               className="mb-4 w-auto"
               label="Observação"
             >

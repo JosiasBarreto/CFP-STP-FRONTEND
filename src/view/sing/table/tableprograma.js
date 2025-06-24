@@ -11,6 +11,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import { PaginatedList } from "../../../component/Panilist";
+import { FaClock, FaInfoCircle, FaLayerGroup, FaUser, FaUsers } from "react-icons/fa";
 
 function TablePrograma({
   carregarPrograma,
@@ -69,7 +70,7 @@ function TablePrograma({
   if (isLoading) return <div>Carregando...</div>;
 
   return (
-    <Row className="card-container-glass p-4 mb-1">
+    <Row className="bg-white p-4 mb-1 reorder-1 shadow-sm rounded">
       <div className="d-flex flex-wrap gap-3 align-items-center mb-1 card-header-controls">
         <Button className="fw-bolder" variant="success" onClick={funcao}>
           <FontAwesomeIcon icon={faPlus} className="me-2" bounce />Adicionar
@@ -117,42 +118,54 @@ function TablePrograma({
       <Row md={12} className="g-2">
         {currentItems.length > 0 ? (
           currentItems.map((user, index) => (
-            <Col key={user.id} md={6} className="mb-3">
-              <Card className="card-white h-100 text-success-emphasis shadow border border-2">
-                <Card.Body>
-                  <Card.Title>{user.nome}</Card.Title>
-
-                  <Card.Text>
-                    <strong>Duração:</strong> {user.duracao}
-                  </Card.Text>
-                  <Card.Text>
-                    <strong>Público Alvo:</strong> {user.publico_alvo}
-                  </Card.Text>
-                  <Card.Text>
-                    <strong>Descrição:</strong> {user.descricao}
-                  </Card.Text>
-                </Card.Body>
-                <Card.Footer className="d-flex justify-content-between">
-                  <Button
-                    variant="success"
-                    className="text-light"
-                    size="sm"
-                    onClick={() =>
-                      carregarPrograma(
-                        formik,
-                        user.id,
-                        user.nome,
-                        user.descricao,
-                        user.duracao,
-                        user.publico_alvo
-                      )
-                    }
-                  >
-                    <BsPencilSquare /> Editar
-                  </Button>
-                </Card.Footer>
-              </Card>
-            </Col>
+            <Col key={user.id} md={6} className="mb-4">
+            <Card className="h-100 shadow-lg border-0 rounded-4">
+              <Card.Header className="bg-success text-white d-flex justify-content-between align-items-center p-3 rounded-top">
+                <div className="d-flex align-items-center gap-2">
+                  <FaLayerGroup size={30} />
+                  <span className="fw-bold fs-5">{user.nome}</span>
+                </div>
+                </Card.Header>
+              <Card.Body className="p-4">
+               
+          
+                <Card.Text className="mb-2 d-flex align-items-start gap-2">
+                  <FaClock className="text-secondary mt-1" />
+                  <span><strong>Duração:</strong> {user.duracao} meses</span>
+                </Card.Text>
+          
+                <Card.Text className="mb-2 d-flex align-items-start gap-2">
+                  <FaUsers className="text-secondary mt-1" size={40} />
+                  <span><strong>Público Alvo:</strong> {user.publico_alvo}</span>
+                </Card.Text>
+          
+                <Card.Text className="d-flex align-items-start gap-2">
+                  <FaInfoCircle className="text-secondary mt-1" size={40}/>
+                  <span><strong>Descrição:</strong> {user.descricao}</span>
+                </Card.Text>
+              </Card.Body>
+          
+              <Card.Footer className="bg-light border-0 d-flex justify-content-end px-4 pb-3">
+                <Button
+                  variant="success"
+                  className="d-flex align-items-center gap-2 px-3 rounded-pill"
+                  size="sm"
+                  onClick={() =>
+                    carregarPrograma(
+                      formik,
+                      user.id,
+                      user.nome,
+                      user.descricao,
+                      user.duracao,
+                      user.publico_alvo
+                    )
+                  }
+                >
+                  <BsPencilSquare /> Editar
+                </Button>
+              </Card.Footer>
+            </Card>
+          </Col>
           ))
         ) : (
           <div className="no-results text-center w-100 py-5">

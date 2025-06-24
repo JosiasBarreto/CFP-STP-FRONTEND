@@ -61,6 +61,7 @@ const DataFotos = ({ formik, preview, setPreview }) => {
         </label>
 
         <Form.Control
+        
           type="file"
           name="arquivo_foto"
           id="arquivo_foto"

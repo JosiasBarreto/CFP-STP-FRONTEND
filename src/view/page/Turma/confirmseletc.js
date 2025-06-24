@@ -10,7 +10,7 @@ import {
   Container,
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { Selecaomassa } from "../sing/function";
+import { Selecaomassa } from "../../sing/function";
 import { toast } from "react-toastify";
 import {
   FaCheckCircle,

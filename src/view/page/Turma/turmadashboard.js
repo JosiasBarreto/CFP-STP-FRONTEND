@@ -1,5 +1,5 @@
 import React from "react";
-import Turmacabecalho from "./estruturapage/turmacabecalho";
+import Turmacabecalho from "./turmacabecalho";
  
 function TurmaDashboard () {
 

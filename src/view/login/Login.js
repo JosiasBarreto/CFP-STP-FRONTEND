@@ -9,6 +9,7 @@ import { FaUserCircle } from "react-icons/fa";
 import { ButtonS } from "../../component/Buttons.js/CustomButton";
 import { API_URL } from "../../api/urls";
 import { login_routes } from "../../api/routes";
+import { saveTokens } from "../../api/Conf/reflesk_Fuction/authService";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -28,8 +29,11 @@ const Login = () => {
       });
   
       if (response.status === 200) {
-        const { token, user } = response.data;
-        localStorage.setItem("token", token);
+        const { token, user, refresh_token} = response.data;
+        // Salva o token e o refresh_token no localStorage
+        
+        saveTokens(token, refresh_token);
+
         localStorage.setItem("user", JSON.stringify(user));
         toast.success("Login bem-sucedido!");
         navigate("/auth");

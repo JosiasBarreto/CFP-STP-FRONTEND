@@ -63,9 +63,10 @@ function SelectFieldCurso({
               ?.slice() // Criar uma cópia do array para evitar mutações no original
               .sort((a, b) => a.nome.localeCompare(b.nome)) // Ordenar por nome
               .map((item) => (
-                <option key={item.id} value={item.nome}>
-                  {item.nome} - {item.acao}
-                </option>
+                
+                <option key={item.id} value={item.id}>
+                {item.nome} - {item.acao}
+              </option>
               ))}
         </Form.Select>
         <Form.Control.Feedback type="invalid">{feedback}</Form.Control.Feedback>

@@ -118,13 +118,15 @@ function RegisterUser() {
     }
   };
 
-  const carregarUsuario = (formik, id, nome, email) => {
-    setShow(true);
+  const carregarUsuario = (formik, id, nome, email,fknivelacesso) => {
+    setShow(true); 
     setId(id);
     setButton("EDITAR");
     setVariant("success");
     formik.setFieldValue("nome", nome);
     formik.setFieldValue("email", email);
+    formik.setFieldValue("nivel", fknivelacesso); // Definindo um valor padrão para o nível de acesso
+    setFuncao("EDITAR");
   };
 
   const reset = () => {
@@ -265,8 +267,8 @@ function RegisterUser() {
                       placeholder="nivel"
                     >
                       <option>Escolha uma opção</option>
-                      <option value="1">Funcionario Utilizador</option>
-                      <option value="2">Administrador</option>
+                      <option value="2">Funcionario Utilizador</option>
+                      <option value="1">Administrador</option>
                       <option value="3">Master</option>
                     </Form.Select>
                     <Form.Control.Feedback type="invalid">

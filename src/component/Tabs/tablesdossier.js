@@ -8,6 +8,7 @@ import { saveAs } from 'file-saver';
 import { API_URL } from '../../api/urls';
 import BadgeDisplay from './ComponentesTabs/gerarcrachar';
 import DocumentosPorTurma from './ComponentesTabs/gerarcrachar';
+import CracharGenerations from './ComponentesTabs/Crachar';
 
 const TabsCustom = ({searchParams}) => {
   const [key, setKey] = useState('estatistica');
@@ -32,6 +33,9 @@ const TabsCustom = ({searchParams}) => {
  
 
   return (
+    <div className="bg-light p-3 rounded">
+      
+
     <Tabs
       id="custom-tabs"
       activeKey={key}
@@ -66,12 +70,14 @@ const TabsCustom = ({searchParams}) => {
         Conteúdo dos Quadros de Avaliação
       </Tab>
       <Tab eventKey="crachar" title="Crachár">
-      
+      <CracharGenerations   datas={searchParams}/>
       </Tab>
       <Tab eventKey="relatorio" title="Relatório">
         Conteúdo do Relatório
       </Tab>
     </Tabs>
+     
+    </div>
   );
 };
 

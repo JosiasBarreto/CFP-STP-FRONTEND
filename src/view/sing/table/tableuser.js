@@ -113,7 +113,7 @@ function TableUser({ carregarUsuario, formik, deletarUsuario, datas, isLoading, 
                                 <td>
                                     <Button
                                         variant='outline-success'
-                                        onClick={() => carregarUsuario(formik, user.id, user.nome, user.email)}
+                                        onClick={() => carregarUsuario(formik, user.id, user.nome, user.email, user.fknivelacesso)}
                                     >
                                         <BsPencilSquare /> Editar
                                     </Button>

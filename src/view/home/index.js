@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Container,
   Row,
@@ -7,6 +7,7 @@ import {
   Nav,
   Button,
   Image,
+  ToastContainer,
 } from "react-bootstrap";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import {
@@ -15,15 +16,34 @@ import {
   FaClipboard,
   FaBook,
   FaUserTie,
+  FaClipboardCheck,
+  FaUsersCog,
+  FaCheckSquare,
+  FaListUl,
+  FaUsers,
+  FaBookOpen,
+  FaLayerGroup,
 } from "react-icons/fa";
 import "./index.css";
-
+import UserMenu from "./userMenu";
+import { handleLogoutmethods } from "../login/logout";
 
 const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false); // Sidebar control
   const navigate = useNavigate();
   const location = useLocation();
+  const [user, setUser] = useState(null); // inicialmente null
 
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (error) {
+        console.error("Erro ao fazer parse do usuário:", error);
+      }
+    }
+  }, []);
   const handleToggleSidebar = () => {
     setSidebarOpen(!sidebarOpen); // Toggle sidebar
   };
@@ -34,7 +54,18 @@ const DashboardLayout = () => {
   const handleNavigate = (path) => {
     navigate(path);
     setSidebarOpen(!sidebarOpen); // ou handleToggleSidebar();
-  }; 
+  };
+  const handleLogout = () => {};
+
+  const handleEditProfile = () => {
+    // lógica para editar perfil
+    console.log("Editar perfil");
+  };
+
+  const handleChangePassword = () => {
+    // lógica para redefinir senha
+    console.log("Redefinir senha");
+  };
 
   return (
     <div className="dashboard-container">
@@ -56,7 +87,12 @@ const DashboardLayout = () => {
             </Col>
             <Col md={4}></Col>
             <Col md={4} className="user-info text-white">
-              <span>Usuário: João Silva</span>
+              <UserMenu
+                userName={user?.nome || "Utilizador"}
+                onLogout={() => handleLogoutmethods({ navigate })}
+                onEditProfile={handleEditProfile}
+                onChangePassword={handleChangePassword}
+              />
             </Col>
           </Row>
         </Container>
@@ -79,6 +115,7 @@ const DashboardLayout = () => {
                   ☰
                 </Button>
               </div>
+              {/* ======= INÍCIO / PRINCIPAL ======= */}
               <Nav.Link
                 className={`sidebar-link ${getNavLinkClass("home")}`}
                 onClick={() => handleNavigate("home")}
@@ -87,14 +124,15 @@ const DashboardLayout = () => {
                 {sidebarOpen && <span className="sidebar-text">Home</span>}
               </Nav.Link>
 
+              {/* ======= GESTÃO DE REGISTROS ======= */}
+              {sidebarOpen && <div className="sidebar-group-title">Gestão</div>}
+
               <Nav.Link
                 className={`sidebar-link ${getNavLinkClass("register-user")}`}
                 onClick={() => handleNavigate("register-user")}
               >
                 <FaUserPlus className="sidebar-icon" />
-                {sidebarOpen && (
-                  <span className="sidebar-text">Registrar Usuário</span>
-                )}
+                {sidebarOpen && <span className="sidebar-text">Utilizador</span>}
               </Nav.Link>
 
               <Nav.Link
@@ -103,20 +141,16 @@ const DashboardLayout = () => {
                 )}`}
                 onClick={() => handleNavigate("register-programas")}
               >
-                <FaClipboard className="sidebar-icon" />
-                {sidebarOpen && (
-                  <span className="sidebar-text">Registrar Programas</span>
-                )}
+                <FaLayerGroup className="sidebar-icon" />
+                {sidebarOpen && <span className="sidebar-text">Programas</span>}
               </Nav.Link>
 
               <Nav.Link
                 className={`sidebar-link ${getNavLinkClass("register-cursos")}`}
                 onClick={() => handleNavigate("register-cursos")}
               >
-                <FaBook className="sidebar-icon" />
-                {sidebarOpen && (
-                  <span className="sidebar-text">Registrar Cursos</span>
-                )}
+                <FaBookOpen className="sidebar-icon" />
+                {sidebarOpen && <span className="sidebar-text">Cursos</span>}
               </Nav.Link>
 
               <Nav.Link
@@ -125,23 +159,24 @@ const DashboardLayout = () => {
                 )}`}
                 onClick={() => handleNavigate("register-formandos")}
               >
-                <FaUserTie className="sidebar-icon" />
-                {sidebarOpen && (
-                  <span className="sidebar-text">Registrar Formandos</span>
-                )}
+                <FaUsers className="sidebar-icon" />
+                {sidebarOpen && <span className="sidebar-text">Inscrição</span>}
               </Nav.Link>
+
+              {/* ======= CANDIDATURA ======= */}
               {sidebarOpen && (
-                <div className="sidebar-group-title">Candidatura</div>
+                <div className="sidebar-group-title">Candidaturas</div>
               )}
+
               <Nav.Link
                 className={`sidebar-link ${getNavLinkClass(
                   "listar-inscricoes"
                 )}`}
                 onClick={() => handleNavigate("list-formandos")}
               >
-                <FaClipboard className="sidebar-icon" />
+                <FaListUl className="sidebar-icon" />
                 {sidebarOpen && (
-                  <span className="sidebar-text">Listagem Inscrições</span>
+                  <span className="sidebar-text">Pesquisar</span>
                 )}
               </Nav.Link>
 
@@ -151,29 +186,36 @@ const DashboardLayout = () => {
                 )}`}
                 onClick={() => handleNavigate("selecionar-candidatura")}
               >
-                <FaUserTie className="sidebar-icon" />
+                <FaCheckSquare className="sidebar-icon" />
                 {sidebarOpen && (
-                  <span className="sidebar-text">Selecionar Candidatura</span>
+                  <span className="sidebar-text">Selecionar</span>
                 )}
               </Nav.Link>
+
+              {/* ======= TURMAS E MATRÍCULAS ======= */}
+              {sidebarOpen && (
+                <div className="sidebar-group-title">Turmas & Matrículas</div>
+              )}
+
               <Nav.Link
                 className={`sidebar-link ${getNavLinkClass(
                   "selecionado-turma"
                 )}`}
                 onClick={() => handleNavigate("selecionado-turma")}
               >
-                <FaUserTie className="sidebar-icon" />
+                <FaUsersCog className="sidebar-icon" />
                 {sidebarOpen && <span className="sidebar-text">Turmas</span>}
               </Nav.Link>
+
               <Nav.Link
                 className={`sidebar-link ${getNavLinkClass(
                   "selecionar-matricula"
                 )}`}
                 onClick={() => handleNavigate("selecionar-matricula")}
               >
-                <FaUserTie className="sidebar-icon" />
+                <FaClipboardCheck className="sidebar-icon" />
                 {sidebarOpen && (
-                  <span className="sidebar-text">Matriculas</span>
+                  <span className="sidebar-text">Matrículas</span>
                 )}
               </Nav.Link>
             </Nav>
@@ -185,10 +227,10 @@ const DashboardLayout = () => {
               if (window.innerWidth < 768 && sidebarOpen) {
                 setSidebarOpen(false);
               }
-           
             }}
           >
             <Outlet />
+            <ToastContainer />
           </Col>
         </Row>
       </Container>

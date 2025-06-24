@@ -31,6 +31,7 @@ import {
 import { Qprograma } from "../../api/urls/nameQuery";
 import { ButtonS } from "../../component/Buttons.js/CustomButton";
 import TablePrograma from "./table/tableprograma";
+import { FaLayerGroup } from "react-icons/fa";
 
 function RegisterProgramas() {
   const token = localStorage.getItem("token");
@@ -168,27 +169,28 @@ function RegisterProgramas() {
   }, [data]);
 
   return (
-    <>
-      <div className="d-flex w-100 justify-content-between bg-white p-2 shadow mb-1 rounded">
-        <h4 className="text-success-emphasis">
-        
-          REGISTRO DE PROGRAMAS
+    <div className="container-fluid">
+      <Row className="d-flex  justify-content-between bg-success p-2 shadow mb-1 rounded">
+        <h4 className="text-white">
+        <FaLayerGroup className="m-2" />{""}
+          REGISTOS DOS PROGRAMAS DOS CURSOS 
         </h4>
       
-      </div>
+      </Row>
       
       <Modal
-        aria-labelledby="example-modal-sizes-title-lg"
+        aria-labelledby="example-modal-sizes-title-xl"
         show={show}
         onHide={addUser}
         backdrop="static"
         keyboard={false}
+        size="xl"
       >
         <Modal.Header
           className={`text-white bg-${variant} rounded-3 w-100 mb-3`}
         >
           <div>
-            <Modal.Title className="text-center">{funcao} PROGRAMA</Modal.Title>
+            <Modal.Title className="text-center"><FaLayerGroup className="m-2" /> {funcao} PROGRAMA</Modal.Title>
           </div>
         </Modal.Header>
 
@@ -321,7 +323,7 @@ function RegisterProgramas() {
         funcao={addUser}
         contagem={contagem}
       />
-    </>
+    </div>
   );
 }
 
