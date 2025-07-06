@@ -20,6 +20,7 @@ import Selectsformandos from "./view/page/Seleccao/selectformandos.js";
 import TurmaDashboard from "./view/page/Turma/turmadashboard.js";
 import ConfirmarMatricula from "./view/page/Matricula/confirmar_matricula.js";
 import ProtectedRoute from "./api/routes/protected_routes.js";
+import { FormadorForms } from "./view/sing/formador/index.js";
 // Componente de Rota Protegida (para páginas que precisam de autenticação)
 
 // Componente para impedir login de usuários autenticados
@@ -55,6 +56,7 @@ function App() {
           <Route path="selecionar-candidatura" element={<Selectsformandos />} />
           <Route path="selecionado-turma" element={<TurmaDashboard />} />
           <Route path="selecionar-matricula" element={<ConfirmarMatricula />} />
+          <Route path="registar-formador" element={<FormadorForms />} />
          
         </Route>
 

@@ -218,6 +218,17 @@ const DashboardLayout = () => {
                   <span className="sidebar-text">Matrículas</span>
                 )}
               </Nav.Link>
+              <Nav.Link
+                className={`sidebar-link ${getNavLinkClass(
+                  "registar-formador"
+                )}`}
+                onClick={() => handleNavigate("registar-formador")}
+              >
+                <FaClipboardCheck className="sidebar-icon" />
+                {sidebarOpen && (
+                  <span className="sidebar-text">Formador</span>
+                )}
+              </Nav.Link>
             </Nav>
           </Col>
 
