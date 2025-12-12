@@ -6,6 +6,7 @@ import {
   Button,
   Row,
   Col,
+  Form,
 } from 'react-bootstrap';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
@@ -85,101 +86,78 @@ export default function FormadorForm({ initialValues, onSuccess }) {
   };
 
   return (
+    <div className='bg-white p-4 rounded shadow-sm'>
     <Formik
       initialValues={safeInitialValues}
       validationSchema={validationSchema}
       onSubmit={(values) => mutation.mutate(values)}
     >
       {({ values, errors, touched, handleChange, setFieldValue }) => (
-        <FormikForm className="p-4">
-          <h5 className="mb-3">📋 Dados Pessoais</h5>
-          <Row>
-            {[
-              ['nome', 'Nome completo'],
-              ['numero_bi', 'Número BI'],
-              ['numero_nif', 'Número NIF'],
-              ['numero_iban', 'IBAN'],
-              ['banco', 'Banco'],
-              ['morada', 'Morada'],
-            ].map(([name, label]) => (
-              <Col md={6} key={name}>
-                <FloatingLabel label={label} className="mb-3">
-                  <BootstrapForm.Control
-                    name={name}
-                    value={values[name]}
-                    onChange={handleChange}
-                    isInvalid={touched[name] && !!errors[name]}
-                  />
-                  <BootstrapForm.Control.Feedback type="invalid">
-                    {errors[name]}
-                  </BootstrapForm.Control.Feedback>
-                </FloatingLabel>
-              </Col>
+        <FormikForm noValidate>
+        
+        <Row md={12} xs={12} className="mb-3">
+  {[
+    ['Control', 'text', 'nome', 'Nome completo', 6],
+    ['Control', 'number', 'numero_bi', 'Número BI', 2],
+    ['Control', 'number', 'numero_nif', 'Número NIF', 2],
+    ['Control', 'number', 'numero_iban', 'IBAN', 2],
+    ['Control', 'text', 'banco', 'Banco', 2],
+    ['Control', 'text', 'morada', 'Morada', 3],
+    ['Select', 'select', 'distrito', 'Distrito', 3, [
+      { value: '', label: 'Selecionar' },
+      { value: 'agua_grande', label: 'Água Grande' },
+      { value: 'lobata', label: 'Lobata' },
+      { value: 'me_zochi', label: 'Mé-Zóchi' }
+    ]],
+    ['Control', 'number', 'contacto', 'Contacto', 2],
+    ['Control', 'number', 'contacto_2', 'Outro Contacto', 2],
+    ['Control', 'date', 'data_nascimento', 'Data Nascimento', 3],
+    ['Select', 'select', 'genero', 'Género', 3, [
+      { value: '', label: 'Selecionar' },
+      { value: 'masculino', label: 'Masculino' },
+      { value: 'feminino', label: 'Feminino' }
+    ]],
+    ['Select', 'select', 'estado_civil', 'Estado Civil', 3, [
+      { value: '', label: 'Selecionar' },
+      { value: 'solteiro', label: 'Solteiro(a)' },
+      { value: 'casado', label: 'Casado(a)' },
+      { value: 'divorciado', label: 'Divorciado(a)' }
+    ]],
+  ].map(([form, type, name, label, col, options]) => (
+    <Col md={col} key={name}>
+      <FloatingLabel label={label} className="mb-4">
+        {form === 'Select' ? (
+          <BootstrapForm.Select
+            className="input_left_color p-2"
+            name={name}
+            value={values[name]}
+            onChange={handleChange}
+            isInvalid={touched[name] && !!errors[name]}
+          >
+            {options.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
             ))}
-
-            {/* Outros campos */}
-            <Col md={6}>
-              <FloatingLabel label="Data de nascimento" className="mb-3">
-                <BootstrapForm.Control
-                  type="date"
-                  name="data_nascimento"
-                  value={values.data_nascimento}
-                  onChange={handleChange}
-                  isInvalid={touched.data_nascimento && !!errors.data_nascimento}
-                />
-                <BootstrapForm.Control.Feedback type="invalid">
-                  {errors.data_nascimento}
-                </BootstrapForm.Control.Feedback>
-              </FloatingLabel>
-            </Col>
-
-            <Col md={6}>
-              <FloatingLabel label="Género" className="mb-3">
-                <BootstrapForm.Select
-                  name="genero"
-                  value={values.genero}
-                  onChange={handleChange}
-                  isInvalid={touched.genero && !!errors.genero}
-                >
-                  <option value="">Selecionar</option>
-                  <option value="masculino">Masculino</option>
-                  <option value="feminino">Feminino</option>
-                </BootstrapForm.Select>
-                <BootstrapForm.Control.Feedback type="invalid">
-                  {errors.genero}
-                </BootstrapForm.Control.Feedback>
-              </FloatingLabel>
-            </Col>
-
-            <Col md={6}>
-              <FloatingLabel label="Distrito" className="mb-3">
-                <BootstrapForm.Control
-                  name="distrito"
-                  value={values.distrito}
-                  onChange={handleChange}
-                  isInvalid={touched.distrito && !!errors.distrito}
-                />
-                <BootstrapForm.Control.Feedback type="invalid">
-                  {errors.distrito}
-                </BootstrapForm.Control.Feedback>
-              </FloatingLabel>
-            </Col>
-
-            <Col md={6}>
-              <FloatingLabel label="Estado civil" className="mb-3">
-                <BootstrapForm.Select
-                  name="estado_civil"
-                  value={values.estado_civil}
-                  onChange={handleChange}
-                >
-                  <option value="">Selecionar</option>
-                  <option value="solteiro">Solteiro(a)</option>
-                  <option value="casado">Casado(a)</option>
-                  <option value="divorciado">Divorciado(a)</option>
-                </BootstrapForm.Select>
-              </FloatingLabel>
-            </Col>
-          </Row>
+          </BootstrapForm.Select>
+        ) : (
+          <Form.Control
+            className="input_left_color p-2"
+            name={name}
+            type={type}
+            value={values[name]}
+            onChange={handleChange}
+            isInvalid={touched[name] && !!errors[name]}
+            placeholder={label}
+          />
+        )}
+        <BootstrapForm.Control.Feedback type="invalid">
+          {errors[name]}
+        </BootstrapForm.Control.Feedback>
+      </FloatingLabel>
+    </Col>
+  ))}
+</Row>
 
           <h5 className="mt-4">🎓 Formação e Experiência</h5>
           <Row>
@@ -295,5 +273,6 @@ export default function FormadorForm({ initialValues, onSuccess }) {
         </FormikForm>
       )}
     </Formik>
+    </div>
   );
 }

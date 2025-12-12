@@ -277,7 +277,7 @@ const TurmaCard = ({ turma }) => {
             <Col md={6} xs={6}>
               <div className="bg-secondary-subtle text-secondary rounded-3 p-2 text-center shadow-sm">
                 <div className="fw-semibold fs-6">
-                  {turma?.distrito.agua_grande || 0}
+                  {turma?.sexo.masculino || 0}
                 </div>
                 <div className="small text-muted">Masculino</div>
               </div>
@@ -285,7 +285,7 @@ const TurmaCard = ({ turma }) => {
             <Col md={6} xs={6}>
               <div className="bg-secondary-subtle text-secondary rounded-3 p-2 text-center shadow-sm">
                 <div className="fw-semibold fs-6">
-                  {turma?.distrito.agua_grande || 0}
+                  {turma?.sexo.feminino || 0}
                 </div>
                 <div className="small text-muted">Feminino</div>
               </div>

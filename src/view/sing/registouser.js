@@ -308,6 +308,7 @@ function RegisterUser() {
         isLoading={isLoading}
         isFetching={isFetching}
       />
+      
     </>
   );
 }

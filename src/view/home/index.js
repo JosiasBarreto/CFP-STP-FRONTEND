@@ -144,6 +144,16 @@ const DashboardLayout = () => {
                 <FaLayerGroup className="sidebar-icon" />
                 {sidebarOpen && <span className="sidebar-text">Programas</span>}
               </Nav.Link>
+              <Nav.Link
+                className={`sidebar-link ${getNavLinkClass(
+                  "registar-area"
+                )}`}
+                onClick={() => handleNavigate("registar-area")}
+              >
+                <FaLayerGroup className="sidebar-icon" />
+                {sidebarOpen && <span className="sidebar-text">Áreas de Formação</span>}
+              </Nav.Link>
+              
 
               <Nav.Link
                 className={`sidebar-link ${getNavLinkClass("register-cursos")}`}
@@ -244,6 +254,7 @@ const DashboardLayout = () => {
             <ToastContainer />
           </Col>
         </Row>
+        
       </Container>
     </div>
   );

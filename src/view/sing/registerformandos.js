@@ -97,7 +97,7 @@ const navigate = useNavigate();
         ocupacao: dadosEditaveis.ocupacao || "",
         motivo: dadosEditaveis.motivo_inscricao || "",
         arquivo_foto: dadosEditaveis.foto_url || "",
-        inscricao: dadosEditaveis.incricao_id || lastid?.id || 0,
+        inscricao: dadosEditaveis.incricao_id || lastid?.id+1 || 0,
         processo: dadosEditaveis.processo || "",
         programa: primeiraOpcao.id_programa ?? "",
         data: dadosEditaveis.data_criacao
@@ -110,7 +110,7 @@ const navigate = useNavigate();
         formik.setFieldValue(campo, valoresConvertidos[campo]);
       });
     } else {
-      formik.setFieldValue("inscricao", lastid + 1);
+      //formik.setFieldValue("inscricao", lastid + 1);
     }
   }, [dadosEditaveis, lastid]);
 
@@ -190,7 +190,7 @@ const navigate = useNavigate();
       motivo: "",
       arquivo_foto: "",
       data: new Date().toISOString().split("T")[0],
-
+      inscricao:  lastid?.id + 1 || 0, // Incrementa o último ID
       processo: 0,
       programa: 0,
       telefone2: "",
@@ -205,6 +205,17 @@ const navigate = useNavigate();
         await mutation.mutateAsync(values);
       } finally {
         setSubmitting(false);
+        // Limpa o formulário após o envio
+        
+        //resetarLocation();
+        // Atualiza o estado de dadosEditaveis para false após o registro
+        //setDadosEditaveis(false);
+        // Atualiza o estado de lastid para o novo ID registrado
+        ///LastIdFormando(token).then((newLastId) => {
+          //console.log("Novo ID registrado:", newLastId);
+          // Atualiza o estado de lastid com o novo ID
+         // formik.setFieldValue("inscricao", newLastId.id + 1); // Incrementa o novo ID
+        //});
         
       }
     },

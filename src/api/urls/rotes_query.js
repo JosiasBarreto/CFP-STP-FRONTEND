@@ -35,3 +35,12 @@ export const FiltroEstatisticoturma="/turma/estatisticas";
 export const Matricula = "/turma/matricula";
 
 export const Buscardocuemntos="/documents/buscar-documentos";
+
+
+
+
+export const CreatAreaFormacao="/areas";
+export const UpdateAreaformacao="/areas";
+export const GetAreasFormacao="/areas";
+
+export const GetDominioFormacao="/dominios";

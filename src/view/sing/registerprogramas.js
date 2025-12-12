@@ -32,6 +32,8 @@ import { Qprograma } from "../../api/urls/nameQuery";
 import { ButtonS } from "../../component/Buttons.js/CustomButton";
 import TablePrograma from "./table/tableprograma";
 import { FaLayerGroup } from "react-icons/fa";
+import RegisterAreasFormacao from "./areas_formacao/register_areas_formacao";
+import RegisterDominiosFormacao from "./areas_formacao/RegisterDominiosFormacao";
 
 function RegisterProgramas() {
   const token = localStorage.getItem("token");
@@ -323,6 +325,7 @@ function RegisterProgramas() {
         funcao={addUser}
         contagem={contagem}
       />
+    
     </div>
   );
 }

@@ -156,7 +156,7 @@ export const registarUser = async (uses, token) => {
       })
       .then((response) => response.data) // Retorna os dados da resposta
       .catch((error) => {
-        console.error("Erro ao buscar programa:", error);
+        console.error("Erro ao buscar numero de formando:", error);
         throw error; // Rejeita a promessa para permitir tratamento do erro no código que chamar a função
       });
   }

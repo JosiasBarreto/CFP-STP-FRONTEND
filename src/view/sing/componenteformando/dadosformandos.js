@@ -6,6 +6,7 @@ import {  useEffect } from "react";
 
 import Cabecalhos from "./dadoscabeçalhos";
 import DataFotos from "./datafotos";
+import { DISTRITOS, DISTRITOS_ORDENADOS } from "../../../data/data_distrit/distrito_stp";
 const DadosFormandos = ({ formik, preview, setPreview }) => {
   
 
@@ -123,6 +124,7 @@ const DadosFormandos = ({ formik, preview, setPreview }) => {
               <option value="">Selecione</option>
               <option value="C.I.C.C">C.I.C.C</option>
               <option value="Cédula">Cédula</option>
+              <option value="Cartão Residência">Cartão Residência</option>
               <option value="Passaporte">Passaporte</option>
             </Form.Select>
             <Form.Control.Feedback type="invalid">
@@ -244,32 +246,26 @@ const DadosFormandos = ({ formik, preview, setPreview }) => {
           </FloatingLabel>
         </Col>
         <Col md={3}>
-        <FloatingLabel
-        
-            className="mb-4 w-auto"
-            label="Distrito"
-          >
-            <Form.Select
-              className="input_left_color p-2"
-              name="distrito"
-              id="distrito"
-              value={formik.values.distrito}
-              onChange={formik.handleChange}
-              isInvalid={formik.touched.distrito && formik.errors.distrito}
-            >
-              <option value="">Selecione o Distrito</option>
-              <option value="Água Grande">Água Grande</option>
-              <option value="Lobata">Lobata</option>
-              <option value="Mé-zochi">Mé-zochi</option>
-              <option value="Lembá">Lembá</option>
-              <option value="Cantagalo">Cantagalo</option>
-              <option value="Caué">Caué</option>
-              <option value="RAP">Região Autônoma de Príncipe</option>
-            </Form.Select>
-            <Form.Control.Feedback type="invalid">
-              {formik.errors.distrito}
-            </Form.Control.Feedback>
-          </FloatingLabel>
+        <FloatingLabel className="mb-4 w-auto" label="Distrito">
+  <Form.Select
+    className="input_left_color p-2"
+    name="distrito"
+    id="distrito"
+    value={formik.values.distrito}
+    onChange={formik.handleChange}
+    isInvalid={formik.touched.distrito && formik.errors.distrito}
+  >
+    <option value="">Selecione o Distrito</option>
+    {DISTRITOS_ORDENADOS.map((distrito) => (
+      <option key={distrito.value} value={distrito.value}>
+        {distrito.label}
+      </option>
+    ))}
+  </Form.Select>
+  <Form.Control.Feedback type="invalid">
+    {formik.errors.distrito}
+  </Form.Control.Feedback>
+</FloatingLabel>
           <FloatingLabel
          
             className="mb-4 w-auto"
