@@ -27,6 +27,7 @@ function ListFormandos() {
     queryKey: ["lastid"],
     queryFn: () => LastIdFormando(token),
   });
+  
 
   const { data: datas, isLoading } = useQuery({
     queryKey: ["Qformandos", searchParams],

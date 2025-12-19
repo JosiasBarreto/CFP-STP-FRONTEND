@@ -2,6 +2,8 @@ import React from "react";
 
 import { ToastContainer } from "react-toastify";
 import FormadorForm from "./FormadorForm";
+import FormadorDetail from "../../page/Formador/formador/FormadorDetail";
+import InscricaoFormador from "../../page/Formador/formador/Inscricao/InscricaoFormador";
 
 export function FormadorForms() {
     const defaultInitialValues = {
@@ -26,7 +28,7 @@ export function FormadorForms() {
       };
   return (
     <div>
-      <FormadorForm  />
+      <InscricaoFormador />
       <ToastContainer />
     </div>
   );

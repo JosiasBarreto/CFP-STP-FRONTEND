@@ -1,5 +1,5 @@
 export const personalFields = [
-    ['Control', 'text', 'codigo', 'Codigo do Formador', 25],
+    ['Control', 'text', 'codigo', 'Codigo do Formador', 5],
    
     ['Control', 'date', 'data_incricao', 'Data Inicio', 25],
     ['Control', 'text', 'nome', 'Nome completo', 75],
