@@ -1,11 +1,13 @@
-// Novo componente: SectionDadosPessoais.js
+// File: src/view/sing/componenteformando/dadoscabeçalhos.js
+
 import React from "react";
 import { Col, FloatingLabel, Form, Row } from "react-bootstrap";
 
 const Cabecalhos = ({ formik }) => {
+  
   return (
     <>
-      <Row md={12} xs={12} className="bg-light d-flex justify-content-center  ">
+      <Row md={12} xs={12} className="d-flex justify-content-center mb-3">
           <Col md={3}>
            <FloatingLabel
              
@@ -13,7 +15,7 @@ const Cabecalhos = ({ formik }) => {
               label="Inscrição"
             >
               <Form.Control
-                cl assName="input_left_color"
+                cl assName=""
                 type="number"
                 name="inscricao"
                 id="inscricao"
@@ -35,11 +37,11 @@ const Cabecalhos = ({ formik }) => {
               label="Processo"
             >
               <Form.Control
-                className="input_left_color p-2"
+                className=" p-2"
                 type="text"
                 name="processo"
                 id="processo"
-                disabled
+            
                 placeholder="Digite o Número do Processo"
                 value={formik.values.processo}
                 onChange={formik.handleChange}
@@ -57,7 +59,7 @@ const Cabecalhos = ({ formik }) => {
               label="Data de Inscrição"
             >
               <Form.Control
-                className="input_left_color p-2"
+                className=" p-2"
                 type="date"
                 name="data"
                 id="data"
@@ -79,7 +81,7 @@ const Cabecalhos = ({ formik }) => {
               label="Ano de Lectivo"
             >
               <Form.Control
-                className="input_left_color p-2"
+                className=" p-2"
                 type="text"
                 name="anoexecucao"
                 id="anoexecucao"

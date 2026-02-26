@@ -274,6 +274,50 @@ const TurmaCard = ({ turma }) => {
             </Col>
           </Row>
           <Row className="mt-3 g-2 bg-light">
+            <Col md={3} xs={6}>
+              <div className="bg-primary-subtle text-primary rounded-3 p-2 text-center shadow-sm">
+                <div className="fw-semibold fs-6">
+                  {turma?.habilitacao.hab_4_6 || 0}
+                </div>
+                <div className="small text-muted">Ensino Básico</div>
+              </div>
+            </Col>
+            <Col md={3} xs={6}>
+              <div className="bg-primary-subtle text-primary rounded-3 p-2 text-center shadow-sm">
+                <div className="fw-semibold fs-6">
+                  {turma?.habilitacao.hab_7_9 || 0}
+                </div>
+                <div className="small text-muted">Ensino Secundario 1º Circulo</div>
+
+              </div>
+            </Col>
+            <Col md={3} xs={6}>
+              <div className="bg-primary-subtle text-primary rounded-3 p-2 text-center shadow-sm">
+                <div className="fw-semibold fs-6">
+                  {turma?.habilitacao.hab_10_12 || 0}
+                </div>
+                <div className="small text-muted">Ensino Secundario 2º Circulo</div>
+              </div>
+            </Col>
+            <Col md={3} xs={6}>
+              <div className="bg-primary-subtle text-primary rounded-3 p-2 text-center shadow-sm">
+                <div className="fw-semibold fs-6">
+                  {turma?.habilitacao.hab_media || 0}
+                </div>
+                <div className="small text-muted">Formação média</div>
+              </div>
+            </Col>
+            <Col md={3} xs={6}>
+              <div className="bg-primary-subtle text-primary rounded-3 p-2 text-center shadow-sm">
+                <div className="fw-semibold fs-6">
+                  {turma?.habilitacao.hab_superior || 0}
+                </div>
+                <div className="small text-muted">Ensino Superior </div>
+              </div>
+            </Col>
+            
+          </Row>
+          <Row className="mt-3 g-2 bg-light">
             <Col md={6} xs={6}>
               <div className="bg-secondary-subtle text-secondary rounded-3 p-2 text-center shadow-sm">
                 <div className="fw-semibold fs-6">

@@ -1,0 +1,8 @@
+export function formatarData(dataISO) {
+  if (!dataISO) return "";
+
+  const [ano, mes, dia] = dataISO.split("-");
+  const anoCurto = ano.slice(-2); // Pega os últimos dois dígitos do ano
+
+  return `${dia}/${mes}/${anoCurto}`;
+}

@@ -19,3 +19,23 @@ export const buscarDocumentosCrachar = async (token, datar) => {
 
   return response.data;
 };
+
+
+export const gerarcontrato = async (datas) => {
+  const response = await axios.post(
+    `${API_URL}/documents/gerar-contratos`,
+    datas,
+    { responseType: "blob" }
+  );
+
+  return response;
+};
+export const gerarseguros = async (datas) => {
+  const response = await axios.post(
+    `${API_URL}/documents/gerar-seguro`,
+    datas,
+    { responseType: "blob" }
+  );
+
+  return response;
+};

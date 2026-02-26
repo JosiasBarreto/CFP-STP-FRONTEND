@@ -9,6 +9,8 @@ import { API_URL } from '../../api/urls';
 import BadgeDisplay from './ComponentesTabs/gerarcrachar';
 import DocumentosPorTurma from './ComponentesTabs/gerarcrachar';
 import CracharGenerations from './ComponentesTabs/Crachar';
+import Gerarcontrato from './ComponentesTabs/Gerar_contratos';
+import GerarSeguro from './ComponentesTabs/Gerar_seguros';
 
 const TabsCustom = ({searchParams}) => {
   const [key, setKey] = useState('estatistica');
@@ -19,16 +21,7 @@ const TabsCustom = ({searchParams}) => {
  
   
   const gerarDocumentos = async () => {
-      try {
-          const response = await axios.post(API_URL+'/documents/gerar-crachas', searchParams, {
-              responseType: 'blob'  // importante!
-          });
-  
-         
-      } catch (err) {
-          console.error("Erro ao gerar documento:", err);
-          alert("Erro ao gerar documento.");
-      }
+      
   };
  
 
@@ -59,9 +52,10 @@ const TabsCustom = ({searchParams}) => {
       </Tab>
       <Tab eventKey="contrato" title="Contrato">
         Conteúdo do Contrato
+        <Gerarcontrato datas={searchParams}/>
       </Tab>
       <Tab eventKey="seguro" title="Seguro">
-      <DocumentosPorTurma turmaId={4} datas={searchParams}/>
+      <GerarSeguro datas={searchParams}/>
       </Tab>
       <Tab eventKey="ficha-sumario" title="Ficha Sumário">
         Conteúdo da Ficha Sumário

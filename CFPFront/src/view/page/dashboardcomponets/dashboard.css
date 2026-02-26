@@ -1,0 +1,28 @@
+.summary-card {
+    height: 100%;
+    transition: all 0.3s ease;
+  }
+  
+  .summary-card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .icon-box {
+    font-size: 2rem;
+  }
+  
+  @media (max-width: 576px) {
+    .icon-box {
+      font-size: 1.5rem;
+    }
+  
+    .summary-card .card-title {
+      font-size: 1rem;
+    }
+  
+    .summary-card .card-text {
+      font-size: 0.9rem;
+    }
+  }
+  

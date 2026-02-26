@@ -1,4 +1,4 @@
-// Novo componente: SectionDadosPessoais.js
+// File: src/view/sing/componenteformando/dadosformandos.js
 import React from "react";
 import { Col, FloatingLabel, Form, Row } from "react-bootstrap";
 

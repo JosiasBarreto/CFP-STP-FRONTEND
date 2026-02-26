@@ -1,0 +1,8 @@
+/* Exemplo de realce para a aba ativa */
+.nav-tabs .nav-link.active {
+    background-color: #d1e7dd; /* Cor de fundo para aba ativa */
+    color: #0f5132;            /* Cor do texto da aba ativa */
+    border-color: #badbcc;     /* Cor da borda */
+    font-weight: bold;         /* Opcional: deixar texto em negrito */
+  }
+  

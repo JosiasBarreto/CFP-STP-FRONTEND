@@ -1,3 +1,6 @@
+// Este componente é responsável por registrar e editar os formandos. Ele utiliza o Formik para gerenciar o estado do formulário, Yup para validação, React Query para buscar dados de programas e cursos, e React Bootstrap para a interface. O componente também lida com a lógica de pré-visualização de fotos e exibe mensagens de feedback durante o processo de registro ou edição.
+
+//registerformandos.js
 import React from "react";
 import { FiSave, FiEdit, FiXCircle } from "react-icons/fi";
 import { useState, useEffect } from "react";

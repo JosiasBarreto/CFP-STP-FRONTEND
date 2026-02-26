@@ -1,4 +1,4 @@
-// data/distritos.js
+
 const DISTRITOS = [
     { value: "Água Grande", label: "Água Grande" },
     { value: "Caué", label: "Caué" },

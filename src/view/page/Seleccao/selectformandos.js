@@ -332,14 +332,14 @@ function Selectsformandos() {
                     label: "Não Selecionados",
                     name: "nselecionados",
                     value: nselecionados,
-                    variant: "danger",
+                    variant: "warning",
                   },
              
                   {
                     label: "Desistidos",
                     name: "desistidos",
                     value: desistidos,
-                    variant: "warning",
+                    variant: "danger",
                   },
                   
                 ].map(({ label, name, value, variant }) => (

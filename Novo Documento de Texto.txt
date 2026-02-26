@@ -1,0 +1,370 @@
+import React, { useState, useEffect, useMemo } from "react";
+import { BsPencilSquare, BsTrash } from "react-icons/bs";
+import {
+  Table,
+  Button,
+  Form,
+  Card,
+  Col,
+  Dropdown,
+  Modal,
+  Row,
+  Image,
+  Badge,
+} from "react-bootstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faSortAlphaDown,
+  faArrowDownZA,
+  faList,
+  faUserSlash,
+} from "@fortawesome/free-solid-svg-icons";
+
+import { PaginatedList } from "../../../component/Panilist";
+import axios from "axios";
+import { API_URL } from "../../../api/urls";
+import { useNavigate } from "react-router-dom";
+import SituacaoCandidatura from "../../../component/Selects/SelectionInscrits";
+
+function ListSelets({
+  data,
+  searchParams,
+  isLoading,
+  isFetching,
+  situacoes,
+  setSituacao,
+  filtros,
+}) {
+  const [formandos, setFormandos] = useState([]);
+  const [order, setOrder] = useState(null);
+  const [itemsPerPage, setItemsPerPage] = useState(20);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [formandoSelecionado, setFormandoSelecionado] = useState(null);
+  const [mostrarModal, setMostrarModal] = useState(false);
+
+  const navigate = useNavigate();
+
+  /* ------------------------- EFFECT ------------------------- */
+
+  useEffect(() => {
+    if (Array.isArray(data)) {
+      setFormandos(data);
+    }
+  }, [data]);
+
+  /* ------------------------- UTIL ------------------------- */
+
+  const normalize = (text) =>
+    text
+      ?.toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+
+  const getRowClass = (status) => {
+    const s = normalize(status);
+
+    if (s === "selecionado") return "table-primary";
+    if (s === "desistiu") return "table-danger";
+    if (s === "nao selecionado") return "table-warning";
+    if (s === "suplente") return "table-info";
+
+    return "";
+  };
+
+  const calcularIdade = (dataNascimento) => {
+    if (!dataNascimento) return "---";
+
+    const birth = new Date(dataNascimento);
+    const today = new Date();
+    let age = today.getFullYear() - birth.getFullYear();
+    const m = today.getMonth() - birth.getMonth();
+
+    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+      age--;
+    }
+
+    return age;
+  };
+
+  /* ------------------------- PAGINAÇÃO ------------------------- */
+
+  const totalPages = Math.ceil(formandos.length / itemsPerPage);
+
+  const currentItems = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return formandos.slice(start, start + itemsPerPage);
+  }, [formandos, currentPage, itemsPerPage]);
+
+  /* ------------------------- ORDENAÇÃO ------------------------- */
+
+  const orderByField = (field) => {
+    const sorted = [...formandos].sort((a, b) =>
+      a[field]?.localeCompare(b[field])
+    );
+
+    const isAsc = order === "asc";
+    setFormandos(isAsc ? sorted.reverse() : sorted);
+    setOrder(isAsc ? "desc" : "asc");
+  };
+
+  /* ------------------------- SEARCH ------------------------- */
+
+  const handleSearch = (event) => {
+    const searchTerm = event.target.value.toLowerCase();
+    const filtered = data?.filter((f) =>
+      f.nome.toLowerCase().includes(searchTerm)
+    );
+    setFormandos(filtered || []);
+  };
+
+  /* ------------------------- MODAL ------------------------- */
+
+  const handleVerFormando = async (id) => {
+    try {
+      const { data } = await axios.get(`${API_URL}/formando/buscarid/${id}`);
+      setFormandoSelecionado(data);
+      setMostrarModal(true);
+    } catch (error) {
+      console.error("Erro ao carregar dados:", error);
+    }
+  };
+
+  const handleEditar = () => {
+    navigate("/auth/register-formandos", {
+      state: { dadosFormando: formandoSelecionado },
+    });
+  };
+
+  /* ------------------------- LOADING ------------------------- */
+
+  if (isLoading) {
+    return (
+      <div className="text-center py-5 text-muted">
+        Carregando dados...
+      </div>
+    );
+  }
+  const OrderName = () => {
+    const sorted = [...formandos].sort((a, b) => a.nome.localeCompare(b.nome));
+    setFormandos(order === "asc" ? sorted.reverse() : sorted);
+    setOrder(order === "asc" ? "desc" : "asc");
+  };
+  const Orderdistrito = () => {
+    const sorted = [...formandos].sort((a, b) =>
+      a.distrito.localeCompare(b.distrito)
+    );
+    setFormandos(order === "asc" ? sorted.reverse() : sorted);
+    setOrder(order === "asc" ? "desc" : "asc");
+  };
+
+  const ListAll = () => {
+    if (data) setFormandos(data);
+  };
+ const handleItemsPerPageChange = (selectedValue) => {
+    setItemsPerPage(parseInt(selectedValue, 10));
+    setCurrentPage(1);
+  };
+  return (
+    <>
+      <Card className="shadow rounded p-2 mb-2">
+        {/* LEGENDA DE CORES */}
+        <Card.Body className="py-2">
+          <Row md={12} xs={12}>
+            <Col md={7} className="d-flex gap-3">
+              <Dropdown onSelect={handleItemsPerPageChange}>
+                <Dropdown.Toggle variant="outline-success" id="dropdown-basic">
+                  Items Pág.
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  <Dropdown.Item eventKey="20">20</Dropdown.Item>
+                  <Dropdown.Item eventKey="30">30</Dropdown.Item>
+                  <Dropdown.Item eventKey="60">60</Dropdown.Item>
+                  <Dropdown.Item eventKey="100">100</Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+
+              <Button variant="outline-success" onClick={ListAll}>
+                <FontAwesomeIcon icon={faList} /> Resultados
+              </Button>
+
+              <Button variant="outline-success" onClick={OrderName}>
+                <FontAwesomeIcon
+                  icon={order === "asc" ? faSortAlphaDown : faArrowDownZA}
+                />{" "}
+                Nome
+              </Button>
+              <Button variant="outline-success" onClick={Orderdistrito}>
+                <FontAwesomeIcon
+                  icon={order === "asc" ? faSortAlphaDown : faArrowDownZA}
+                />{" "}
+                Distrito
+              </Button>
+
+              {isFetching && <p className="text-success m-0">Carregando...</p>}
+            </Col>
+            <Col className="">
+              <Form>
+                <Form.Control
+                  type="text"
+                  placeholder="Pesquisar Candidato por Nome"
+                  className=" w-100"
+                  aria-label="Search"
+                  onChange={handleSearch}
+                />
+              </Form>
+            </Col>
+          </Row>
+        </Card.Body>
+
+        {/* TABELA */}
+        <div className="table-responsive">
+          <Table striped bordered hover size="sm">
+            <thead className="table-success text-center">
+              <tr>
+                <th>Inscr.</th>
+                <th>Nome</th>
+                <th>Idade</th>
+                <th>Distrito</th>
+                <th>Curso 1ª</th>
+                <th>Curso 2ª</th>
+                <th>Opção</th>
+                {!filtros && <th>Situação</th>}
+              </tr>
+            </thead>
+
+            <tbody>
+              {currentItems.length > 0 ? (
+                currentItems.map((item) => {
+                  const cursoSelecionado =
+                    item.cursos_inscritos.find(
+                      (c) =>
+                        String(c.curso_id) ===
+                        String(searchParams.id_curso)
+                    );
+
+                  const statusAlterado = situacoes.find(
+                    (s) => s.idInscricao === item.incricao_id
+                  )?.status;
+
+                  const statusFinal =
+                    statusAlterado ||
+                    cursoSelecionado?.status ||
+                    "";
+
+                  return (
+                    <tr
+                      key={item.incricao_id}
+                      className={getRowClass(statusFinal)}
+                    >
+                      <td>{item.incricao_id}</td>
+                      <td>{item.nome}</td>
+                      <td>{calcularIdade(item.data_nascimento)}</td>
+                      <td>{item.distrito}</td>
+
+                      <td>
+                        {item.cursos_inscritos
+                          .filter((c) => c.opcao === "1")
+                          .map((c) => `${c.nome_curso} (${c.status})`)
+                          .join(", ") || "---"}
+                      </td>
+
+                      <td>
+                        {item.cursos_inscritos
+                          .filter((c) => c.opcao === "2")
+                          .map((c) => `${c.nome_curso} (${c.status})`)
+                          .join(", ") || "---"}
+                      </td>
+
+                      <td>
+                        <Button
+                          size="sm"
+                          variant="outline-success"
+                          onClick={() =>
+                            handleVerFormando(item.incricao_id)
+                          }
+                        >
+                          Ver
+                        </Button>
+                      </td>
+
+                      {!filtros && (
+                        <td>
+                          <SituacaoCandidatura
+                            items={item}
+                            idCurso={cursoSelecionado?.curso_id ?? null}
+                            status={cursoSelecionado?.status ?? ""}
+                            id_curso_incricao={
+                              cursoSelecionado?.id_curso_incricao ?? ""
+                            }
+                            situacoes={situacoes}
+                            setSituacoes={setSituacao}
+                          />
+                        </td>
+                      )}
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td colSpan="8" className="text-center py-4">
+                    <FontAwesomeIcon
+                      icon={faUserSlash}
+                      className="text-warning mb-2"
+                    />
+                    <div>Nenhum Candidato encontrado</div>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </Table>
+        </div>
+
+        <PaginatedList
+          totalPages={totalPages}
+          currentPage={currentPage}
+          handlePageChange={setCurrentPage}
+        />
+      </Card>
+
+      {/* MODAL */}
+      <Modal
+        show={mostrarModal}
+        onHide={() => setMostrarModal(false)}
+        size="xl"
+        centered
+      >
+        <Modal.Header closeButton className="bg-success text-white">
+          <Modal.Title>Ficha do Formando</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          {formandoSelecionado && (
+            <div>
+              <h5 className="fw-bold">
+                {formandoSelecionado.nome}
+              </h5>
+              <p>Processo: {formandoSelecionado.processo}</p>
+              <p>Email: {formandoSelecionado.email}</p>
+            </div>
+          )}
+        </Modal.Body>
+
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={() => setMostrarModal(false)}
+          >
+            Fechar
+          </Button>
+
+          <Button variant="primary" onClick={handleEditar}>
+            <BsPencilSquare className="me-1" />
+            Editar
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
+  );
+}
+
+export default ListSelets;

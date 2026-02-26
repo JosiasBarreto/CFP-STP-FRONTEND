@@ -1,0 +1,28 @@
+.turma-card-wrapper {
+    position: relative;
+    transition: transform 0.3s ease;
+  }
+  
+  .turma-card-wrapper:hover .turma-card {
+    transform: scale(1.02);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
+  }
+  
+  .overlay-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 10;
+    pointer-events: auto;
+  }
+  
+  .turma-card-wrapper:hover .overlay-button {
+    opacity: 1;
+  }
+  .turma-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  

@@ -1,0 +1,35 @@
+@import "variables";
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+// Modo Claro
+.light-theme {
+  --bg: #{map-get($light-theme, bg)};
+  --text: #{map-get($light-theme, text)};
+  --primary: #{map-get($light-theme, primary)};
+}
+
+// Modo Escuro
+.dark-theme {
+  --bg: #{map-get($dark-theme, bg)};
+  --text: #{map-get($dark-theme, text)};
+  --primary: #{map-get($dark-theme, primary)};
+}
+
+// Estilizar os ícones e botões
+.icon {
+  color: var(--primary);
+}
+
+button {
+  background-color: var(--primary);
+  border: none;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
