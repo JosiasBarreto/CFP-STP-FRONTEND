@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { API_URL } from "../../urls";
 import { PutFormandos } from "../../urls/rotes_query";
 import { formatarData } from "../../../view/sing/configureData";
+import Swal from "sweetalert2";
 
 export const useEditarFormando = (token, setPreview, formik, setDadosEditaveis, resetarDados) => {
   return useMutation({
@@ -68,14 +69,21 @@ export const useEditarFormando = (token, setPreview, formik, setDadosEditaveis, 
       return response.data;
     },
     onSuccess: () => {
-      toast.success("Formando editado com sucesso!");
-      resetarDados()
+      Swal.fire({
+        icon: "success",
+        title: "Formando editado com sucesso!",
+      });
+      resetarDados();
       setPreview(null);
-      setDadosEditaveis({})
-      formik.resetForm()
+      setDadosEditaveis({});
+      formik.resetForm();
     },
     onError: (error) => {
-      toast.error(error.response?.data?.erro || "Erro ao editar formando.");
+      Swal.fire({
+        icon: "error",
+        title: "Erro ao editar formando.",
+        text: error.response?.data?.erro || "Erro ao editar formando.",
+      });
     },
   });
 };

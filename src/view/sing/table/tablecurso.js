@@ -1,8 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { BsPencilSquare, BsTrash } from "react-icons/bs";
-import { Table, Button, Form, Card, Col, Dropdown } from "react-bootstrap";
+import {
+  Table,
+  Button,
+  Form,
+  Card,
+  Col,
+  Dropdown,
+  Badge,
+} from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import './index.css'
+import "./index.css";
 import {
   faSortAlphaDown,
   faArrowDownZA,
@@ -13,7 +21,7 @@ import { PaginatedList } from "../../../component/Panilist";
 import { formatarData } from "../configureData";
 
 function TableCurso({
-carregarCurso,
+  carregarCurso,
   formik,
   deletarCurso,
   datas,
@@ -48,7 +56,32 @@ carregarCurso,
       setOrder("asc");
     }
   };
-
+  const OrderPrograma = () => {
+    if (order === "asc") {
+      setUsers(
+        [...users].sort((a, b) =>
+          a.programa_nome.localeCompare(b.programa_nome)
+        )
+      );
+      setOrder("desc");
+    } else {
+      setUsers(
+        [...users].sort((a, b) =>
+          b.programa_nome.localeCompare(a.programa_nome)
+        )
+      );
+      setOrder("asc");
+    }
+  };
+  const OrderAcao = () => {
+    if (order === "asc") {
+      setUsers([...users].sort((a, b) => a.acao.localeCompare(b.acao)));
+      setOrder("desc");
+    } else {
+      setUsers([...users].sort((a, b) => b.acao.localeCompare(a.acao)));
+      setOrder("asc");
+    }
+  };
   const ListAll = () => {
     setUsers(datas);
   };
@@ -70,7 +103,7 @@ carregarCurso,
   };
 
   return (
-    <Card className="card-glass shadow rounded p-2 mb-2">
+    <Card className="card-glass shadow rounded p-2 mb-2 bg-white">
       <div className="d-flex hstack gap-3 p-1">
         <Dropdown onSelect={(eventKey) => handleItemsPerPageChange(eventKey)}>
           <Dropdown.Toggle variant="outline-success" id="dropdown-basic">
@@ -91,6 +124,12 @@ carregarCurso,
           />{" "}
           Curso
         </Button>
+        <Button variant="outline-success" onClick={OrderPrograma}>
+          <FontAwesomeIcon icon={faSortAlphaDown} /> Programa
+        </Button>
+        <Button variant="outline-success" onClick={OrderAcao}>
+          <FontAwesomeIcon icon={faArrowDownZA} /> Acção
+        </Button>
         {isFetching && <p className="text-success">Carregando...</p>}
         <Col>
           <Form>
@@ -109,57 +148,78 @@ carregarCurso,
         responsive
         hover
         table-bordered
-        
         bordered
         className=" table table-sm table-striped table-hover text-center "
-        style={{ fontSize: "0.9rem"}}
+        style={{ fontSize: "0.9rem" }}
         striped
         size="sm"
-
       >
-        <thead className="bg-success text-light text-center">
+        <thead className="bg-success text-light ">
           <tr>
-            <th>Acção</th>
-            <th>Nome</th>
+            <th>
+              Acção{" "}
+              <Badge bg="light" className="text-success" onClick={OrderAcao}>
+                <FontAwesomeIcon icon={faArrowDownZA} />
+              </Badge>
+            </th>
+            <th>
+              Nome
+              <Badge bg="light" className="text-success" onClick={OrderName}>
+                <FontAwesomeIcon
+                  icon={order === "asc" ? faSortAlphaDown : faArrowDownZA}
+                />
+              </Badge>
+            </th>
+            <th>
+              Programa{" "}
+              <Badge
+                bg="light"
+                className="text-success"
+                onClick={OrderPrograma}
+              >
+                <FontAwesomeIcon
+                  icon={order === "asc" ? faSortAlphaDown : faArrowDownZA}
+                />
+              </Badge>
+            </th>
             <th>Horario</th>
             <th>Carga Hor.</th>
             <th>Data Inicio</th>
             <th>Data Término</th>
             <th>Ano</th>
-            <th>Programa</th>
-            <th>Eliminar</th>
+            
+
+            <th>Acção</th>
           </tr>
         </thead>
         <tbody className="text-size-sm text-start">
           {currentItems.length > 0 ? (
             currentItems.map((user, index) => (
               <tr key={index}>
-                <td>{user.acao}</td>
+                <td>{user.acao} </td>
                 <td>{user.nome}</td>
-                <td>{user.horario} - {user.horario_termino}</td>
+                <td>{user.programa_nome}</td>
+                <td>
+                  {user.horario} - {user.horario_termino}
+                </td>
                 <td>{user.duracao} Horas</td>
                 <td>{formatarData(user.data_inicio)}</td>
                 <td>{formatarData(user.data_termino)}</td>
                 <td>{user.ano_execucao}</td>
-                <td>{user.programa_nome}</td>
-                <td>
+                
+                <td className="d-flex gap-2 justify-content-center">
                   <Button
                     variant="outline-success"
-                    onClick={() =>
-                      carregarCurso(
-                        formik,
-                        user
-                      )
-                    }
+                    onClick={() => carregarCurso(formik, user)}
                   >
-                    <BsPencilSquare /> Editar
+                    <BsPencilSquare />
                   </Button>
-               
+
                   <Button
                     variant="outline-danger"
                     onClick={() => deletarCurso(user.id)}
                   >
-                    <BsTrash /> Eliminar
+                    <BsTrash />
                   </Button>
                 </td>
               </tr>
@@ -169,7 +229,6 @@ carregarCurso,
               <td colSpan="9" className="text-center text-warning">
                 <FontAwesomeIcon icon={faList} />{" "}
                 <strong>Nenhum curso encontrado</strong>
-               
               </td>
             </tr>
           )}

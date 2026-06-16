@@ -35,6 +35,7 @@ const Login = () => {
         saveTokens(token, refresh_token);
 
         localStorage.setItem("user", JSON.stringify(user));
+        
         toast.success("Login bem-sucedido!");
         navigate("/auth");
       }

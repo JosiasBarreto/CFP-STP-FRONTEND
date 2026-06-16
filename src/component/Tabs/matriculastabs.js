@@ -38,11 +38,9 @@ const DsitribesMatriculas = ({
       const classificados = classificarFormandos(data);
       setDataClassificada(classificados);
     }
-    
   }, [data]);
 
   const tabsConfig = [
-    
     {
       key: "matriculados",
       title: (
@@ -54,7 +52,6 @@ const DsitribesMatriculas = ({
       data: dataClassificada.matriculados,
       textButton: "Cancelar Matricula",
       variante: "danger",
-  
     },
     {
       key: "pendentes",
@@ -79,7 +76,6 @@ const DsitribesMatriculas = ({
       data: dataClassificada.nao_matriculados,
       textButton: "Confirmar Matricula",
       variante: "success",
-     
     },
     {
       key: "desistentes",
@@ -107,41 +103,57 @@ const DsitribesMatriculas = ({
   ];
 
   return (
-    
-    <Tabs defaultActiveKey="dossier" id="tabs-dossier" className="mb-1 bg-white rounded" fill >
-      <Tab eventKey="dossier" title={<>
-          <FaUsers className="me-2" />
-          Dossier
-        </>}>
-        <TabsCustom searchParams={searchParams}/>
+    <Tabs
+      defaultActiveKey="dossier"
+      id="tabs-dossier"
+      className="mb-1 bg-white rounded"
+      fill
+    >
+      <Tab
+        eventKey="dossier"
+        title={
+          <>
+            <FaUsers className="me-2" />
+            Dossier
+          </>
+        }
+      >
+        <TabsCustom
+          searchParams={searchParams}
+          datas={dataClassificada.matriculados}
+        />
       </Tab>
-    {tabsConfig.map((tab) => (
-      <Tab eventKey={tab.key} title={tab.title} key={tab.key} className="mb-1 bg-white text-success " >
-        {isFetching ? (
-          <div className="d-flex justify-content-center align-items-center" style={{ height: "200px" }}>
-            <Spinner animation="border" variant="success" />
-          </div>
-        ) : (
-          <ListMatriculas
-            data={tab.data}
-            isLoading={isLoading}
-            searchParams={searchParams}
-            situacoes={situacoes}
-            setSituacao={setSituacao}
-            filtros={filtros}
-            ToggleStatusFilter={ToggleStatusFilter}
-            setFiltros={setFiltros}
-            textButton={tab.textButton}
-            variante={tab.variante}
-          />
-        )}
-      </Tab>
-    ))}
-    
-      
-  </Tabs>
-  
-     
+      {tabsConfig.map((tab) => (
+        <Tab
+          eventKey={tab.key}
+          title={tab.title}
+          key={tab.key}
+          className="mb-1 bg-white text-success "
+        >
+          {isFetching ? (
+            <div
+              className="d-flex justify-content-center align-items-center"
+              style={{ height: "200px" }}
+            >
+              <Spinner animation="border" variant="success" />
+            </div>
+          ) : (
+            <ListMatriculas
+              data={tab.data}
+              isLoading={isLoading}
+              searchParams={searchParams}
+              situacoes={situacoes}
+              setSituacao={setSituacao}
+              filtros={filtros}
+              ToggleStatusFilter={ToggleStatusFilter}
+              setFiltros={setFiltros}
+              textButton={tab.textButton}
+              variante={tab.variante}
+            />
+          )}
+        </Tab>
+      ))}
+    </Tabs>
   );
 };
 

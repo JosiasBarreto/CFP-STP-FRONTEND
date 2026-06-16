@@ -40,6 +40,18 @@ export const criarFormador = async (data) => {
   const res = await axios.post(API_URL + "/api/formadores", data);
   return res.data;
 };
+//@formador_bp.route("/<int:id>", methods=["PUT"])
+//enviar id do formador no cabeçalho e o dados no corpo
+export const atualizarFormador = async (id, data) => {
+  try {
+        const res = await axios.put(API_URL + `/api/formadores/${id}`, data);
+        return res.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
 
 
 export const atualizarDominiosFormador = async ({ formadorId, dominios }) => {

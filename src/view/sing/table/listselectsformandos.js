@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { BsPencilSquare, BsTrash } from "react-icons/bs";
+import { BsFillXCircleFill, BsPencilSquare, BsTrash } from "react-icons/bs";
 import {
   Table,
   Button,
@@ -133,7 +133,21 @@ function ListSelets({
         </p>
       </div>
     );
-
+    const calcularIdade = (dataNascimento) => {
+      if (!dataNascimento) return "---";
+  
+      const birth = new Date(dataNascimento);
+      const today = new Date();
+      let age = today.getFullYear() - birth.getFullYear();
+      const m = today.getMonth() - birth.getMonth();
+  
+      if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+        age--;
+      }
+  
+      return age;
+    };
+  
   const handleVerFormando = async (id) => {
     try {
       const { data } = await axios.get(API_URL + `/formando/buscarid/${id}`);
@@ -149,6 +163,21 @@ function ListSelets({
       <div className="fw-bold">{valor || "---"}</div>
     </div>
   );
+  const normalize = (text) =>
+    text
+      ?.toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+  const getRowClass = (status) => {
+    const s = normalize(status);
+
+    if (s === "selecionado") return "table-primary";
+    if (s === "desistiu") return "table-danger";
+    if (s === "nao selecionado") return "table-warning";
+    if (s === "suplente") return "table-info";
+
+    return "";
+  };
 
   return (
     <>
@@ -215,6 +244,7 @@ function ListSelets({
                 <th>Nome</th>
                 <th>Idade</th>
                 <th>Sexo</th>
+                
                 <th>Identif</th>
                 <th>Distrito</th>
                 <th>Morada</th>
@@ -225,112 +255,113 @@ function ListSelets({
                 {!filtros && <th>Situação</th>}
               </tr>
             </thead>
-            <tbody className="table-group-divider text-size-sm text-start">
-              {currentItems.length > 0 ? (
-                currentItems.map((item, index) => (
-                  <tr key={item.incricao_id}>
-                    <td>{item.incricao_id}</td>
-                    <td>{item.nome}</td>
-                    <td>
-                      {(() => {
-                        const birth = new Date(item.data_nascimento);
-                        const today = new Date();
-                        let age = today.getFullYear() - birth.getFullYear();
-                        const m = today.getMonth() - birth.getMonth();
-                        if (
-                          m < 0 ||
-                          (m === 0 && today.getDate() < birth.getDate())
-                        ) {
-                          age--;
-                        }
-                        return age;
-                      })()}
-                    </td>
-                    <td>{item.sexo}</td>
-                    <td>{item.bi}</td>
-                    <td>{item.distrito}</td>
-                    <td>{item.zona}</td>
-                    <td>
-                      <>
-                        {item.contacto && item.contacto.length >= 7 && (
-                          <span>{item.contacto}</span>
-                        )}
-                        {item.contacto_opcional &&
-                          item.contacto_opcional.length >= 7 && (
-                            <span>{" / " + item.contacto_opcional}</span>
-                          )}
-                      </>
-                    </td>
+            <tbody>
+  {currentItems.length > 0 ? (
+    currentItems.map((item) => {
+      const cursoSelecionado = item.cursos_inscritos.find(
+        (c) => String(c.curso_id) === String(searchParams.id_curso)
+      );
 
-                    <td>
-                      {item.cursos_inscritos.length > 0
-                        ? item.cursos_inscritos
-                            .filter((c) => c.opcao === "1")
-                            .map((c) => `${c.nome_curso} (${c.status})`)
-                            .join(", ")
-                        : "---"}
-                    </td>
-                    <td>
-                      
-                      {item.cursos_inscritos.length > 0
-                        ? item.cursos_inscritos
-                            .filter((c) => c.opcao === "2")
-                            .map((c) => `${c.nome_curso} (${c.status})`)
-                            .join(", ")
-                        : "---"}
-                    </td>
+      const statusAlterado = situacoes.find(
+        (s) => s.idInscricao === item.incricao_id
+      )?.status;
 
-                    <td>
-                      <Button
-                        variant="outline-success"
-                        onClick={() => handleVerFormando(item.incricao_id)}
-                      >
-                        Ver
-                      </Button>
-                    </td>
-                    {!filtros && (
-                      <td>
-                        {(() => {
-                          const cursoSelecionado = item.cursos_inscritos.find(
-                            (c) =>
-                              String(c.curso_id) ===
-                              String(searchParams.id_curso)
-                          );
+      const statusFinal =
+        statusAlterado || cursoSelecionado?.status || "";
 
-                          return (
-                            <SituacaoCandidatura
-                              items={item}
-                              idCurso={cursoSelecionado?.curso_id ?? null}
-                              status={cursoSelecionado?.status ?? ""}
-                              id_curso_incricao={
-                                cursoSelecionado?.id_curso_incricao ?? ""
-                              }
-                              situacoes={situacoes}
-                              setSituacoes={setSituacao}
-                            />
-                          );
-                        })()}
-                      </td>
-                    )}
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="11" className="text-center">
-                    <div className="d-flex flex-column align-items-center py-3">
-                      <FontAwesomeIcon
-                        icon={faUserSlash}
-                        size="2x"
-                        className="text-warning mb-2"
-                      />
-                      <h5 className="text-warning fw-bold">
-                        Nenhum Candidato encontrado
-                      </h5>
-                    </div>
-                  </td>
-                </tr>
+      return (
+        <tr
+          key={item.incricao_id}
+          className={getRowClass(statusFinal)} // ✅ Mantém as cores
+        >
+          <td>{item.incricao_id}</td>
+          <td>{item.nome}</td>
+
+          {/* Idade */}
+          <td>{calcularIdade(item.data_nascimento)}</td>
+
+          {/* Sexo */}
+          <td>{item.sexo}</td>
+
+          {/* Identificação */}
+          <td>{item.bi}</td>
+
+          {/* Distrito */}
+          <td>{item.distrito}</td>
+
+          {/* Morada */}
+          <td>{item.zona}</td>
+
+          {/* Contacto */}
+          <td>
+            <>
+              {item.contacto && item.contacto.length >= 7 && (
+                <span>{item.contacto}</span>
               )}
-            </tbody>
+              {item.contacto_opcional &&
+                item.contacto_opcional.length >= 7 && (
+                  <span>{" / " + item.contacto_opcional}</span>
+                )}
+            </>
+          </td>
+
+          {/* Curso 1ª Opção */}
+          <td>
+            {item.cursos_inscritos
+              ?.filter((c) => c.opcao === "1")
+              .map((c) => `${c.nome_curso} (${c.status})`)
+              .join(", ") || "---"}
+          </td>
+
+          {/* Curso 2ª Opção */}
+          <td>
+            {item.cursos_inscritos
+              ?.filter((c) => c.opcao === "2")
+              .map((c) => `${c.nome_curso} (${c.status})`)
+              .join(", ") || "---"}
+          </td>
+
+          {/* Botão Ver */}
+          <td>
+            <Button
+              size="sm"
+              variant="outline-success"
+              onClick={() => handleVerFormando(item.incricao_id)}
+            >
+              Ver
+            </Button>
+          </td>
+
+          {/* Situação */}
+          {!filtros && (
+            <td>
+              <SituacaoCandidatura
+                items={item}
+                idCurso={cursoSelecionado?.curso_id ?? null}
+                status={cursoSelecionado?.status ?? ""}
+                id_curso_incricao={
+                  cursoSelecionado?.id_curso_incricao ?? ""
+                }
+                situacoes={situacoes}
+                setSituacoes={setSituacao}
+              />
+            </td>
+          )}
+        </tr>
+      );
+    })
+  ) : (
+    <tr>
+      <td colSpan="12" className="text-center py-4">
+        <FontAwesomeIcon
+          icon={faUserSlash}
+          className="text-warning mb-2"
+        />
+        <div>Nenhum Candidato encontrado</div>
+      </td>
+    </tr>
+  )}
+</tbody>
           </Table>
         </div>
 
@@ -627,7 +658,7 @@ function ListSelets({
 
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setMostrarModal(false)}>
-            <BsTrash className="me-1" /> Fechar
+            <BsFillXCircleFill className="me-1" /> Fechar
           </Button>
           <Button variant="primary" onClick={() => handleEditar()}>
             <BsPencilSquare className="me-1" />

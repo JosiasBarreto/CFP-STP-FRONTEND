@@ -1,541 +1,648 @@
-import { Form, Button, Row, Col, Spinner, FloatingLabel, Toast } from "react-bootstrap";
+import { useEffect } from "react";
+import { Form, Button, Row, Col, Spinner, FloatingLabel } from "react-bootstrap";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import Swal from "sweetalert2";
 import { useMutation } from "@tanstack/react-query";
-import { criarFormador } from "../../../../../../api/formador.api";
+import {
+  atualizarFormador,
+  criarFormador,
+} from "../../../../../../api/formador.api";
+
+
 import { toast, ToastContainer } from "react-toastify";
-
-
-
 
 /**
  * Step 1 – Dados pessoais do Formador
- * Cria o formador e devolve o ID
  */
-export default function StepDados({ onSuccess }) {
-  const mutation = useMutation({
-    mutationFn: criarFormador,
+export default function StepDados({
+  onSuccess,
+  formador = null,
+}) {
+  /* =========================================================
+      INITIAL VALUES
+  ========================================================= */
   
+  const initialValues = {
+    id: formador?.id || null,
+
+    inscricao: formador?.inscricao || "",
+    codigo: formador?.codigo || "",
+    nome: formador?.nome || "",
+    numero_bi: formador?.numero_bi || "",
+    numero_nif: formador?.numero_nif || "",
+    data_nascimento:
+      formador?.data_nascimento || "",
+    genero: formador?.genero || "",
+    estado_civil:
+      formador?.estado_civil || "",
+    morada: formador?.morada || "",
+    distrito: formador?.distrito || "",
+
+    banco: formador?.banco || "",
+    numero_iban:
+      formador?.numero_iban || "",
+    numero_nib:
+      formador?.numero_nib || "",
+
+    formacao_pedagogica:
+      formador?.formacao_pedagogica ||
+      false,
+
+    observacao:
+      formador?.observacao || "",
+
+    contacto_telefonico:
+      formador?.contacto_telefonico ||
+      "",
+
+    email: formador?.email || "",
+
+    outros_contactos:
+      formador?.outros_contactos || "",
+
+    data_criacao:
+      formador?.data_criacao ||
+      new Date()
+        .toISOString()
+        .split("T")[0],
+
+    hora_criacao:
+      formador?.hora_criacao ||
+      new Date()
+        .toISOString()
+        .split("T")[1]
+        .split(".")[0],
+  };
+
+  /* =========================================================
+      MUTATION
+  ========================================================= */
+
+  const mutation = useMutation({
+    mutationFn: (data) => {
+      if (data.id) {
+        return atualizarFormador(
+          data.id,
+          data
+        );
+      }
+
+      return criarFormador(data);
+    },
+
     onSuccess: (data) => {
       const formadorId = data.data.id;
-  
-      toast.success("Dados pessoais carregados com sucesso!");
-  
+
+      toast.success(
+        "Dados salvos com sucesso!"
+      );
+
       onSuccess(formadorId);
     },
-  
+
     onError: (error) => {
       Swal.fire({
         icon: "error",
         title: "Erro ao salvar dados",
         text:
           error?.response?.data?.erro ||
-          error?.response?.data?.mensagem ||
+          error?.response?.data
+            ?.mensagem ||
           "Erro inesperado",
       });
     },
   });
-  
+
+  /* =========================================================
+      FORMIK
+  ========================================================= */
 
   const formik = useFormik({
-    initialValues: {
-        inscricao:"",
-      codigo: "",
-      nome: "",
-      numero_bi: "",
-      numero_nif: "",
-      data_nascimento: "",
-      genero: "",
-      estado_civil: "",
-      morada: "",
-      distrito: "",
-      banco: "",
-      numero_iban: "",
-      numero_nib: "",
-      formacao_pedagogica: false,
-      observacao: "",
-        numero_telefone: "",
-        email: "",
-        outros_contactos: "",
-        data_criacao: new Date().toISOString().split('T')[0],
-        hora_criacao: new Date().toISOString().split('T')[1].split('.')[0],
-    },
-// --- IGNORE ---
-//quero pegar a data e hora atual e guardar na base de dados,
-
+    initialValues,
 
     validationSchema: Yup.object({
-        inscricao: Yup.string(),
-        data_criacao: Yup.date(),
-      codigo: Yup.string(),
-      nome: Yup.string().required("Nome é obrigatório"),
-      numero_bi: Yup.string().required("BI é obrigatório"),
-      numero_nif: Yup.string().required("NIF é obrigatório"),
-      data_nascimento: Yup.date().required("Data de nascimento obrigatória"),
-      genero: Yup.string().required("Selecione o género"),
-      morada: Yup.string().required("Morada é obrigatória"),
-      distrito: Yup.string().required("Distrito é obrigatório"),
-      banco: Yup.string(),
-      numero_iban: Yup.string(),
-      numero_nib: Yup.string(),
-        numero_telefone: Yup.string().required("Número de telefone é obrigatório"),
-        email: Yup.string(),
-        outros_contactos: Yup.string(),
-        observacao: Yup.string(),
+      nome: Yup.string().required(
+        "Nome é obrigatório"
+      ),
 
-        
+      numero_bi:
+        Yup.string().required(
+          "BI é obrigatório"
+        ),
+
+      numero_nif:
+        Yup.string(),
+
+      data_nascimento:
+        Yup.date().required(
+          "Data de nascimento obrigatória"
+        ),
+
+      genero: Yup.string().required(
+        "Selecione o género"
+      ),
+
+      morada: Yup.string().required(
+        "Morada é obrigatória"
+      ),
+
+      distrito: Yup.string().required(
+        "Distrito é obrigatório"
+      ),
+
+      contacto_telefonico:
+        Yup.string().required(
+          "Telefone obrigatório"
+        ),
     }),
 
     onSubmit: (values) => {
       mutation.mutate(values);
     },
   });
+  useEffect(() => {
+    const bi = formik.values.numero_bi;
   
+    if (!bi || bi.length < 5) return;
+  
+    const ano = new Date().getFullYear();
+  
+    formik.setFieldValue(
+      "codigo",
+      `CFP${bi}/FP-${ano}`
+    );
+  }, [formik.values.numero_bi]);
 
   return (
     <Form onSubmit={formik.handleSubmit}>
-    <ToastContainer />
+      <ToastContainer />
+
+      {/* =========================================================
+          LINHA 1
+      ========================================================= */}
+
       <Row className="mb-2">
-      <Col md={2}>
-        <FloatingLabel
-              
-              className="mb-4 w-auto"
-              label="Inscrição Número"
-            >
-            <Form.Control
-            placeholder="Inscrição Número"
-             className="input_left_color p-2"
-              name="inscricao"
-              value={formik.values.inscricao}
-              onChange={formik.handleChange}
-              isInvalid={formik.touched.inscricao && formik.errors.inscricao}
-            />
-            <Form.Control.Feedback type="invalid">
-              {formik.errors.inscricao}
-            </Form.Control.Feedback>
-          
-          </FloatingLabel>
-        </Col>
         <Col md={2}>
-        <FloatingLabel
-              
-              className="mb-4 w-auto"
-              label="Código do Formador"
-            >
+          <FloatingLabel
+            label="Inscrição Número"
+            className="mb-4"
+          >
             <Form.Control
-            placeholder="Código do Formador"
-             className="input_left_color p-2"
-              name="codigo"
-              value={formik.values.codigo}
-              onChange={formik.handleChange}
-              isInvalid={formik.touched.codigo && formik.errors.codigo}
+              className="input_left_color p-2"
+              placeholder="Inscrição Número"
+              name="id"
+              disabled
+              value={
+                formik.values.id
+              }
+              onChange={
+                formik.handleChange
+              }
             />
-            <Form.Control.Feedback type="invalid">
-              {formik.errors.codigo}
-            </Form.Control.Feedback>
-          
-          </FloatingLabel>
-        </Col>
-        <Col md={2}>
-        <FloatingLabel
-              
-              className="mb-4 w-auto"
-              label="Data de Inscrição"
-            >
-        
-            <Form.Control
-             className="input_left_color p-2"
-              type="date"
-              name="data_criacao"
-              value={formik.values.data_criacao}
-              onChange={formik.handleChange}
-              isInvalid={formik.touched.data_criacao && formik.errors.data_criacao}
-            />
-            <Form.Control.Feedback type="invalid">
-              {formik.errors.data_criacao}
-            </Form.Control.Feedback>
-          </FloatingLabel>
-        </Col>
-        <Col md={2}>
-        <FloatingLabel
-              
-              className="mb-4 w-auto"
-              label="Hora de Inscrição"
-            >
-        
-            <Form.Control
-             className="input_left_color p-2"
-              type="Time"
-              name="hora_criacao"
-              value={formik.values.hora_criacao}
-              onChange={formik.handleChange}
-              isInvalid={formik.touched.hora_criacao && formik.errors.hora_criacao}
-            />
-            <Form.Control.Feedback type="invalid">
-              {formik.errors.hora_criacao}
-            </Form.Control.Feedback>
           </FloatingLabel>
         </Col>
 
-        <Col md={8}>
-        <FloatingLabel
-              
-              className="mb-4 w-auto"
-              label="Nome Completo"
-            >
-        
+        <Col md={2}>
+        <FloatingLabel label="Código do Formador" className="mb-4">
+  <Form.Control
+    className="input_left_color p-2"
+    placeholder="Código"
+    name="codigo"
+    value={formik.values.codigo}
+    onChange={formik.handleChange}
+    readOnly
+  />
+</FloatingLabel>
+        </Col>
+
+        <Col md={2}>
+          <FloatingLabel
+            label="Data de Inscrição"
+            className="mb-4"
+          >
             <Form.Control
-             className="input_left_color p-2"
-             placeholder="Nome Completo"
+              type="date"
+              className="input_left_color p-2"
+              name="data_criacao"
+              value={
+                formik.values.data_criacao
+              }
+              onChange={
+                formik.handleChange
+              }
+            />
+          </FloatingLabel>
+        </Col>
+
+        <Col md={2}>
+          <FloatingLabel
+            label="Hora de Inscrição"
+            className="mb-4"
+          >
+            <Form.Control
+              type="time"
+              className="input_left_color p-2"
+              name="hora_criacao"
+              value={
+                formik.values.hora_criacao
+              }
+              onChange={
+                formik.handleChange
+              }
+            />
+          </FloatingLabel>
+        </Col>
+
+        
+      </Row>
+
+      {/* =========================================================
+          LINHA 2
+      ========================================================= */}
+
+      <Row className="mb-2">
+      <Col md={4}>
+          <FloatingLabel
+            label="Nome Completo"
+            className="mb-4"
+          >
+            <Form.Control
+              className="input_left_color p-2"
+              placeholder="Nome Completo"
               name="nome"
               value={formik.values.nome}
-              onChange={formik.handleChange}
-              isInvalid={formik.touched.nome && formik.errors.nome}
+              onChange={
+                formik.handleChange
+              }
+              isInvalid={
+                formik.touched.nome &&
+                formik.errors.nome
+              }
             />
+
             <Form.Control.Feedback type="invalid">
               {formik.errors.nome}
             </Form.Control.Feedback>
-      </FloatingLabel>
+          </FloatingLabel>
         </Col>
         <Col md={2}>
-        <FloatingLabel
-              
-              className="mb-4 w-auto"
-              label="Genero"
-            >
-        
+          <FloatingLabel
+            label="Género"
+            className="mb-4"
+          >
             <Form.Select
-             className="input_left_color p-2"
+              className="input_left_color p-2"
               name="genero"
-              value={formik.values.genero}
-              onChange={formik.handleChange}
-              isInvalid={formik.touched.genero && formik.errors.genero}
+              value={
+                formik.values.genero
+              }
+              onChange={
+                formik.handleChange
+              }
+              isInvalid={
+                formik.touched.genero &&
+                formik.errors.genero
+              }
             >
-              <option value="">Selecione</option>
-              <option value="Masculino">Masculino</option>
-              <option value="Feminino">Feminino</option>
+              <option value="">
+                Selecione
+              </option>
+
+              <option value="Masculino">
+                Masculino
+              </option>
+
+              <option value="Feminino">
+                Feminino
+              </option>
             </Form.Select>
+
             <Form.Control.Feedback type="invalid">
-                {formik.errors.genero}
+              {formik.errors.genero}
             </Form.Control.Feedback>
           </FloatingLabel>
         </Col>
+
         <Col md={2}>
-        <FloatingLabel
-        className="mb-4 w-auto"
-              label="Estado Civil"
-            >
+          <FloatingLabel
+            label="Estado Civil"
+            className="mb-4"
+          >
             <Form.Select
-             className="input_left_color p-2"
+              className="input_left_color p-2"
               name="estado_civil"
-
-                value={formik.values.estado_civil}
-                onChange={formik.handleChange}
-                isInvalid={formik.touched.estado_civil && formik.errors.estado_civil}
+              value={
+                formik.values.estado_civil
+              }
+              onChange={
+                formik.handleChange
+              }
             >
-                <option value="">Selecione</option>
-                <option value="Solteiro(a)">Solteiro(a)</option>
-                <option value="Casado(a)">Casado(a)</option>
-                <option value="Divorciado(a)">Divorciado(a)</option>
-                <option value="Viúvo(a)">Viúvo(a)</option>
+              <option value="">
+                Selecione
+              </option>
+
+              <option value="Solteiro(a)">
+                Solteiro(a)
+              </option>
+
+              <option value="Casado(a)">
+                Casado(a)
+              </option>
+
+              <option value="Divorciado(a)">
+                Divorciado(a)
+              </option>
+
+              <option value="Viúvo(a)">
+                Viúvo(a)
+              </option>
             </Form.Select>
-            <Form.Control.Feedback type="invalid">
-              {formik.errors.estado_civil}
-            </Form.Control.Feedback>
           </FloatingLabel>
         </Col>
-      </Row>
 
-      <Row className="mb-2">
-      <Col md={2}>
-        <FloatingLabel
-              
-              className="mb-4 w-auto"
-              label="Data de Nascimento"
-            >
-        
+        <Col md={2}>
+          <FloatingLabel
+            label="Data de Nascimento"
+            className="mb-4"
+          >
             <Form.Control
-             className="input_left_color p-2"
               type="date"
+              className="input_left_color p-2"
               name="data_nascimento"
-              value={formik.values.data_nascimento}
-              onChange={formik.handleChange}
-              isInvalid={formik.touched.data_nascimento && formik.errors.data_nascimento}
+              value={
+                formik.values
+                  .data_nascimento
+              }
+              onChange={
+                formik.handleChange
+              }
+              isInvalid={
+                formik.touched
+                  .data_nascimento &&
+                formik.errors
+                  .data_nascimento
+              }
             />
+
             <Form.Control.Feedback type="invalid">
-              {formik.errors.data_nascimento}
-            </Form.Control.Feedback>
-          </FloatingLabel>
-        </Col>
-        <Col md={2}>
-        <FloatingLabel
-              
-              className="mb-4 w-auto"
-              label="Nº do Bilhete de Identidade"	
-            >
-        
-            <Form.Control
-             className="input_left_color p-2"
-              name="numero_bi"
-              value={formik.values.numero_bi}
-              onChange={formik.handleChange}
-              isInvalid={formik.touched.numero_bi && formik.errors.numero_bi}
-              placeholder="Número do Bilhete de Identidade"
-            />
-            <Form.Control.Feedback type="invalid">
-              {formik.errors.numero_bi}
+              {
+                formik.errors
+                  .data_nascimento
+              }
             </Form.Control.Feedback>
           </FloatingLabel>
         </Col>
 
         <Col md={2}>
-        <FloatingLabel
-              
-              className="mb-4 w-auto"
-              label="Número do NIF"
-            >
-        
-            <Form.Control
-             className="input_left_color p-2"
-              name="numero_nif"
-              placeholder="Número do NIF"
-              value={formik.values.numero_nif}
-              onChange={formik.handleChange}
-              isInvalid={formik.touched.numero_nif && formik.errors.numero_nif}
-            />
-            <Form.Control.Feedback type="invalid">
-              {formik.errors.numero_nif}
-            </Form.Control.Feedback>
-          </FloatingLabel>
-        </Col>
-
-       
-        <Col md={2}>
-        <FloatingLabel
-              
-              className="mb-4 w-auto"
-              label="Morada"
-            >
-        
-            <Form.Control
-             className="input_left_color p-2"
-              name="morada"
-              value={formik.values.morada}
-              onChange={formik.handleChange}
-              isInvalid={formik.touched.morada && formik.errors.morada}
-              placeholder="Morada"
-            />
-            <Form.Control.Feedback type="invalid">
-              {formik.errors.morada}
-            </Form.Control.Feedback>
-          </FloatingLabel>
-        </Col>
-        <Col md={2}>
-        <FloatingLabel
-              
-              className="mb-4 w-auto"
-              label="Distrito"
-            >
-        
-            <Form.Select
-             className="input_left_color p-2"
-              name="distrito"
-                value={formik.values.distrito}
-                onChange={formik.handleChange}
-                isInvalid={formik.touched.distrito && formik.errors.distrito}
-            >       
-                <option value="">Selecione</option>
-                <option value="Água Grande">Água Grande</option>
-                <option value="Lobata">Lobata</option>
-                <option value="Mé-Zóchi">Mé-Zóchi</option>
-                <option value="Cantagalo">Cantagalo</option>
-                <option value="Caué">Caué</option>
-                <option value="Lembá">Lembá</option>
-                <option value="Príncipe">Rigião Autónuma do Príncipe</option>
-            </Form.Select>
-            <Form.Control.Feedback type="invalid">
-              {formik.errors.distrito}
-            </Form.Control.Feedback>
-          </FloatingLabel>
-        </Col>
-        <Col md={2}>
-        <FloatingLabel
-        className="mb-4 w-auto"
-                label="Número do Telefone"
-            >
-        
-            <Form.Control
-             className="input_left_color p-2"
-              name="numero_telefone"
-              value={formik.values.numero_telefone}
-              onChange={formik.handleChange}
-              isInvalid={formik.touched.numero_telefone && formik.errors.numero_telefone}
-              placeholder="Número do Telefone"
-            />
-            <Form.Control.Feedback type="invalid">
-              {formik.errors.numero_telefone}
-            </Form.Control.Feedback>
-          </FloatingLabel>
-        </Col> 
-      </Row>
-
-      <Row className="mb-2">
-      <Col md={3}>
-        <FloatingLabel
-            
-              className="mb-4 w-auto"
-              label="Email"
-            >
-          
-            <Form.Control
-             className="input_left_color p-2"
-              name="email"  
-                type="email"
-                placeholder="Email"
-                value={formik.values.email}
-                onChange={formik.handleChange}
-                isInvalid={formik.touched.email && formik.errors.email}
-            />
-            <Form.Control.Feedback type="invalid">
-              {formik.errors.email}
-            </Form.Control.Feedback>
-          </FloatingLabel>
-        </Col>
-
-        
-        <Col md={2}>
-        <FloatingLabel
-        
-              className="mb-4 w-auto"
-              label="Outros Contactos"
-            >
-          
-            <Form.Control
-                className="input_left_color p-2"
-                name="outros_contactos"
-                placeholder="Outros Contactos"
-                value={formik.values.outros_contactos}
-                onChange={formik.handleChange}
-                isInvalid={formik.touched.outros_contactos && formik.errors.outros_contactos}
-            />
-            <Form.Control.Feedback type="invalid">
-              {formik.errors.outros_contactos}
-            </Form.Control.Feedback>
-          </FloatingLabel>
-        </Col>
-      
-        
-
-        <Col md={3}>
-        <FloatingLabel
-              
-              className="mb-4 w-auto"
-              label="Banco"
-            >
-        
-            <Form.Select
-             className="input_left_color p-2"
-              name="banco"
-                value={formik.values.banco}
-                onChange={formik.handleChange}
-                isInvalid={formik.touched.banco && formik.errors.banco}
-            >
-                <option value="">Selecione</option>
-                <option value="Banco Internacional de São Tomé e Príncipe">Banco Internacional de São Tomé e Príncipe</option>
-                <option value="Banco Afirland First Bank">Banco Afirland First Bank</option>
-                <option value="Banco Equador">Banco Equador</option>
-                <option value="Banco GTI">Banco GTI</option>
-                <option value="Banco Ecobank">Banco Ecobank</option>
-                <option value="Banco BGFI">Banco BGFI</option>
-            </Form.Select>
-            <Form.Control.Feedback type="invalid">
-              {formik.errors.banco}
-            </Form.Control.Feedback>
-          </FloatingLabel>
-            
-        </Col>
-
-        <Col md={2}>
-        <FloatingLabel
-              
-              className="mb-4 w-auto"
-              label="Número do IBAN"
-            >
-        
-            <Form.Control
-             className="input_left_color p-2"
-              name="numero_iban"
-              value={formik.values.numero_iban}
-              onChange={formik.handleChange}
-            />
-            <Form.Control.Feedback type="invalid">
-              {formik.errors.numero_iban}
-            </Form.Control.Feedback>
-          </FloatingLabel>
-        </Col>
-        <Col md={2}>
-        <FloatingLabel
-            
-              className="mb-4 w-auto"
-              label="Número do Nib"
-            >
+          <FloatingLabel
+            label="Número do BI"
+            className="mb-4"
+          >
             <Form.Control
               className="input_left_color p-2"
-              name="numero_nib"
-              value={formik.values.numero_nib}
-              onChange={formik.handleChange}
-              isInvalid={formik.touched.numero_nib && formik.errors.numero_nib}
-              placeholder="Número de Nib"
+              placeholder="Número do BI"
+              name="numero_bi"
+              value={
+                formik.values.numero_bi
+              }
+              onChange={
+                formik.handleChange
+              }
+              isInvalid={
+                formik.touched
+                  .numero_bi &&
+                formik.errors.numero_bi
+              }
             />
+
             <Form.Control.Feedback type="invalid">
-              {formik.errors.numero_nib}
+              {
+                formik.errors.numero_bi
+              }
             </Form.Control.Feedback>
           </FloatingLabel>
         </Col>
-      </Row>
-      <Row className="mb-2">
-        <Col md={8}>
-        <FloatingLabel
-          className="mb-4 w-auto"
-          label="Observação"
-        >
-          <Form.Control
-            as="textarea"
-            rows={3}
-            className="input_left_color p-2"
-            name="observacao"
-            value={formik.values.observacao}
-            onChange={formik.handleChange}
-            isInvalid={formik.touched.observacao && formik.errors.observacao}
-            placeholder="Observação"
-          />
-          <Form.Control.Feedback type="invalid">
-            {formik.errors.observacao}
-          </Form.Control.Feedback>
-        </FloatingLabel>
-        </Col>
-        <Col md={4} className="">
-        <label>Possui Formação Pedagógica de Formador?</label>
 
-        <Form.Group >
-        
-        <Form.Check
-          label="SIM"
-         
-          name="formacao_pedagogica"
-          checked={formik.values.formacao_pedagogica}
-          onChange={formik.handleChange}
-        />
-      </Form.Group>
-        </Col>
-      </Row>
+        <Col md={2}>
+          <FloatingLabel
+            label="Número do NIF"
+            className="mb-4"
+          >
+            <Form.Control
+              className="input_left_color p-2"
+              placeholder="Número do NIF"
+              name="numero_nif"
+              value={
+                formik.values.numero_nif
+              }
+              onChange={
+                formik.handleChange
+              }
+              isInvalid={
+                formik.touched
+                  .numero_nif &&
+                formik.errors
+                  .numero_nif
+              }
+            />
 
+            <Form.Control.Feedback type="invalid">
+              {
+                formik.errors
+                  .numero_nif
+              }
+            </Form.Control.Feedback>
+          </FloatingLabel>
+        </Col>
       
+        <Col md={2}>
+          <FloatingLabel
+            label="Morada"
+            className="mb-4"
+          >
+            <Form.Control
+              className="input_left_color p-2"
+              placeholder="Morada"
+              name="morada"
+              value={
+                formik.values.morada
+              }
+              onChange={
+                formik.handleChange
+              }
+            />
+          </FloatingLabel>
+        </Col>
 
-      <div className="text-end">
-        <Button variant="success" type="submit" disabled={mutation.isLoading}>
-          {mutation.isLoading ? <Spinner size="sm" /> : "Salvar e Continuar"}
+        <Col md={2}>
+          <FloatingLabel
+            label="Distrito"
+            className="mb-4"
+          >
+            <Form.Select
+              className="input_left_color p-2"
+              name="distrito"
+              value={
+                formik.values.distrito
+              }
+              onChange={
+                formik.handleChange
+              }
+            >
+              <option value="">
+                Selecione
+              </option>
+
+              <option value="Água Grande">
+                Água Grande
+              </option>
+
+              <option value="Lobata">
+                Lobata
+              </option>
+
+              <option value="Mé-Zóchi">
+                Mé-Zóchi
+              </option>
+
+              <option value="Cantagalo">
+                Cantagalo
+              </option>
+
+              <option value="Caué">
+                Caué
+              </option>
+
+              <option value="Lembá">
+                Lembá
+              </option>
+
+              <option value="Príncipe">
+                Região Autónoma do Príncipe
+              </option>
+            </Form.Select>
+          </FloatingLabel>
+        </Col>
+
+        <Col md={3}>
+          <FloatingLabel
+            label="Número do Telefone"
+            className="mb-4"
+          >
+            <Form.Control
+              className="input_left_color p-2"
+              placeholder="Telefone"
+              name="contacto_telefonico"
+              value={
+                formik.values
+                  .contacto_telefonico
+              }
+              onChange={
+                formik.handleChange
+              }
+              isInvalid={
+                formik.touched
+                  .contacto_telefonico &&
+                formik.errors
+                  .contacto_telefonico
+              }
+            />
+
+            <Form.Control.Feedback type="invalid">
+              {
+                formik.errors
+                  .contacto_telefonico
+              }
+            </Form.Control.Feedback>
+          </FloatingLabel>
+        </Col>
+
+        <Col md={3}>
+          <FloatingLabel
+            label="Email"
+            className="mb-4"
+          >
+            <Form.Control
+              type="email"
+              className="input_left_color p-2"
+              placeholder="Email"
+              name="email"
+              value={
+                formik.values.email
+              }
+              onChange={
+                formik.handleChange
+              }
+            />
+          </FloatingLabel>
+        </Col>
+      </Row>
+
+      {/* =========================================================
+          OBSERVAÇÃO
+      ========================================================= */}
+
+      <Row>
+        <Col md={8}>
+          <FloatingLabel
+            label="Observação"
+            className="mb-4"
+          >
+            <Form.Control
+              as="textarea"
+              style={{
+                height: "120px",
+              }}
+              className="input_left_color p-2"
+              placeholder="Observação"
+              name="observacao"
+              value={
+                formik.values.observacao
+              }
+              onChange={
+                formik.handleChange
+              }
+            />
+          </FloatingLabel>
+        </Col>
+
+        <Col
+          md={4}
+          className="d-flex align-items-center"
+        >
+          <Form.Check
+            type="switch"
+            label="Possui Formação Pedagógica"
+            name="formacao_pedagogica"
+            checked={
+              formik.values
+                .formacao_pedagogica
+            }
+            onChange={
+              formik.handleChange
+            }
+          />
+        </Col>
+      </Row>
+
+      {/* =========================================================
+          BUTTON
+      ========================================================= */}
+
+      <div className="text-end mt-3">
+        <Button
+          variant="success"
+          type="submit"
+          disabled={mutation.isPending}
+          className="px-4 rounded-pill"
+        >
+          {mutation.isPending ? (
+            <Spinner size="sm" />
+          ) : (
+            "Salvar e Continuar"
+          )}
         </Button>
       </div>
     </Form>

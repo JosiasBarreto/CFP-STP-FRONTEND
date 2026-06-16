@@ -8,6 +8,7 @@ import {
   Button,
   Image,
   ToastContainer,
+  Modal,
 } from "react-bootstrap";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import {
@@ -33,6 +34,7 @@ const DashboardLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [user, setUser] = useState(null); // inicialmente null
+  
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -55,17 +57,9 @@ const DashboardLayout = () => {
     navigate(path);
     setSidebarOpen(!sidebarOpen); // ou handleToggleSidebar();
   };
-  const handleLogout = () => {};
+  
+ 
 
-  const handleEditProfile = () => {
-    // lógica para editar perfil
-    console.log("Editar perfil");
-  };
-
-  const handleChangePassword = () => {
-    // lógica para redefinir senha
-    console.log("Redefinir senha");
-  };
 
   return (
     <div className="dashboard-container">
@@ -88,10 +82,9 @@ const DashboardLayout = () => {
             <Col md={4}></Col>
             <Col md={4} className="user-info text-white">
               <UserMenu
-                userName={user?.nome || "Utilizador"}
+                userName={user || "Utilizador"}
                 onLogout={() => handleLogoutmethods({ navigate })}
-                onEditProfile={handleEditProfile}
-                onChangePassword={handleChangePassword}
+              
               />
             </Col>
           </Row>
@@ -126,7 +119,8 @@ const DashboardLayout = () => {
 
               {/* ======= GESTÃO DE REGISTROS ======= */}
               {sidebarOpen && <div className="sidebar-group-title">Gestão</div>}
-
+               {user && user.nivel === "MASTER" && (
+                 <>
               <Nav.Link
                 className={`sidebar-link ${getNavLinkClass("register-user")}`}
                 onClick={() => handleNavigate("register-user")}
@@ -134,11 +128,12 @@ const DashboardLayout = () => {
                 <FaUserPlus className="sidebar-icon" />
                 {sidebarOpen && <span className="sidebar-text">Registo dos Utilizador</span>}
               </Nav.Link>
+                </>
+              )}
+              
 
               <Nav.Link
-                className={`sidebar-link ${getNavLinkClass(
-                  "register-programas"
-                )}`}
+                className={`sidebar-link ${getNavLinkClass("register-programas")}`}
                 onClick={() => handleNavigate("register-programas")}
               >
                 <FaLayerGroup className="sidebar-icon" />
@@ -161,6 +156,13 @@ const DashboardLayout = () => {
               >
                 <FaBookOpen className="sidebar-icon" />
                 {sidebarOpen && <span className="sidebar-text">Cursos</span>}
+              </Nav.Link>
+              <Nav.Link
+                className={`sidebar-link ${getNavLinkClass("componente-cursos")}`}
+                onClick={() => handleNavigate("componente-cursos")}
+              >
+                <FaBookOpen className="sidebar-icon" />
+                {sidebarOpen && <span className="sidebar-text">Componente de Cursos</span>}
               </Nav.Link>
 
               <Nav.Link

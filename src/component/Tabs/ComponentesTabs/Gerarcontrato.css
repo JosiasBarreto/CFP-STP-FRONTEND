@@ -40,3 +40,20 @@
     width: 100%;
     justify-content: center;
   }
+  .custom-grid .ag-header {
+    background-color: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .custom-grid .ag-row {
+    border-bottom: 1px solid #f1f5f9;
+  }
+  
+  .custom-grid .ag-row:hover {
+    background-color: #f9fafb;
+  }
+  
+  .custom-grid .ag-cell {
+    display: flex;
+    align-items: center;
+  }

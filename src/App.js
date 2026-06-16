@@ -24,6 +24,10 @@ import { FormadorForms } from "./view/sing/formador/index.js";
 import AreasTabs from "./view/sing/areas_formacao/index.jsx";
 import InscricaoFormador from "./view/page/Formador/formador/Inscricao/InscricaoFormador.jsx";
 import FormadoresPage from "./view/page/Formador/formador/list_formador/FormadoresPage.jsx";
+import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community';
+import Index_perfil from "./view/page/profile/Index_perfil.jsx";
+import RegisterComponente from "./pages/componentes/RegisterComponente.jsx";
+import HomeCursoComponente from "./pages/index.js";
 // Componente de Rota Protegida (para páginas que precisam de autenticação)
 
 // Componente para impedir login de usuários autenticados
@@ -32,9 +36,27 @@ const PublicRoute = ({ element }) => {
   return token ? <Navigate to="/auth" /> : element;
 };
 
+// receber o token e verificar o utilizador para deifinir o nivel de acesso
+const PrivateRoute = ({ element }) => {
+  const token = localStorage.getItem("token");
+  const user = JSON.parse(localStorage.getItem("user"));
+  console.log("User role:", user?.nivel); // Log do papel do usuário para depuração
+  if (!token) {
+    return <Navigate to="/" />;
+  }
+
+  // Verificar o nível de acesso do utilizador
+  if (user && user.nivel !== "MASTER") {
+    return <Navigate to="/auth" />;
+  }
+
+  return element;
+};
 
 function App() {
+  ModuleRegistry.registerModules([AllCommunityModule]);
   return (
+    
     <Router>
       <Routes>
         {/* Rota pública: Se o usuário não estiver autenticado, exibe o login */}
@@ -50,7 +72,7 @@ function App() {
           {/* Rotas dentro do DashboardLayout */}
           <Route index element={<Navigate to="home" replace />} />
           <Route path="home" element={<Home />} />
-          <Route path="register-user" element={<RegisterUser />} />
+          <Route path="register-user" element={<PrivateRoute element={<RegisterUser />} />} />
           <Route path="register-programas" element={<RegisterProgramas />} />
           <Route path="register-cursos" element={<RegisterCursos />} />
           <Route path="register-formandos" element={<Registerformandos />} />
@@ -63,6 +85,8 @@ function App() {
           <Route path="registar-area" element={<AreasTabs />} />
           <Route path="registar-formador" element={<InscricaoFormador/>} />
           <Route path="list-formador" element={<FormadoresPage/>} />
+          <Route path="componente-cursos" element={<HomeCursoComponente />} />
+          
          
         </Route>
 

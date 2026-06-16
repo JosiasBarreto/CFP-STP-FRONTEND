@@ -4,7 +4,12 @@ import { Buscardocuemntos, DeleteUser, FiltroEstatisticoturma, FiltroInscricao, 
 
 export const registarUser = async (uses, token) => {
     try {
-      const response = await axios.post(API_URL + PostUser, uses);
+      const response = await axios.post(API_URL + PostUser, uses, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
       return response;
     } catch (error) {
       throw error;
@@ -12,7 +17,13 @@ export const registarUser = async (uses, token) => {
   };
   export const registarPrograma = async (programa, token) => {
     try {
-      const response = await axios.post(API_URL + PostPrograma, programa);
+      const response = await axios.post(API_URL + PostPrograma, programa, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(response);
       return response;
     } catch (error) {
       throw error;
@@ -20,7 +31,13 @@ export const registarUser = async (uses, token) => {
   };
   export const registarCurso = async (data, token) => {
     try {
-      const response = await axios.post(API_URL + PostCurso, data);
+      const response = await axios.post(API_URL + PostCurso, data, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(response);
       return response;
     } catch (error) {
       throw error;

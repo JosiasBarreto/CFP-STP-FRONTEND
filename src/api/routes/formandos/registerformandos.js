@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { API_URL } from "../../urls";
 import { PostFormandos } from "../../urls/rotes_query";
+import Swal from "sweetalert2";
 
 export const useRegistrarFormando = (token, formik, setPreview) => {
   return useMutation({
@@ -57,7 +58,11 @@ export const useRegistrarFormando = (token, formik, setPreview) => {
           }
         );
 
-        toast.success(`Formando registrado com sucesso! ID: ${response.data.inscricao_id}`);
+        Swal.fire({
+          icon: "success",
+          title: "Formando registrado com sucesso!",
+          text: `Inscrição Nº: ${response.data.inscricao_id}`,
+        });
         return response.data;
 
       } catch (error) {
@@ -71,7 +76,11 @@ export const useRegistrarFormando = (token, formik, setPreview) => {
     },
 
     onError: (error) => {
-      toast.error(error.response?.data?.erro || "Erro ao registrar formando.");
+        Swal.fire({
+          icon: "error",
+          title: "Erro ao registrar formando.",
+          text: error.response?.data?.erro || "Erro ao registrar formando.",
+        });
       // ❌ formik.resetForm(); NÃO CHAMAR AQUI
     },
   });

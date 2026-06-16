@@ -23,15 +23,13 @@ import { ToastContainer } from "react-toastify";
 import { useLocation } from "react-router-dom";
 import MyComponent from "../../../component/InfoCard/CardsInfoselects";
 import {
-  BuscarInscricao,
+
   Buscarmatricula,
   LastIdFormando,
 } from "../../sing/function";
 import SelectField from "../../../component/Selects/Index";
 import SelectFieldCurso from "../../../component/Selects/selectcursos";
-import Finalizar from "../Turma/confirmseletc";
-import ListSelets from "../../sing/table/listselectsformandos";
-import ListMatriculas from "../../sing/table/listmatriculas";
+
 import DsitribesMatriculas from "../../../component/Tabs/matriculastabs";
 function ConfirmarMatricula() {
   const token = localStorage.getItem("token");

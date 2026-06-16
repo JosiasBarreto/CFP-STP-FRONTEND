@@ -7,20 +7,20 @@ const Cabecalhos = ({ formik }) => {
   
   return (
     <>
-      <Row md={12} xs={12} className="d-flex justify-content-center mb-3">
+      <Row md={12} xs={12} className="d-flex justify-content-center mb-2">
           <Col md={3}>
            <FloatingLabel
-             
+             controlId="floatingTextarea"
               className="mb-3 w-auto"
-              label="Inscrição"
+              label="Número de Inscrição"
             >
               <Form.Control
-                cl assName=""
+                className=""
                 type="number"
                 name="inscricao"
                 id="inscricao"
                 disabled
-                placeholder="Digite a Inscrição"
+                
                 value={formik.values.inscricao}
                 onChange={formik.handleChange}
                 isInvalid={formik.touched.inscricao && formik.errors.inscricao}

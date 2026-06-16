@@ -113,6 +113,7 @@ function RegisterCursos() {
     descricao: Yup.string(),
     fk_programa: Yup.number(),
     duracao_mes: Yup.number().required("Duração em Mês é Obrigratório"),
+    
   });
 
   const formik = useFormik({
@@ -226,9 +227,10 @@ function RegisterCursos() {
     formik.setFieldValue("local_realizacao", user.local_realizacao);
     formik.setFieldValue("alunos_por_turma", user.alunos_por_turma);
     formik.setFieldValue("fk_programa", user.programa_id);
-    if(user.duracao_mes==="nan"){
-      formik.setFieldValue("duracao_mes", user.duracao_mes);
-    }
+    formik.setFieldValue(
+      "duracao_mes",
+      user.duracao_mes === "nan" ? 0 : user.duracao_mes
+    );
    
   };
 
@@ -253,6 +255,13 @@ function RegisterCursos() {
       return () => clearInterval(intervalId);
     }
   }, [data]);
+  useEffect(() => {
+    const delay = setTimeout(() => {
+      queryClient.invalidateQueries({ queryKey: [Qcurso] });
+    }, 500);
+  
+    return () => clearTimeout(delay);
+  }, [searchParams]);
 
   return (
     <>
@@ -465,8 +474,7 @@ function RegisterCursos() {
                       <Form.Select
                         name="duracao"
                         id="duracao"
-                        onChange={formik.handleChange}
-                        value={formik.values.duracao}
+                        {...formik.getFieldProps("duracao")}
                         isInvalid={
                           formik.touched.duracao && formik.errors.duracao
                         }
@@ -484,8 +492,9 @@ function RegisterCursos() {
                         <option value="240">240 Horas</option>
                         <option value="270">270 Horas</option>
                         <option value="300">300 Horas</option>
-                        <option value="330">330 Horas</option>
+                        
                         <option value="360">360 Horas</option>
+                        <option value="1200">1200 Horas</option>
                       </Form.Select>
                       <Form.Control.Feedback type="invalid">
                         {formik.errors.duracao}

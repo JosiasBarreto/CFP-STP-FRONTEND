@@ -1,0 +1,1 @@
+export const QModulo = ["Qmodulos"];

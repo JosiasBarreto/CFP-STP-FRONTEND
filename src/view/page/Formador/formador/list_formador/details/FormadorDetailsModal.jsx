@@ -1,4 +1,7 @@
-import { useState } from "react";
+import React, { useMemo, useState } from "react";
+
+import { useNavigate } from "react-router-dom";
+
 import {
   Modal,
   Tabs,
@@ -10,241 +13,777 @@ import {
   Image,
   Card,
   Alert,
-  CardHeader,
 } from "react-bootstrap";
 
+import {
+  FaEdit,
+  FaUserGraduate,
+  FaPhone,
+  FaEnvelope,
+  FaMapMarkerAlt,
+  FaUniversity,
+  FaFileAlt,
+  FaCheckCircle,
+  FaExclamationTriangle,
+  FaBriefcase,
+  FaGraduationCap,
+  FaClosedCaptioning,
+} from "react-icons/fa";
+import axios from "axios";
+import Swal from "sweetalert2";
+import { API_URL } from "../../../../../../api/urls";
 
-export default function FormadorDetailsModal({ show, onHide, formador }) {
-  const [documentoSelecionado, setDocumentoSelecionado] = useState(null);
+export default function FormadorDetailsModal({
+  show,
+  onHide,
+  formador,
+}) {
+  const dominiosAgrupados = useMemo(() => {
+    if (!formador?.dominios) return {};
+  
+    return formador.dominios.reduce((acc, dominio) => {
+      if (!acc[dominio.area_nome]) {
+        acc[dominio.area_nome] = [];
+      }
+      acc[dominio.area_nome].push(dominio);
+      return acc;
+    }, {});
+  }, [formador?.dominios]);
+  const navigate = useNavigate();
+
+  const [documentoSelecionado, setDocumentoSelecionado] =
+    useState(null);
+
   if (!formador) return null;
 
+  /* =========================================================
+      EDITAR
+  ========================================================= */
+
+  const handleEdit = () => {
+    navigate("/auth/registar-formador", {
+      state: { formador },
+    });
+  };
+
+  const handleDownloadSelecionados = async () => {
+    Swal.fire({
+      icon: "info",
+      title: "Processando...",
+      text:
+        "Gerando o PDF unificado dos documentos...",
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+  
+    try {
+      const response = await axios.get(
+        `${API_URL}/api/documentos/formador/${formador.id}/unificado`,
+        {
+          responseType: "blob",
+        }
+      );
+  
+      // Verifica se veio vazio
+      if (
+        !response.data ||
+        response.data.size === 0
+      ) {
+        throw new Error("PDF vazio");
+      }
+  
+      // Criar blob PDF
+      const blob = new Blob(
+        [response.data],
+        {
+          type: "application/pdf",
+        }
+      );
+  
+      // Criar URL temporária
+      const url =
+        window.URL.createObjectURL(blob);
+  
+      // Criar link invisível
+      const link =
+        document.createElement("a");
+  
+      link.href = url;
+  
+      // Nome do ficheiro
+      link.download = `Dossier_Formador_${formador.id}.pdf`;
+  
+      // Necessário para Firefox
+      document.body.appendChild(link);
+  
+      // Download
+      link.click();
+  
+      // Limpeza
+      document.body.removeChild(link);
+  
+      // Libertar memória
+      window.URL.revokeObjectURL(url);
+  
+      Swal.fire({
+        icon: "success",
+        title: "Sucesso!",
+        text:
+          "Documento descarregado com sucesso.",
+      });
+    } catch (error) {
+      console.error(error);
+  
+      // Tentar ler erro vindo do backend
+      if (error.response) {
+        console.log(error.response);
+      }
+  
+      Swal.fire({
+        icon: "error",
+        title: "Erro!",
+        text:
+          "Não foi possível gerar o PDF.",
+      });
+    }
+  };
+    
 
 
-  const InfoCard = ({ label, value }) => (
-    <Col xs={12} md={4} lg={3}>
-      <Card className="h-100 shadow-sm border-1">
-        <Card.Body className="p-2">
-          <div className="text-muted small">{label}</div>
-          <div className="fw-semibold">{value || "-"}</div>
+  /* =========================================================
+      DOMÍNIOS AGRUPADOS
+  ========================================================= */
+
+  
+
+  /* =========================================================
+      COMPONENTES
+  ========================================================= */
+
+  const InfoCard = ({
+    icon,
+    label,
+    value,
+  }) => (
+    <Col xl={3} lg={4} md={6}>
+      <Card className="border-0 shadow-sm rounded-4 h-100 info-card">
+        <Card.Body className="p-3">
+          <div className="d-flex align-items-start gap-1">
+            <div className="icon-box">
+              {icon}
+            </div>
+
+            <div>
+              <div className=" text-muted mb-1">
+                {label}
+              </div>
+
+              <div className="fw-semibold text-dark">
+                {value || "-"}
+              </div>
+            </div>
+          </div>
         </Card.Body>
       </Card>
     </Col>
   );
 
-  const SectionTitle = ({ children }) => (
-    <h6 className="mt-4 mb-3 fw-bold text-success">{children}</h6>
+  const SectionTitle = ({
+    title,
+    icon,
+  }) => (
+    <div className="d-flex align-items-center gap-2">
+      <div className="text-success">
+        {icon}
+      </div>
+
+      <h5 className="fw-bold text-success mb-0">
+        {title}
+      </h5>
+    </div>
   );
-  const dominiosAgrupados = formador.dominios?.reduce((acc, dominio) => {
-    if (!acc[dominio.area_nome]) {
-      acc[dominio.area_nome] = [];
-    }
-    acc[dominio.area_nome].push(dominio);
-    return acc;
-  }, {});
-  
 
   return (
-    <Modal show={show} onHide={onHide} size="xl" scrollable >
-    
-      <Modal.Header closeButton className="bg-success text-white">
-        <div>
-          <h5 className="mb-0">Ficha do Registo do Formador</h5>
-        </div>
-      </Modal.Header>
+    <>
+      <style>
+        {`
+          .details-modal .modal-content{
+            border:none;
+            border-radius:24px;
+            overflow:hidden;
+          }
 
-      
-      <Modal.Body>
-        <Row className="align-items-center g-2 mb-3">
-          <Col md={5} className="d-flex gap-3 align-items-center">
-            <Image
-              src={formador.foto_url || "data:image/png;base64,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"
-                        }
-              roundedCircle
-              width={90}
-              height={90}
-              style={{ objectFit: "cover" }}
-            />
-           
+          .hero-card{
+            background: linear-gradient(
+              135deg,
+              #198754 0%,
+              #157347 100%
+            );
+            border:none;
+            border-radius:24px;
+            color:white;
+          }
+
+          .hero-avatar{
+            width:110px;
+            height:110px;
+            border:4px solid rgba(255,255,255,.25);
+            object-fit:cover;
+          }
+
+          .info-card{
+            transition: all .2s ease;
+          }
+
+          .info-card:hover{
+            transform:translateY(-3px);
+          }
+
+          .icon-box{
+            width:15px;
+            height:15px;
+            border-radius:7px;
+            background:#19875415;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            color:#198754;
+            flex-shrink:0;
+          }
+
+          .custom-tab .nav-link{
+            border:none !important;
+            color:#6c757d;
+            font-weight:600;
+            border-radius:14px !important;
+            padding:12px 18px;
+          }
+
+          .custom-tab .nav-link.active{
+            background:#198754 !important;
+            color:white !important;
+          }
+
+          .document-card{
+            transition: all .2s ease;
+          }
+
+          .document-card:hover{
+            transform:translateY(-4px);
+          }
+
+          .glass-badge{
+            background:rgba(255,255,255,.18) !important;
+            border:1px solid rgba(255,255,255,.15);
+            color:white !important;
+          }
+          .info-card .fw-semibold {
+            word-break: break-word;
+            overflow-wrap: anywhere;
+          }
+          .details-modal .modal-body {
+            overflow-x: hidden;
+          }
+        `}
+      </style>
+
+      <Modal
+        show={show}
+        onHide={onHide}
+        size="xl"
+        centered
+        scrollable
+        dialogClassName="details-modal"
+      >
+        {/* =========================================================
+            HEADER
+        ========================================================= */}
+        
+
+        <Modal.Body className="p-0 bg-light">
+
+          {/* HERO */}
+
+          <Card className="hero-card shadow-lg mb-1">
+            <Card.Body className="p-3">
+              <Row className="align-items-center g-4">
+                <Col lg={8}>
+                  <div className="d-flex align-items-center gap-4 flex-wrap">
+                    <Image
+                      src={
+                        formador.foto_url ||
+                        "https://via.placeholder.com/150"
+                      }
+                      roundedCircle
+                      className="hero-avatar"
+                    />
+
+                    <div>
+                      <h3 className="fw-bold mb-2">
+                        {formador.nome}
+                      </h3>
+
+                      <div className="d-flex flex-wrap gap-2">
+                        <Badge className="glass-badge px-3 py-2 rounded-pill">
+                          {"Inscrição Nº "}
+                          {
+                            formador.id
+                          }
+                        </Badge>
+
+                        <Badge className="glass-badge px-3 py-2 rounded-pill">
+                          {"Processo Nº"}
+                          {formador.codigo}
+                        </Badge>
+
+                        <Badge className="glass-badge px-3 py-2 rounded-pill">
+                          {
+                            formador.genero
+                          }
+                        </Badge>
+
+                        <Badge className="glass-badge px-3 py-2 rounded-pill">
+                          {
+                            formador.estado_civil
+                          }
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
+                </Col>
+
+                <Col lg={4}>
+                  <Row className="g-3">
+                    <Col md={6}>
+                      <Card className="border-0 rounded-4 shadow-sm h-100">
+                        <Card.Body>
+                          <small className="text-muted">
+                            Data de
+                            Inscrição
+                          </small>
+
+                          <div className="fw-bold mt-1">
+                            {
+                              formador.data_criacao
+                            }
+                          </div>
+                        </Card.Body>
+                      </Card>
+                    </Col>
+
+                    <Col md={6}>
+                      <Card className="border-0 rounded-4 shadow-sm h-100">
+                        <Card.Body>
+                          <small className="text-muted">
+                            Documentação
+                          </small>
+
+                          <div className="mt-2">
+                            {formador
+                              .status_documentos
+                              ?.completo ? (
+                              <Badge bg="success">
+                                Completa
+                              </Badge>
+                            ) : (
+                              <Badge bg="danger">
+                                Incompleta
+                              </Badge>
+                            )}
+                          </div>
+                        </Card.Body>
+                      </Card>
+                    </Col>
+                  </Row>
+                </Col>
+              </Row>
+            </Card.Body>
+          </Card>
+
+          {/* =========================================================
+              TABS
+          ========================================================= */}
+         <Row className="p-2 g-1">
+          <Tabs
+            defaultActiveKey="dados"
+            className="mb-2 custom-tab"
+          >
+
+            {/* =========================================================
+                DADOS
+            ========================================================= */}
+
+            <Tab
+              eventKey="dados"
+              title="Dados Pessoais"
+            >
+              
+
+            <Row className="g-3 p-3">
+              
             
-            <div>
-              <h5 className="mb-1 fw-bold">{formador.nome}</h5>
-              <div className="d-flex flex-wrap gap-1">
-                <Badge bg="success" className="bg-opacity-10 text-success">Inscrição {formador.id}</Badge>
-                <Badge bg="secondary" className="bg-opacity-10 text-success">Processo {formador.codigo}</Badge>
-                <Badge bg={formador.formacao_pedagogica ? "success" : "warning"}className="bg-opacity-10 text-success">
-                  Formação Pedagógica
-                </Badge>
-                <Badge
-                  bg={
-                    formador.status_documentos.completo
-                      ? "success"
-                      : "danger"
-                  }
-                  className="bg-opacity-10 text-success"
-                >
-                  Documentos
-                </Badge>
-              </div>
-            </div>
-          </Col>
+            
+             
+              <InfoCard icon={<FaFileAlt />} label="BI" value={formador.numero_bi} />
+              <InfoCard label="NIF" value={formador.numero_nif} />
+            
 
-          <Col md={3}>
-            <Card className="shadow-sm border-0">
-              <Card.Body>
-                <small className="text-muted">Data de Inscrição</small>
-                <div className="fw-bold">{formador.data_criacao}</div>
-              </Card.Body>
-            </Card>
-          </Col>
+            
+            
+              <InfoCard icon={<FaUserGraduate />} label="Género" value={formador.genero} />
+              <InfoCard icon={<FaUserGraduate />} label="Estado Civil" value={formador.estado_civil} />
+              <InfoCard icon={<FaUserGraduate />} label="Data de Nascimento" value={formador.data_nascimento} />
+            
 
-          <Col md={4}>
-            <Card className="shadow-sm border-0">
-              <Card.Body>
-                <small className="text-muted">Observação</small>
-                <div>{formador.observacao || "-"}</div>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-
-        {/* TABS */}
-        <Tabs defaultActiveKey="dados" className="mb-3">
-          {/* DADOS */}
-          <Tab eventKey="dados" title="Dados Pessoais" >
-           
-            <Row className="g-2">
-              <InfoCard label="Número de Bilhete de Identidade" value={formador.numero_bi} />
-              <InfoCard label="Número de Identificação Fiscal" value={formador.numero_nif} />
-              <InfoCard label="Género" value={formador.genero} />
-              <InfoCard label="Estado Civil" value={formador.estado_civil} />
-              <InfoCard label="Data de Nascimento" value={formador.data_nascimento} />
+            
+              <InfoCard label="Telefone" value={formador.contacto_telefonico} />
               <InfoCard label="Email" value={formador.email} />
-              <InfoCard label="Contacto" value={formador.contacto_telefonico} />
-              <InfoCard label="Outros" value={formador.outros_contactos} />
-              <InfoCard label="Distrito" value={formador.distrito} />
+              <InfoCard label="Outros Contactos" value={formador.outros_contactos} />
+           
+
+           
               <InfoCard label="Morada" value={formador.morada} />
+              <InfoCard label="Distrito" value={formador.distrito} />
+            
+
+            
+            
+            <Row className="g-2">
               <InfoCard label="Banco" value={formador.banco} />
-              <InfoCard label="IBAM" value={formador.numero_iban} />
+              <InfoCard label="IBAN" value={formador.numero_iban} />
               <InfoCard label="NIB" value={formador.numero_nib} />
             </Row>
+                
+              </Row>
 
-            <SectionTitle>Formações</SectionTitle>
-            <Row className="g-2">
-              {formador.formacoes?.map((f) => (
-                <Col md={4} key={f.id}>
-                  <Card className="h-100 shadow-sm border-0">
-                    <Card.Header className="bg-success bg-opacity-10 text-success fw-bold border-0">
-                    {f.tipo_formacao.nome}
-                    </Card.Header>
-                    <Card.Body>
-                                  <div className="fw-semibold">{f.descricao}</div>
-                    </Card.Body>
-                  </Card>
-                </Col>
-              ))}
-            </Row>
-
-            <SectionTitle>Experiência Profissional</SectionTitle>
-            <Row className="g-2">
-            {formador.experiencias?.map((e) => (
-              <Col md={6} key={e.id}>
-              <Card key={e.id} className="h-100 mb-2 shadow-sm border-0">
-                <CardHeader className="d-flex justify-content-between bg-success bg-opacity-10 text-success fw-bold border-0">
-                <strong>{e.cargo} — {e.instituicao}</strong> 
-                <Badge bg="success">{e.anos_experiencia} anos</Badge>
-                </CardHeader>
-                <Card.Body>
-                  
-                  {e.descricao && <text className="mt-0">{e.descricao}</text>}
-                </Card.Body>
-              </Card>
-              </Col>
-            ))}
-            </Row>
-          </Tab>
-
-          {/* DOMÍNIOS */}
-          <Tab eventKey="dominios" title="Domínios">
-            <Row>
-  {dominiosAgrupados &&
-    Object.entries(dominiosAgrupados).map(([areaNome, dominios]) => (
-      <Col md={6} key={areaNome}>
-      <Card key={areaNome} className="mb-3 border-1 shadow-sm">
-        <Card.Header className="bg-success bg-opacity-10 text-success fw-bold border-0">
-        {areaNome}
-        </Card.Header>
-        <Card.Body>
-         {/* Lista de domínios */}
-          <ul className="list-unstyled mb-0">
-            {dominios.map((d) => (
-              <li key={d.id} className="ps-2 py-1">
-                • {d.nome}
-              </li>
-            ))}
-          </ul>
-        </Card.Body>
-      </Card>
-      </Col>
-    ))}
-    </Row>
-</Tab>
-
-
-          {/* DOCUMENTOS */}
-          <Tab eventKey="documentos" title="Documentos">
-  {/* STATUS */}
-  {formador.status_documentos.completo ? (
-    <Alert variant="success">Documentação completa</Alert>
-  ) : (
-    <Alert variant="danger">
-      <strong>Documentos em falta:</strong>
-      <ul className="mb-0">
-        {formador.status_documentos.faltantes.map((d) => (
-          <li key={d.id}>{d.nome}</li>
-        ))}
-      </ul>
-    </Alert>
-  )}
-
-  {/* DOCUMENTOS */}
-  <Row className="mt-3">
-    {formador.documentos?.map((doc) => (
-      <Col md={3} key={doc.id}>
-        <Card className="mb-3 text-center shadow-sm">
-          <Card.Body>
-            {/* ÍCONE */}
-            <div style={{ fontSize: "42px" }}>📄</div>
-
-            <Card.Title
-              className="mt-2"
-              style={{ fontSize: "14px", minHeight: "40px" }}
+              
+            </Tab>
+            <Tab
+              eventKey="formacao"
+              title="Formações e Experiências"
             >
-              {doc.tipo_documento}
-            </Card.Title>
+              {/* FORMAÇÕES */}
 
-            <Button
-            variant="outline-success"
-            onClick={() => window.open(doc.arquivo_url, "_blank")}
+              <SectionTitle
+                title="Formações"
+                icon={<FaGraduationCap />}
+              />
+
+              <Row className="g-2 p-3">
+                {formador.formacoes?.map(
+                  (f) => (
+                    <Col
+                      lg={4}
+                      md={6}
+                      key={f.id}
+                    >
+                      <Card className="border-0 shadow-sm rounded-4 h-100">
+                        <Card.Header className="bg-success bg-opacity-10 border-0 fw-bold text-success rounded-top-4" >
+                        {
+                              f
+                                .tipo_formacao
+                                ?.nome
+                            }
+                        </Card.Header>
+                        <Card.Body>
+                          
+
+                          <div className="fw-semibold">
+                            {
+                              f.descricao
+                            }
+                          </div>
+                        </Card.Body>
+                      </Card>
+                    </Col>
+                  )
+                )}
+              </Row>
+
+              {/* EXPERIÊNCIAS */}
+
+              <SectionTitle
+                title="Experiência Profissional"
+                icon={<FaBriefcase />}
+              />
+
+              <Row className="g-3">
+                {formador.experiencias?.map(
+                  (e) => (
+                    <Col
+                      md={6}
+                      key={e.id}
+                    >
+                      <Card className="border-0 shadow-sm rounded-4 h-100">
+                        <Card.Body>
+                          <div className="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                              <h6 className="fw-bold mb-1">
+                                {e.cargo}
+                              </h6>
+
+                              <small className="text-muted">
+                                {
+                                  e.instituicao
+                                }
+                              </small>
+                            </div>
+
+                            <Badge bg="success">
+                              {
+                                e.anos_experiencia
+                              }{" "}
+                              anos
+                            </Badge>
+                          </div>
+
+                          <div className="text-muted">
+                            {e.descricao ||
+                              "-"}
+                          </div>
+                        </Card.Body>
+                      </Card>
+                    </Col>
+                  )
+                )}
+              </Row>
+            </Tab>
+
+            {/* =========================================================
+                DOMÍNIOS
+            ========================================================= */}
+
+            <Tab
+              eventKey="dominios"
+              title="Domínios"
+            >
+              <Row className="g-3 mt-1">
+                {Object.entries(
+                  dominiosAgrupados
+                ).map(
+                  ([
+                    areaNome,
+                    dominios,
+                  ]) => (
+                    <Col
+                      md={6}
+                      key={areaNome}
+                    >
+                      <Card className="border-0 shadow-sm rounded-4 h-100">
+                        <Card.Header className="bg-success bg-opacity-10 border-0 fw-bold text-success rounded-top-4">
+                          {areaNome}
+                        </Card.Header>
+
+                        <Card.Body>
+                          <div className="d-flex flex-wrap gap-2">
+                            {dominios?.map(
+                              (d) => (
+                                <Badge
+                                  key={d.id}
+                                  bg="light"
+                                  text="dark"
+                                  className="px-3 py-2 rounded-pill border"
+                                >
+                                  {
+                                    d.nome
+                                  }
+                                </Badge>
+                              )
+                            )}
+                          </div>
+                        </Card.Body>
+                      </Card>
+                    </Col>
+                  )
+                )}
+              </Row>
+            </Tab>
+
+            {/* =========================================================
+                DOCUMENTOS
+                criar um scroll bar no corpo de tab caso for necessario
+            ========================================================= */}
+            
+            <Tab
+              eventKey="documentos"
+              title="Documentos"
+              className="p-2  "
+            >
+              <div className="mt-2" style={{ maxHeight: "50vh", overflowY: "auto", overflowX: "hidden" }}>
+
+                {formador
+                  .status_documentos
+                  ?.completo ? (
+                  <Alert
+                    variant="success"
+                    className="rounded-4 border-0 shadow-sm"
+                  >
+                    <FaCheckCircle className="me-2" />
+                    Toda documentação está
+                    completa.
+                  </Alert>
+                ) : (
+                  <Alert
+                    variant="danger"
+                    className="rounded-4 border-0 shadow-sm"
+                  >
+                    <FaExclamationTriangle className="me-2" />
+
+                    Documentos em falta:
+
+                    <ul className="mt-2 mb-0">
+                      {formador
+                        .status_documentos
+                        ?.faltantes?.map(
+                          (d) => (
+                            <li
+                              key={d.id}
+                            >
+                              {
+                                d.nome
+                              }
+                            </li>
+                          )
+                        )}
+                    </ul>
+                  </Alert>
+                )}
+
+                <Row className="g-3 ">
+                  {formador.documentos?.map(
+                    (doc) => (
+                      <Col
+                        lg={3}
+                        md={4}
+                        sm={6}
+                        key={doc.id}
+                      >
+                        <Card className="border-0 shadow-sm rounded-4 h-100 text-center document-card">
+                          <Card.Body className="d-flex flex-column">
+                            <div
+                                style={{
+                                  fontSize:
+                                    "60px",
+                                }}
+                                >
+                                    {doc ? (
+                                      <>
+                                        <Card className="border-0 shadow-sm overflow-hidden">
+
+                                          {doc.mime_type?.startsWith("image") ? (
+                                            <img
+                                              src={doc.arquivo_url}
+                                              alt={doc.nome}
+                                              className="w-100"
+                                              style={{
+                                                height: "220px",
+                                                objectFit: "cover",
+                                              }}
+                                            />
+                                          ) : (
+                                            <iframe
+                                              src={doc.arquivo_url}
+                                              title={doc.nome}
+                                              width="100%"
+                                              height="220"
+                                              style={{
+                                                border: "none",
+                                                borderRadius: "12px",
+                                              }}
+                                            />
+                                          )}
+                                        </Card>
+
+                                        <div className="mt-3">
+                                        
+
+                                          <div className="fw-semibold small">
+                                            {doc.nome}
+                                          </div>
+                                        </div>
+                                      </>
+                                    ) : (
+                                      <div
+                                        className="border rounded-4 d-flex flex-column justify-content-center align-items-center text-muted"
+                                        style={{
+                                          height: "220px",
+                                          background: "#f8f9fa",
+                                        }}
+                                      >
+                                        <div style={{ fontSize: "50px" }}>
+                                          📄
+                                        </div>
+
+                                        <small>
+                                          Nenhum documento enviado
+                                        </small>
+                                      </div>
+                                    )}
+                            </div>
+
+                            <div className="fw-semibold small mt-2 flex-grow-1">
+                              {
+                                doc.tipo_documento
+                              }
+                            </div>
+
+                            <Button
+                              variant="success"
+                              className="rounded-pill mt-3"
+                              onClick={() =>
+                                window.open(
+                                  doc.arquivo_url,
+                                  "_blank"
+                                )
+                              }
+                            >
+                              Ver Documento
+                            </Button>
+                          </Card.Body>
+                        </Card>
+                      </Col>
+                    )
+                  )}
+                </Row>
+              </div>
+            </Tab>
+          </Tabs>
+          </Row>
+        </Modal.Body>
+
+        {/* =========================================================
+            FOOTER
+        ========================================================= */}
+
+        <Modal.Footer className="d-flex justify-content-between border-0 bg-white">
+          <Button
+            variant="secondary"
+            onClick={onHide}
+            className="rounded-pill px-4 shadow"
           >
-            Ver Documento
-          </Button>
-
-          </Card.Body>
-        </Card>
-      </Col>
-    ))}
-  </Row>
-
-</Tab>
-
-        </Tabs>
-      </Modal.Body>
-
-      <Modal.Footer>
-        <Button variant="secondary" onClick={onHide}>
+          
           Fechar
-        </Button>
-      </Modal.Footer>
-    </Modal>
+          </Button>
+          <Button 
+          variant="primary"
+          onClick={() => handleDownloadSelecionados()}
+          className="rounded-pill px-4 shadow"
+          >
+            <FaFileAlt className="me-2" />
+            Imprimir Inscrição</Button>
+
+          <Button
+            variant="success"
+            onClick={handleEdit}
+            className="rounded-pill px-4 shadow"
+          >
+            <FaEdit className="me-2" />
+            Editar Formador
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
   );
 }

@@ -7,31 +7,32 @@ import { useState, useEffect } from "react";
 import { Form, Col, Row, FloatingLabel, Button } from "react-bootstrap";
 import { ToastContainer } from "react-toastify";
 import { useLocation } from "react-router-dom";
-
 import { ButtonS } from "../../component/Buttons.js/CustomButton";
-
 import { useQuery } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { fetchCursosAno, fetchProgramas, LastIdFormando } from "./function";
 import { Qprograma } from "../../api/urls/nameQuery";
-
 import DadosFormandos from "./componenteformando/dadosformandos";
 import { useRegistrarFormando } from "../../api/routes/formandos/registerformandos";
 import { useEditarFormando } from "../../api/routes/formandos/updateformandos";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
-
-  
 const Registerformandos = () => {
   const token = localStorage.getItem("token");
   const [preview, setPreview] = useState(null);
   const location = useLocation();
-  const [dadosEditaveis, setDadosEditaveis] = useState(location.state?.dadosFormando || {});
-const navigate = useNavigate();
+  const [isEditMode, setIsEditMode] = useState(!!location.state?.dadosFormando);
+  const [dadosEditaveis, setDadosEditaveis] = useState(
+    location.state?.dadosFormando || null
+  );
+
+  const navigate = useNavigate();
 
   const resetarLocation = () => {
-    navigate('.', { state: { dadosFormando: {} }, replace: true });
+    navigate(".", { state: { dadosFormando: {} }, replace: true });
+    navigate(".", { state: {}, replace: true });
   };
   // Atualizado para React Query v5
   const { data, isLoading, isFetching } = useQuery({
@@ -41,31 +42,33 @@ const navigate = useNavigate();
     refetchOnWindowFocus: false, // Recarrega quando a janela ganha foco
     refetchOnReconnect: true, // Recarrega quando a conexão é restabelecida
     refetchOnMount: false, // Não recarrega ao montar o componente
-    
-   
   });
-  
-  const { data: lastid  } = useQuery({
+
+  const { data: lastid } = useQuery({
     queryKey: "lastid",
 
     queryFn: () => LastIdFormando(token),
   });
   const resetarDados = () => {
-    
-    setDadosEditaveis(location.state?.dadosFormando.current);
+    setDadosEditaveis(null);
+    setIsEditMode(false);
+    formik.resetForm();
+    resetarLocation();
   };
 
   // Quando formik tem uma foto existente (edição)
 
   useEffect(() => {
-    if (dadosEditaveis) {
-      
+    if (
+      isEditMode &&
+      dadosEditaveis &&
+      Object.keys(dadosEditaveis).length > 0
+    ) {
       // Extrair as opções de cursos antes de definir os valores
       const primeiraOpcao =
         dadosEditaveis.cursos_inscritos?.find((c) => c.opcao === "1") || {};
       const segundaOpcao =
         dadosEditaveis.cursos_inscritos?.find((c) => c.opcao === "2") || {};
-     
 
       // Criar objeto de valores convertidos
       const valoresConvertidos = {
@@ -100,7 +103,7 @@ const navigate = useNavigate();
         ocupacao: dadosEditaveis.ocupacao || "",
         motivo: dadosEditaveis.motivo_inscricao || "",
         arquivo_foto: dadosEditaveis.foto_url || "",
-        inscricao: dadosEditaveis.incricao_id || lastid?.id+1 || 0,
+        inscricao: dadosEditaveis.incricao_id || lastid?.id + 1 || 0,
         processo: dadosEditaveis.processo || "",
         programa: primeiraOpcao.id_programa ?? "",
         data: dadosEditaveis.data_criacao
@@ -193,7 +196,7 @@ const navigate = useNavigate();
       motivo: "",
       arquivo_foto: "",
       data: new Date().toISOString().split("T")[0],
-      inscricao:  lastid?.id + 1 || 0, // Incrementa o último ID
+      inscricao: lastid?.id + 1 || 0, // Incrementa o último ID
       processo: 0,
       programa: 0,
       telefone2: "",
@@ -209,22 +212,27 @@ const navigate = useNavigate();
       } finally {
         setSubmitting(false);
         // Limpa o formulário após o envio
-        
+
         //resetarLocation();
         // Atualiza o estado de dadosEditaveis para false após o registro
         //setDadosEditaveis(false);
         // Atualiza o estado de lastid para o novo ID registrado
         ///LastIdFormando(token).then((newLastId) => {
-          //console.log("Novo ID registrado:", newLastId);
-          // Atualiza o estado de lastid com o novo ID
-         // formik.setFieldValue("inscricao", newLastId.id + 1); // Incrementa o novo ID
+        //console.log("Novo ID registrado:", newLastId);
+        // Atualiza o estado de lastid com o novo ID
+        // formik.setFieldValue("inscricao", newLastId.id + 1); // Incrementa o novo ID
         //});
-        
       }
     },
   });
   const mutation = useRegistrarFormando(token, formik, setPreview);
-  const editarMutation = useEditarFormando(token, setPreview, formik, setDadosEditaveis, resetarDados);
+  const editarMutation = useEditarFormando(
+    token,
+    setPreview,
+    formik,
+    setDadosEditaveis,
+    resetarDados
+  );
   const {
     data: cursos,
     isLoadingcurso,
@@ -243,19 +251,17 @@ const navigate = useNavigate();
 
     return cursos.filter((curso) => curso.programa_id === programaId);
   }, [cursos, formik.values.programa]);
- useEffect(() => {
-  if (!dadosEditaveis && lastid?.id) {
-    const novaInscricao = lastid;
-    console.log("Setando inscrição:", novaInscricao);
-    formik.setFieldValue("inscricao", novaInscricao);
-  }
-}, [lastid, dadosEditaveis, formik]);
 
+  useEffect(() => {
+    if (!isEditMode && lastid?.id) {
+      formik.setFieldValue("inscricao", lastid.id + 1);
+    }
+  }, [lastid, isEditMode]);
 
   return (
     <>
       <div md={12} xs={12} className="p-3 bg-white border-1 rounded shadow ">
-        <Row className="d-flex justify-content-center align-items-center  mt-1 mb-3 " >
+        <Row className="d-flex justify-content-center align-items-center  mt-1 mb-3 ">
           <p className="text-success fw-bolder fs-5 border-2 border-bottom border-success">
             REGISTOS DOS FORMANDOS
           </p>
@@ -270,7 +276,6 @@ const navigate = useNavigate();
         <Row md={12} xs={12}>
           <Col md={4}>
             <FloatingLabel
-              
               className="mb-4 w-auto"
               label="Formação Profissional"
             >
@@ -293,7 +298,6 @@ const navigate = useNavigate();
           </Col>
           <Col md={4}>
             <FloatingLabel
-              
               className="mb-4 w-auto"
               label="Experiência Profissional"
             >
@@ -317,11 +321,7 @@ const navigate = useNavigate();
             </FloatingLabel>
           </Col>
           <Col>
-            <FloatingLabel
-              
-              className="mb-4 w-auto"
-              label="Motivo"
-            >
+            <FloatingLabel className="mb-4 w-auto" label="Motivo">
               <Form.Control
                 className="input_left_color p-2"
                 as={"textarea"}
@@ -341,11 +341,7 @@ const navigate = useNavigate();
         </Row>
         <Row md={12} xs={12}>
           <Col md={4}>
-            <FloatingLabel
-              
-              className="mb-4 w-auto"
-              label="Programa"
-            >
+            <FloatingLabel className="mb-4 w-auto" label="Programa">
               <Form.Select
                 className="input_left_color p-2"
                 name="programa"
@@ -368,11 +364,7 @@ const navigate = useNavigate();
             </FloatingLabel>
           </Col>
           <Col md={4}>
-            <FloatingLabel
-              
-              className="mb-4 w-auto"
-              label="Curso Primeira Opção"
-            >
+            <FloatingLabel className="mb-4 w-auto" label="Curso Primeira Opção">
               <Form.Select
                 className="input_left_color p-2"
                 name="curso_primeiraopcao"
@@ -405,28 +397,24 @@ const navigate = useNavigate();
                 {formik.errors.curso_primeiraopcao}
               </Form.Control.Feedback>
               <Form.Control
-             style={{ display: "none" }}
-            className="input_left_color p-2"
-            type="text"
-            name="ocupacao"
-            id="ocupacao"
-            placeholder="Digite a ocupação"
-            value={formik.values.id_curso_inscricao1}
-            onChange={formik.handleChange}
-            isInvalid={
-              formik.touched.id_curso_inscricao1 &&
-              formik.errors.id_curso_inscricao1
-            }id_curso_incricao1
-          />
+                style={{ display: "none" }}
+                className="input_left_color p-2"
+                type="text"
+                name="ocupacao"
+                id="ocupacao"
+                placeholder="Digite a ocupação"
+                value={formik.values.id_curso_inscricao1}
+                onChange={formik.handleChange}
+                isInvalid={
+                  formik.touched.id_curso_inscricao1 &&
+                  formik.errors.id_curso_inscricao1
+                }
+                id_curso_incricao1
+              />
             </FloatingLabel>
-           
           </Col>
           <Col md={4}>
-            <FloatingLabel
-              
-              className="mb-4 w-auto"
-              label="Curso Segunda Opção"
-            >
+            <FloatingLabel className="mb-4 w-auto" label="Curso Segunda Opção">
               <Form.Select
                 className="input_left_color p-2"
                 name="curso_segundaopcao"
@@ -477,11 +465,7 @@ const navigate = useNavigate();
         </Row>
         <Row>
           <Col>
-            <FloatingLabel
-              
-              className="mb-4 w-auto"
-              label="Observação"
-            >
+            <FloatingLabel className="mb-4 w-auto" label="Observação">
               <Form.Control
                 className="input_left_color p-2"
                 as={"textarea"}
@@ -491,7 +475,9 @@ const navigate = useNavigate();
                 placeholder="Comente as observação"
                 value={formik.values.observacao}
                 onChange={formik.handleChange}
-                isInvalid={formik.touched.observacao && formik.errors.observacao}
+                isInvalid={
+                  formik.touched.observacao && formik.errors.observacao
+                }
               />
               <Form.Control.Feedback type="invalid">
                 {formik.errors.observacao}
@@ -514,7 +500,7 @@ const navigate = useNavigate();
               Limpar
             </Button>
           </Col>
-          {location.state?.dadosFormando && (
+          {isEditMode ? (
             <Col xs="auto">
               <ButtonS
                 texto={
@@ -529,13 +515,11 @@ const navigate = useNavigate();
                   editarMutation.mutate({
                     valores: formik.values,
                   });
-                  
                 }}
                 disabled={formik.isSubmitting}
               />
             </Col>
-          )}
-          {!location.state?.dadosFormando && (
+          ) : (
             <Col xs="auto">
               <ButtonS
                 texto={
