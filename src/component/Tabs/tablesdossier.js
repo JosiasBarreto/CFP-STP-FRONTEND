@@ -17,6 +17,7 @@ import QuadrosFormandos from "./ComponentesTabs/Gerar_quadros";
 import QuadrosAvaliacao from "./ComponentesTabs/Gerar_avaliacao";
 import GerarPresenca from "./ComponentesTabs/Gerar_presenca";
 import FormandosTable from "./ComponentesTabs/index_files";
+import GerarSelecionado from "./ComponentesTabs/Gerar_ficha_selecionados";
 
 const TabsCustom = ({ searchParams, datas }) => {
   const [key, setKey] = useState("estatistica");
@@ -130,6 +131,7 @@ const TabsCustom = ({ searchParams, datas }) => {
           <Row md={12} xs={12} className="mb-3 justify-content-start mt-3">
             <QuadrosFormandos datas={searchParams} />
             <GerarPresenca datas={searchParams} data={datas} />
+            <GerarSelecionado datas={searchParams} data={datas} />
 
             <QuadrosAvaliacao datas={searchParams} />
           </Row>

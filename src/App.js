@@ -28,6 +28,8 @@ import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community';
 import Index_perfil from "./view/page/profile/Index_perfil.jsx";
 import RegisterComponente from "./pages/componentes/RegisterComponente.jsx";
 import HomeCursoComponente from "./pages/index.js";
+import ImportarFormandos from "./view/sing/componenteformando/ImportarFormandos/index.jsx";
+import { IndexFormando } from "./view/sing/indexformando.js";
 // Componente de Rota Protegida (para páginas que precisam de autenticação)
 
 // Componente para impedir login de usuários autenticados
@@ -75,7 +77,7 @@ function App() {
           <Route path="register-user" element={<PrivateRoute element={<RegisterUser />} />} />
           <Route path="register-programas" element={<RegisterProgramas />} />
           <Route path="register-cursos" element={<RegisterCursos />} />
-          <Route path="register-formandos" element={<Registerformandos />} />
+          <Route path="register-formandos" element={<IndexFormando />} />
           <Route path="list-formandos" element={<ListFormandos />} />
           <Route path="table-formandos" element={<TableFormandos />} />
           <Route path="selecionar-candidatura" element={<Selectsformandos />} />
@@ -83,10 +85,10 @@ function App() {
           <Route path="selecionar-matricula" element={<ConfirmarMatricula />} />
          
           <Route path="registar-area" element={<AreasTabs />} />
-          <Route path="registar-formador" element={<InscricaoFormador/>} />
-          <Route path="list-formador" element={<FormadoresPage/>} />
+          <Route path="registar-formador" element={<InscricaoFormador />} />
+          <Route path="list-formador" element={<FormadoresPage />} />
           <Route path="componente-cursos" element={<HomeCursoComponente />} />
-          
+          <Route path="register-mult-formandos" element={<ImportarFormandos />} />
          
         </Route>
 
