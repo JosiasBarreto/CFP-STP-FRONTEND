@@ -1,0 +1,7 @@
+{
+  "name": "@cfp-stp/modulo-admin",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Pacote Independente do Módulo de Administração CFP-STP (RBAC Admin/Staff, Análise Técnica, Devolução, Aprovação Transacional para Formando/Inscrição, Auditoria e Suíte de 12 Testes)",
+  "main": "index.tsx"
+}
