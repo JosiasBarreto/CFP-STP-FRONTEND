@@ -1,31 +1,27 @@
-import { CandidaturaAdmin } from '../types';
-import { DadosInscricaoFormando } from '../../../utils/securityAndValidation';
-
-export const converterCandidaturaAdminParaDadosFicha = (
-  cand: CandidaturaAdmin
-): DadosInscricaoFormando => {
+export const converterCandidaturaAdminParaDadosFicha = (cand) => {
+  if (!cand) return {};
   const fotoDoc = cand.documentos?.find((d) => d.tipo === 'FOTO');
 
   return {
-    id: String(cand.id),
-    protocolo: cand.codigo,
-    numero_inscricao: String(cand.inscricao_id || cand.id).padStart(4, '0'),
+    id: String(cand.id || ''),
+    protocolo: cand.codigo || '',
+    numero_inscricao: String(cand.inscricao_id || cand.id || '').padStart(4, '0'),
     numero_processo: cand.processo_numero || undefined,
     ano: String(cand.ano || 2026),
-    data_inscricao: cand.data_submissao || cand.data_criacao,
-    nome: cand.nome,
+    data_inscricao: cand.data_submissao || cand.data_criacao || '',
+    nome: cand.nome || '',
     nome_pai: cand.nome_pai || '',
     nome_mae: cand.nome_mae || '',
-    bi: cand.bi,
+    bi: cand.bi || '',
     arquivo_identificacao: cand.arquivo_identificacao || 'São Tomé',
     nif: cand.nif || '',
-    datanascimento: cand.data_nascimento,
+    datanascimento: cand.data_nascimento || '',
     idade: cand.idade ? String(cand.idade) : '',
     sexo: cand.sexo || 'Masculino',
     nacionalidade: cand.nacionalidade || 'Santomense',
     naturalidade: cand.naturalidade || 'São Tomé',
     estado_civil: cand.estado_civil || 'Solteiro(a)',
-    agregado_familiar: cand.agregado || '1',
+    agregado_familiar: String(cand.agregado || '1'),
     morada: cand.morada || '',
     distrito: cand.distrito || 'Água Grande',
     telefone: cand.contacto || '',
@@ -62,7 +58,7 @@ export const converterCandidaturaAdminParaDadosFicha = (
     curso_opcao_2_programa: cand.curso_opcao2?.programa_nome || '',
     curso_opcao_2_horario: cand.curso_opcao2?.horario || '',
     curso_opcao_2_local: cand.curso_opcao2?.local_realizacao || '',
-    situacao: cand.estado,
+    situacao: cand.estado || 'EM_ANALISE',
     observacao: '',
     autoriza_divulgacao_dados: cand.autorizacao_divulgacao_dados ? 'Sim' : 'Não',
     fotoPreview: fotoDoc?.download_url || '',

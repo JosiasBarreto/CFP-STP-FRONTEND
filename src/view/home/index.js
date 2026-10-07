@@ -174,6 +174,16 @@ const DashboardLayout = () => {
                 <FaUsers className="sidebar-icon" />
                 {sidebarOpen && <span className="sidebar-text">Inscrição</span>}
               </Nav.Link>
+              <Nav.Link
+                className={`sidebar-link ${getNavLinkClass(
+                  "candidatura-formando"
+                )}`}
+                onClick={() => handleNavigate("candidatura-formando")}
+              >
+                <FaUsers className="sidebar-icon" />
+                {sidebarOpen && <span className="sidebar-text">Inscrição ONLINE</span>}
+              </Nav.Link>
+              
 
               {/* ======= CANDIDATURA ======= */}
               {sidebarOpen && (

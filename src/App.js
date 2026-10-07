@@ -30,6 +30,8 @@ import RegisterComponente from "./pages/componentes/RegisterComponente.jsx";
 import HomeCursoComponente from "./pages/index.js";
 import ImportarFormandos from "./view/sing/componenteformando/ImportarFormandos/index.jsx";
 import { IndexFormando } from "./view/sing/indexformando.js";
+import ModuloAdminApp from "./view/packages/modulo-admin/index.jsx";
+
 // Componente de Rota Protegida (para páginas que precisam de autenticação)
 
 // Componente para impedir login de usuários autenticados
@@ -89,6 +91,7 @@ function App() {
           <Route path="list-formador" element={<FormadoresPage />} />
           <Route path="componente-cursos" element={<HomeCursoComponente />} />
           <Route path="register-mult-formandos" element={<ImportarFormandos />} />
+          <Route path="candidatura-formando" element={<ModuloAdminApp />} />
          
         </Route>
 
