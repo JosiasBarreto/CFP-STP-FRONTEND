@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   Container,
   Row,
@@ -29,13 +29,16 @@ import {
   ChevronDown,
   Filter,
   Sparkles,
+  Archive,
+  Download,
+  BarChart3,
 } from 'lucide-react';
 import Swal from 'sweetalert2';
 import { StatusBadgeAdmin } from './StatusBadgeAdmin';
 import { AdminDossierModal } from './AdminDossierModal';
 import { adminApi } from '../services/adminApi';
 
-export const AdminGestaoView = ({ token, aoNotificar }) => {
+export const AdminGestaoView = ({ token, aoNotificar, onAbrirEstatisticas }) => {
   const [candidaturas, setCandidaturas] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
@@ -57,9 +60,12 @@ export const AdminGestaoView = ({ token, aoNotificar }) => {
   // Modal de Dossiê Unificado
   const [candidaturaSelecionada, setCandidaturaSelecionada] = useState(null);
 
-  // Paginação
+  // Paginação e Metadados do Servidor
   const [paginaAtual, setPaginaAtual] = useState(1);
-  const itensPorPagina = 10;
+  const [itensPorPagina, setItensPorPagina] = useState(20);
+  const [totalRegistos, setTotalRegistos] = useState(0);
+  const [totalPaginas, setTotalPaginas] = useState(1);
+  const [estatisticasBackend, setEstatisticasBackend] = useState(null);
 
   // Helper para extrair lista em formato de array seguro
   const extrairListaArray = (res) => {
@@ -73,27 +79,66 @@ export const AdminGestaoView = ({ token, aoNotificar }) => {
     return [];
   };
 
-  // Carregar dados iniciais
+  // Carregar candidaturas através do backend (com paginação e filtros oficiais)
+  const carregarCandidaturas = useCallback(
+    async (pagina = paginaAtual, porPagina = itensPorPagina) => {
+      setCarregando(true);
+      setErro(null);
+      try {
+        const filtros = {
+          page: pagina,
+          per_page: porPagina,
+        };
+        if (estadoFiltro !== 'TODOS') filtros.estado = estadoFiltro;
+        if (programaFiltro) filtros.programa_id = programaFiltro;
+        if (cursoFiltro) filtros.curso_id = cursoFiltro;
+        if (distritoFiltro) filtros.distrito = distritoFiltro;
+        if (pesquisa.trim()) filtros.pesquisa = pesquisa.trim();
+
+        const res = await adminApi.listarCandidaturas(token, filtros);
+
+        const lista = extrairListaArray(res);
+        setCandidaturas(lista);
+
+        // Tratamento estrito do formato do backend: { page, pages, per_page, total, items, estatisticas }
+        if (res && typeof res.total === 'number') {
+          setTotalRegistos(res.total);
+          const pgs = Number(res.pages || res.total_paginas || Math.ceil(res.total / porPagina)) || 1;
+          setTotalPaginas(pgs);
+        } else {
+          setTotalRegistos(lista.length);
+          setTotalPaginas(Math.ceil(lista.length / porPagina) || 1);
+        }
+
+        if (res && res.estatisticas) {
+          setEstatisticasBackend(res.estatisticas);
+        }
+      } catch (err) {
+        console.error('Erro ao carregar lista de candidaturas:', err);
+        setErro('Não foi possível conectar ao servidor. Verifique a sua ligação.');
+        setCandidaturas([]);
+        setTotalRegistos(0);
+        setTotalPaginas(1);
+      } finally {
+        setCarregando(false);
+      }
+    },
+    [token, estadoFiltro, programaFiltro, cursoFiltro, distritoFiltro, pesquisa]
+  );
+
+  // Carregar metadados iniciais (Programas e Cursos)
   const carregarDados = async () => {
-    setCarregando(true);
-    setErro(null);
     try {
-      const [resCandidaturas, resProgramas, resCursos] = await Promise.all([
-        adminApi.listarCandidaturas(token),
+      const [resProgramas, resCursos] = await Promise.all([
         adminApi.listarProgramas(token).catch(() => []),
         adminApi.listarCursos(token).catch(() => []),
       ]);
-
-      setCandidaturas(extrairListaArray(resCandidaturas));
       setProgramas(extrairListaArray(resProgramas));
       setCursos(extrairListaArray(resCursos));
     } catch (err) {
       console.error('Erro ao carregar gestão de dossiês:', err);
-      setErro('Não foi possível conectar ao servidor remoto. Exibindo dados locais.');
-      setCandidaturas([]);
-    } finally {
-      setCarregando(false);
     }
+    await carregarCandidaturas(paginaAtual, itensPorPagina);
   };
 
   // Atualizar cursos quando o programa for alterado
@@ -109,58 +154,99 @@ export const AdminGestaoView = ({ token, aoNotificar }) => {
     carregarDados();
   }, [token]);
 
-  // Lista garantida como array seguro
+  // Carregar candidaturas sempre que a página, quantidade por página ou filtros mudarem
+  useEffect(() => {
+    carregarCandidaturas(paginaAtual, itensPorPagina);
+  }, [carregarCandidaturas, paginaAtual, itensPorPagina]);
+
+  // Reset de página sempre que qualquer filtro mudar
+  useEffect(() => {
+    setPaginaAtual(1);
+  }, [estadoFiltro, programaFiltro, cursoFiltro, distritoFiltro, pesquisa]);
+
+  // Lista de candidaturas da página atual
   const listaSeguraCandidaturas = useMemo(() => {
     return Array.isArray(candidaturas) ? candidaturas : [];
   }, [candidaturas]);
 
-  // Filtragem de dados em memória
-  const candidaturasFiltradas = useMemo(() => {
-    return listaSeguraCandidaturas.filter((c) => {
-      if (!c) return false;
-      if (estadoFiltro !== 'TODOS' && c.estado !== estadoFiltro) return false;
-      if (programaFiltro && String(c.programa_id) !== String(programaFiltro)) return false;
-      if (cursoFiltro && String(c.curso_opcao1_id) !== String(cursoFiltro)) return false;
-      if (distritoFiltro && c.distrito !== distritoFiltro) return false;
-
-      if (pesquisa.trim()) {
-        const termo = pesquisa.toLowerCase();
-        const nome = (c.nome || '').toLowerCase();
-        const bi = (c.bi || '').toLowerCase();
-        const codigo = (c.codigo || '').toLowerCase();
-        const email = (c.email || '').toLowerCase();
-        const contacto = (c.contacto || '').toLowerCase();
-        return (
-          nome.includes(termo) ||
-          bi.includes(termo) ||
-          codigo.includes(termo) ||
-          email.includes(termo) ||
-          contacto.includes(termo)
-        );
-      }
-
-      return true;
-    });
-  }, [listaSeguraCandidaturas, estadoFiltro, programaFiltro, cursoFiltro, distritoFiltro, pesquisa]);
-
-  // Contadores KPI
+  // Contadores KPI Dinâmicos
   const stats = useMemo(() => {
-    const total = listaSeguraCandidaturas.length;
-    const pendentes = listaSeguraCandidaturas.filter((c) => c && c.estado === 'PENDENTE').length;
-    const emAnalise = listaSeguraCandidaturas.filter((c) => c && c.estado === 'EM_ANALISE').length;
-    const devolvidas = listaSeguraCandidaturas.filter((c) => c && (c.estado === 'DEVOLVIDA' || c.estado === 'CORRIGIDA')).length;
-    const aprovadas = listaSeguraCandidaturas.filter((c) => c && c.estado === 'APROVADA').length;
-    const rejeitadas = listaSeguraCandidaturas.filter((c) => c && c.estado === 'REJEITADA').length;
-    const canceladas = listaSeguraCandidaturas.filter((c) => c && c.estado === 'CANCELADA').length;
-    return { total, pendentes, emAnalise, devolvidas, aprovadas, rejeitadas, canceladas };
-  }, [listaSeguraCandidaturas]);
+    const temFiltroAtivo = Boolean(
+      pesquisa.trim() ||
+      estadoFiltro !== 'TODOS' ||
+      programaFiltro ||
+      cursoFiltro ||
+      distritoFiltro
+    );
 
-  // Lógica de Paginação
-  const totalPaginas = Math.ceil(candidaturasFiltradas.length / itensPorPagina) || 1;
-  const candidaturasPaginadas = useMemo(() => {
-    const inicio = (paginaAtual - 1) * itensPorPagina;
-    return candidaturasFiltradas.slice(inicio, inicio + itensPorPagina);
-  }, [candidaturasFiltradas, paginaAtual]);
+    if (estatisticasBackend) {
+      return {
+        total: totalRegistos,
+        totalSegmento: totalRegistos,
+        totalGeral: estatisticasBackend.total || totalRegistos,
+        pendentes: estatisticasBackend.pendentes || 0,
+        emAnalise: estatisticasBackend.em_analise || 0,
+        devolvidas: (estatisticasBackend.devolvidas || 0) + (estatisticasBackend.corrigidas || 0),
+        aprovadas: estatisticasBackend.aprovadas || 0,
+        rejeitadas: estatisticasBackend.rejeitadas || 0,
+        canceladas: estatisticasBackend.canceladas || 0,
+        temFiltroAtivo,
+      };
+    }
+
+    const base = listaSeguraCandidaturas;
+    return {
+      total: totalRegistos || base.length,
+      totalSegmento: totalRegistos || base.length,
+      totalGeral: totalRegistos || base.length,
+      pendentes: base.filter((c) => c && c.estado === 'PENDENTE').length,
+      emAnalise: base.filter((c) => c && c.estado === 'EM_ANALISE').length,
+      devolvidas: base.filter((c) => c && (c.estado === 'DEVOLVIDA' || c.estado === 'CORRIGIDA')).length,
+      aprovadas: base.filter((c) => c && (c.estado === 'APROVADA' || c.estado === 'APROVADO')).length,
+      rejeitadas: base.filter((c) => c && (c.estado === 'REJEITADA' || c.estado === 'REJEITADO' || c.estado === 'REPROVADA')).length,
+      canceladas: base.filter((c) => c && c.estado === 'CANCELADA').length,
+      temFiltroAtivo,
+    };
+  }, [estatisticasBackend, totalRegistos, listaSeguraCandidaturas, pesquisa, estadoFiltro, programaFiltro, cursoFiltro, distritoFiltro]);
+
+  // Candidaturas exibidas na tabela são diretamente as da página atual obtidas do backend
+  const candidaturasPaginadas = listaSeguraCandidaturas;
+  const candidaturasFiltradas = listaSeguraCandidaturas;
+
+  // Ajuste automático caso a página atual exceda o total de páginas
+  useEffect(() => {
+    if (paginaAtual > totalPaginas && totalPaginas > 0) {
+      setPaginaAtual(Math.max(1, totalPaginas));
+    }
+  }, [paginaAtual, totalPaginas]);
+
+  // Gerador de botões inteligentes de paginação (com elipses ...)
+  const gerarBotoesPaginacao = () => {
+    const delta = 1;
+    const range = [];
+    const rangeComPontos = [];
+    let l;
+
+    for (let i = 1; i <= totalPaginas; i++) {
+      if (i === 1 || i === totalPaginas || (i >= paginaAtual - delta && i <= paginaAtual + delta)) {
+        range.push(i);
+      }
+    }
+
+    for (const i of range) {
+      if (l) {
+        if (i - l === 2) {
+          rangeComPontos.push(l + 1);
+        } else if (i - l !== 1) {
+          rangeComPontos.push('...');
+        }
+      }
+      rangeComPontos.push(i);
+      l = i;
+    }
+
+    return rangeComPontos;
+  };
 
   // Lógica de Seleção Múltipla
   const todosPaginaSelecionados = useMemo(() => {
@@ -332,6 +418,41 @@ export const AdminGestaoView = ({ token, aoNotificar }) => {
     }
   };
 
+  const [processandoZip, setProcessandoZip] = useState(false);
+
+  // 5.6. Baixar Grupo de Dossiês em Ficheiro ZIP (Múltiplos Formandos por ID)
+  const executarDownloadZipEmLote = async () => {
+    if (idsSelecionados.length === 0) return;
+
+    Swal.fire({
+      title: 'A gerar ficheiro ZIP...',
+      html: `A agrupar os dossiês unificados oficiais de <strong>${idsSelecionados.length}</strong> formando(s)...<br/><small class="text-muted">Ordem oficial CFP: Ficha, B.I., NIF, Habilitações e Certificados.</small>`,
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading(),
+    });
+
+    setProcessandoZip(true);
+    try {
+      const candidatosSelecionados = candidaturas.filter((c) => idsSelecionados.includes(c.id));
+      await adminApi.baixarDossiesZip(token, idsSelecionados, candidatosSelecionados);
+      Swal.fire({
+        title: 'ZIP Concluído!',
+        text: `O arquivo ZIP com os dossiês de ${idsSelecionados.length} formando(s) foi transferido com sucesso.`,
+        icon: 'success',
+        confirmButtonColor: '#1b4332',
+      });
+    } catch (err) {
+      Swal.fire({
+        title: 'Erro no Download ZIP',
+        text: err.message || 'Falha ao descarregar grupo de dossiês em ZIP.',
+        icon: 'error',
+        confirmButtonColor: '#d33',
+      });
+    } finally {
+      setProcessandoZip(false);
+    }
+  };
+
   return (
     <Container fluid className="py-1 font-sans" style={{ backgroundColor: '#f8faf9', minHeight: '100vh' }}>
       {/* CABEÇALHO DO PAINEL GERAL */}
@@ -349,6 +470,17 @@ export const AdminGestaoView = ({ token, aoNotificar }) => {
         </div>
 
         <div className="d-flex align-items-center gap-2">
+          {onAbrirEstatisticas && (
+            <Button
+              variant="outline-light"
+              onClick={onAbrirEstatisticas}
+              className="d-flex align-items-center gap-1.5 fw-semibold fs-7 border-light-subtle"
+            >
+              <BarChart3 style={{ width: '15px', height: '15px' }} />
+              Inscrições & Estatísticas
+            </Button>
+          )}
+
           <Button
             variant="light"
             onClick={carregarDados}
@@ -358,67 +490,175 @@ export const AdminGestaoView = ({ token, aoNotificar }) => {
             <RefreshCw style={{ width: '15px', height: '15px' }} className={carregando ? 'spin' : ''} />
             Atualizar
           </Button>
-          
         </div>
       </div>
 
-      {/* CARDS KPI COM CORES LEVES E SUAVES */}
+      {/* CARDS KPI COM CORES EM TONS DE VERDE (DINÂMICOS CONFORME OS FILTROS) */}
       <Row className="g-2 mb-2">
-        <Col xs={3} md={2} lg={2.4}>
-          <Card className="border-2 shadow-xs bg-white rounded-3 h-100">
+        <Col xs={6} md={4} lg className="col-lg">
+          <Card
+            className={`shadow-xs bg-white rounded-3 h-100 transition-all ${
+              estadoFiltro === 'TODOS' ? 'shadow-sm' : ''
+            }`}
+            style={{
+              border: estadoFiltro === 'TODOS' ? '2px solid #1b4332' : '1px solid #d8f3dc',
+              borderLeft: '4px solid #1b4332',
+              backgroundColor: estadoFiltro === 'TODOS' ? '#eaf5ee' : '#ffffff',
+              cursor: 'pointer',
+            }}
+            onClick={() => setEstadoFiltro('TODOS')}
+            title="Clique para exibir todos os estados das inscrições filtradas"
+          >
             <Card.Body className="p-3">
-              <span className="text-muted fs-7 d-block text-uppercase fw-bold">Total Inscrições</span>
+              <div className="d-flex align-items-center justify-content-between mb-1">
+                <span className="fs-7 text-uppercase fw-bold" style={{ color: '#1b4332' }}>Total Inscrições</span>
+                {estadoFiltro === 'TODOS' ? (
+                  <span className="badge badge-cfp-dark fs-8 py-0.5 px-2 rounded-pill">Ativo</span>
+                ) : (
+                  <span className="badge bg-light text-dark border fs-8">Geral</span>
+                )}
+              </div>
               <div className="d-flex align-items-center justify-content-between mt-1">
-                <span className="fs-3 fw-bold text-dark">{stats.total}</span>
-                <Badge bg="light" text="dark" className="border">100%</Badge>
+                <span className="fs-3 fw-bold" style={{ color: '#1b4332' }}>{stats.total}</span>
+                {stats.temFiltroAtivo ? (
+                  <span className="badge badge-cfp-light border fw-semibold fs-8">
+                    {stats.totalGeral > 0 ? `${Math.round((stats.total / stats.totalGeral) * 100)}%` : '100%'}
+                  </span>
+                ) : (
+                  <span className="badge bg-light text-dark border fs-8">100%</span>
+                )}
               </div>
             </Card.Body>
           </Card>
         </Col>
 
-        <Col xs={3} md={2} lg={2.4}>
-          <Card className="border-2 shadow-xs bg-white rounded-3 h-100" style={{ borderLeft: '4px solid #d97706' }}>
+        <Col xs={6} md={4} lg className="col-lg">
+          <Card
+            className={`shadow-xs bg-white rounded-3 h-100 transition-all ${
+              estadoFiltro === 'PENDENTE' ? 'shadow-sm' : ''
+            }`}
+            style={{
+              border: estadoFiltro === 'PENDENTE' ? '2px solid #40916c' : '1px solid #e2ede6',
+              borderLeft: '4px solid #40916c',
+              cursor: 'pointer',
+              backgroundColor: estadoFiltro === 'PENDENTE' ? '#f0f7f4' : '#ffffff',
+            }}
+            onClick={() => setEstadoFiltro(estadoFiltro === 'PENDENTE' ? 'TODOS' : 'PENDENTE')}
+            title="Clique para filtrar apenas inscrições pendentes"
+          >
             <Card.Body className="p-3">
-              <span className="fs-7 d-block text-uppercase fw-bold" style={{ color: '#b45309' }}>Pendentes</span>
+              <div className="d-flex align-items-center justify-content-between mb-1">
+                <span className="fs-7 text-uppercase fw-bold" style={{ color: '#2d6a4f' }}>Pendentes</span>
+                {estadoFiltro === 'PENDENTE' ? (
+                  <span className="badge badge-cfp-medium fs-8 py-0.5 px-2 rounded-pill">Filtrado</span>
+                ) : (
+                  <span className="badge badge-cfp-subtle fs-8">
+                    {stats.totalSegmento > 0 ? `${Math.round((stats.pendentes / stats.totalSegmento) * 100)}%` : '0%'}
+                  </span>
+                )}
+              </div>
               <div className="d-flex align-items-center justify-content-between mt-1">
-                <span className="fs-3 fw-bold" style={{ color: '#b45309' }}>{stats.pendentes}</span>
-                <Clock style={{ width: '20px', height: '20px', color: '#d97706' }} />
+                <span className="fs-3 fw-bold" style={{ color: '#2d6a4f' }}>{stats.pendentes}</span>
+                <Clock style={{ width: '20px', height: '20px', color: '#40916c' }} />
               </div>
             </Card.Body>
           </Card>
         </Col>
 
-        <Col xs={3} md={2} lg={2.4}>
-          <Card className="border-2 shadow-xs bg-white rounded-3 h-100" style={{ borderLeft: '4px solid #0284c7' }}>
+        <Col xs={6} md={4} lg className="col-lg">
+          <Card
+            className={`shadow-xs bg-white rounded-3 h-100 transition-all ${
+              estadoFiltro === 'EM_ANALISE' ? 'shadow-sm' : ''
+            }`}
+            style={{
+              border: estadoFiltro === 'EM_ANALISE' ? '2px solid #2d6a4f' : '1px solid #e2ede6',
+              borderLeft: '4px solid #2d6a4f',
+              cursor: 'pointer',
+              backgroundColor: estadoFiltro === 'EM_ANALISE' ? '#eaf5ee' : '#ffffff',
+            }}
+            onClick={() => setEstadoFiltro(estadoFiltro === 'EM_ANALISE' ? 'TODOS' : 'EM_ANALISE')}
+            title="Clique para filtrar apenas inscrições em análise"
+          >
             <Card.Body className="p-3">
-              <span className="fs-7 d-block text-uppercase fw-bold" style={{ color: '#0369a1' }}>Em Análise</span>
+              <div className="d-flex align-items-center justify-content-between mb-1">
+                <span className="fs-7 text-uppercase fw-bold" style={{ color: '#1b4332' }}>Em Análise</span>
+                {estadoFiltro === 'EM_ANALISE' ? (
+                  <span className="badge badge-cfp-emerald fs-8 py-0.5 px-2 rounded-pill">Filtrado</span>
+                ) : (
+                  <span className="badge badge-cfp-light fs-8">
+                    {stats.totalSegmento > 0 ? `${Math.round((stats.emAnalise / stats.totalSegmento) * 100)}%` : '0%'}
+                  </span>
+                )}
+              </div>
               <div className="d-flex align-items-center justify-content-between mt-1">
-                <span className="fs-3 fw-bold" style={{ color: '#0369a1' }}>{stats.emAnalise}</span>
-                <Eye style={{ width: '20px', height: '20px', color: '#0284c7' }} />
+                <span className="fs-3 fw-bold" style={{ color: '#1b4332' }}>{stats.emAnalise}</span>
+                <Eye style={{ width: '20px', height: '20px', color: '#2d6a4f' }} />
               </div>
             </Card.Body>
           </Card>
         </Col>
 
-        <Col xs={3} md={2} lg={2.4}>
-          <Card className="border-2 shadow-xs bg-white rounded-3 h-100" style={{ borderLeft: '4px solid #2d6a4f' }}>
+        <Col xs={6} md={6} lg className="col-lg">
+          <Card
+            className={`shadow-xs bg-white rounded-3 h-100 transition-all ${
+              estadoFiltro === 'APROVADA' ? 'shadow-sm' : ''
+            }`}
+            style={{
+              border: estadoFiltro === 'APROVADA' ? '2px solid #1b4332' : '1px solid #e2ede6',
+              borderLeft: '4px solid #1b4332',
+              cursor: 'pointer',
+              backgroundColor: estadoFiltro === 'APROVADA' ? '#c8eed5' : '#ffffff',
+            }}
+            onClick={() => setEstadoFiltro(estadoFiltro === 'APROVADA' ? 'TODOS' : 'APROVADA')}
+            title="Clique para filtrar apenas inscrições aprovadas"
+          >
             <Card.Body className="p-3">
-              <span className="fs-7 d-block text-uppercase fw-bold" style={{ color: '#1b4332' }}>Aprovadas</span>
+              <div className="d-flex align-items-center justify-content-between mb-1">
+                <span className="fs-7 text-uppercase fw-bold" style={{ color: '#0f3822' }}>Aprovadas</span>
+                {estadoFiltro === 'APROVADA' ? (
+                  <span className="badge badge-cfp-dark fs-8 py-0.5 px-2 rounded-pill">Filtrado</span>
+                ) : (
+                  <span className="badge badge-cfp-mint fs-8">
+                    {stats.totalSegmento > 0 ? `${Math.round((stats.aprovadas / stats.totalSegmento) * 100)}%` : '0%'}
+                  </span>
+                )}
+              </div>
               <div className="d-flex align-items-center justify-content-between mt-1">
-                <span className="fs-3 fw-bold" style={{ color: '#2d6a4f' }}>{stats.aprovadas}</span>
-                <CheckCircle2 style={{ width: '20px', height: '20px', color: '#2d6a4f' }} />
+                <span className="fs-3 fw-bold" style={{ color: '#0f3822' }}>{stats.aprovadas}</span>
+                <CheckCircle2 style={{ width: '20px', height: '20px', color: '#1b4332' }} />
               </div>
             </Card.Body>
           </Card>
         </Col>
 
-        <Col xs={3} md={2} lg={2.4}>
-          <Card className="border-2 shadow-xs bg-white rounded-3 h-100" style={{ borderLeft: '4px solid #e63946' }}>
+        <Col xs={6} md={6} lg className="col-lg">
+          <Card
+            className={`shadow-xs bg-white rounded-3 h-100 transition-all ${
+              estadoFiltro === 'REJEITADA' ? 'shadow-sm' : ''
+            }`}
+            style={{
+              border: estadoFiltro === 'REJEITADA' ? '2px solid #244b38' : '1px solid #e2ede6',
+              borderLeft: '4px solid #244b38',
+              cursor: 'pointer',
+              backgroundColor: estadoFiltro === 'REJEITADA' ? '#edf2ee' : '#ffffff',
+            }}
+            onClick={() => setEstadoFiltro(estadoFiltro === 'REJEITADA' ? 'TODOS' : 'REJEITADA')}
+            title="Clique para filtrar apenas inscrições rejeitadas"
+          >
             <Card.Body className="p-3">
-              <span className="fs-7 d-block text-uppercase fw-bold" style={{ color: '#991b1b' }}>Rejeitadas</span>
+              <div className="d-flex align-items-center justify-content-between mb-1">
+                <span className="fs-7 text-uppercase fw-bold" style={{ color: '#1c3829' }}>Rejeitadas</span>
+                {estadoFiltro === 'REJEITADA' ? (
+                  <span className="badge badge-cfp-dark fs-8 py-0.5 px-2 rounded-pill" style={{ backgroundColor: '#244b38' }}>Filtrado</span>
+                ) : (
+                  <span className="badge badge-cfp-muted fs-8">
+                    {stats.totalSegmento > 0 ? `${Math.round((stats.rejeitadas / stats.totalSegmento) * 100)}%` : '0%'}
+                  </span>
+                )}
+              </div>
               <div className="d-flex align-items-center justify-content-between mt-1">
-                <span className="fs-3 fw-bold" style={{ color: '#991b1b' }}>{stats.rejeitadas}</span>
-                <XCircle style={{ width: '20px', height: '20px', color: '#e63946' }} />
+                <span className="fs-3 fw-bold" style={{ color: '#1c3829' }}>{stats.rejeitadas}</span>
+                <XCircle style={{ width: '20px', height: '20px', color: '#244b38' }} />
               </div>
             </Card.Body>
           </Card>
@@ -430,9 +670,9 @@ export const AdminGestaoView = ({ token, aoNotificar }) => {
         <Card className="border-2 shadow-md mb-2 text-white animate-in fade-in" style={{ backgroundColor: '#1b4332', borderRadius: '12px' }}>
           <Card.Body className="py-2.5 px-4 d-flex flex-wrap align-items-center justify-content-between gap-3">
             <div className="d-flex align-items-center gap-2">
-              <Badge bg="light" text="dark" className="fs-6 px-2.5 py-1.5 rounded-pill fw-bold">
+              <span className="badge bg-white text-dark fs-6 px-2.5 py-1.5 rounded-pill fw-bold">
                 {idsSelecionados.length}
-              </Badge>
+              </span>
               <span className="fw-semibold fs-6">
                 {idsSelecionados.length === 1 ? 'Candidatura Selecionada' : 'Candidaturas Selecionadas para Ação em Lote'}
               </span>
@@ -470,6 +710,26 @@ export const AdminGestaoView = ({ token, aoNotificar }) => {
               >
                 <RotateCcw style={{ width: '16px', height: '16px' }} />
                 Devolver p/ Correção
+              </Button>
+
+              <Button
+                variant="light"
+                size="sm"
+                onClick={executarDownloadZipEmLote}
+                disabled={processandoZip}
+                className="d-flex align-items-center gap-1.5 fw-bold px-3 py-1.5 text-dark shadow-xs"
+                style={{ backgroundColor: '#e2ece9', borderColor: '#b7d5cb' }}
+                title="Descarregar arquivo ZIP com os Dossiês Unificados em PDF dos candidatos selecionados"
+              >
+                {processandoZip ? (
+                  <Spinner size="sm" animation="border" />
+                ) : (
+                  <Archive style={{ width: '16px', height: '16px', color: '#1b4332' }} />
+                )}
+                <span>Baixar Dossiês (ZIP)</span>
+                <span className="badge badge-cfp-dark ms-1 fs-8">
+                  {idsSelecionados.length}
+                </span>
               </Button>
 
               <Button
@@ -662,7 +922,7 @@ export const AdminGestaoView = ({ token, aoNotificar }) => {
                         />
                       </td>
                       <td className=' fs-9'>
-                        <Badge className="bg-light text-dark   fs-9">{c.codigo}</Badge>
+                        <span className="badge bg-light text-dark border fs-9">{c.codigo}</span>
                         
                       </td>
                       <td>
@@ -683,20 +943,32 @@ export const AdminGestaoView = ({ token, aoNotificar }) => {
                         <StatusBadgeAdmin estado={c.estado} />
                       </td>
                       <td className="">
-                        <Badge bg="light" text="dark" className="fs-8 px-2 py-1 rounded-pill">
-                        {c.data_submissao || c.data_criacao || 'Recente'}
-                        </Badge>
+                        <span className="badge bg-light text-dark border fs-8 px-2 py-1 rounded-pill">
+                          {c.data_submissao || c.data_criacao || 'Recente'}
+                        </span>
                       </td>
                       <td className="text-end pe-4">
-                        <Button
-                          variant="outline-success"
-                          size="sm"
-                          onClick={() => setCandidaturaSelecionada(c)}
-                          className="d-inline-flex align-items-center gap-1.5 fw-bold fs-8 border-success-subtle"
-                          style={{ color: '#1b4332' }}
-                        >
-                          <Eye style={{ width: '14px', height: '14px' }} /> Ver Dossiê
-                        </Button>
+                        <div className="d-inline-flex align-items-center gap-1.5">
+                          <Button
+                            variant="outline-success"
+                            size="sm"
+                            onClick={() => setCandidaturaSelecionada(c)}
+                            className="d-inline-flex align-items-center gap-1.5 fw-bold fs-8 border-success-subtle"
+                            style={{ color: '#1b4332' }}
+                            title="Visualizar dossiê completo do candidato"
+                          >
+                            <Eye style={{ width: '14px', height: '14px' }} /> Ver Dossiê
+                          </Button>
+                          <Button
+                            variant="outline-secondary"
+                            size="sm"
+                            onClick={() => adminApi.baixarDossieCompletoPdf(token, c)}
+                            className="d-inline-flex align-items-center gap-1 fs-8 border-secondary-subtle p-1.5 rounded-3"
+                            title="Baixar Dossiê Completo Unificado em PDF (Ordem Oficial CFP)"
+                          >
+                            <Download style={{ width: '13px', height: '13px' }} />
+                          </Button>
+                        </div>
                       </td>
                     </tr>
                   );
@@ -712,33 +984,95 @@ export const AdminGestaoView = ({ token, aoNotificar }) => {
           )}
         </Card.Body>
 
-        {/* RODAPÉ DE PAGINAÇÃO DA TABELA */}
-        {totalPaginas > 1 && (
-          <Card.Footer className="bg-white border-top-0 d-flex align-items-center justify-content-between py-3 px-4">
+        {/* RODAPÉ DE PAGINAÇÃO ROBUSTA DA TABELA */}
+        <Card.Footer className="bg-white border-top d-flex flex-wrap align-items-center justify-content-between gap-3 py-3 px-4">
+          <div className="d-flex flex-wrap align-items-center gap-3">
             <span className="text-muted fs-7">
-              Página <strong>{paginaAtual}</strong> de <strong>{totalPaginas}</strong>
+              A exibir{' '}
+              <strong>
+                {totalRegistos === 0
+                  ? 0
+                  : (paginaAtual - 1) * itensPorPagina + 1}
+              </strong>{' '}
+              a{' '}
+              <strong>
+                {totalRegistos === 0
+                  ? 0
+                  : Math.min((paginaAtual - 1) * itensPorPagina + candidaturas.length, totalRegistos)}
+              </strong>{' '}
+              de <strong>{totalRegistos}</strong> registos
+              {stats.temFiltroAtivo && (
+                <span className="text-secondary ms-1">
+                  (filtrado de {stats.totalGeral} no total)
+                </span>
+              )}
             </span>
-            <Pagination className="mb-0 size-sm">
-              <Pagination.Prev
-                disabled={paginaAtual === 1}
-                onClick={() => setPaginaAtual((p) => Math.max(p - 1, 1))}
-              />
-              {[...Array(totalPaginas)].map((_, i) => (
-                <Pagination.Item
-                  key={i + 1}
-                  active={i + 1 === paginaAtual}
-                  onClick={() => setPaginaAtual(i + 1)}
-                >
-                  {i + 1}
-                </Pagination.Item>
-              ))}
-              <Pagination.Next
-                disabled={paginaAtual === totalPaginas}
-                onClick={() => setPaginaAtual((p) => Math.min(p + 1, totalPaginas))}
-              />
-            </Pagination>
-          </Card.Footer>
-        )}
+
+            {/* Seletor de itens por página */}
+            <div className="d-flex align-items-center gap-1.5 ms-sm-2">
+              <span className="text-muted fs-8">Exibir:</span>
+              <Form.Select
+                size="sm"
+                value={itensPorPagina}
+                onChange={(e) => {
+                  setItensPorPagina(Number(e.target.value));
+                  setPaginaAtual(1);
+                }}
+                style={{ width: '80px', height: '30px', fontSize: '0.8rem' }}
+                className="py-0 px-2 rounded-2"
+              >
+                <option value={10}>10</option>
+                <option value={20}>20</option>
+                <option value={50}>50</option>
+                <option value={100}>100</option>
+              </Form.Select>
+            </div>
+          </div>
+
+          {totalPaginas > 1 && (
+            <div className="d-flex align-items-center gap-2">
+              <span className="text-muted fs-8 d-none d-md-inline">
+                Página <strong>{paginaAtual}</strong> de <strong>{totalPaginas}</strong>
+              </span>
+              <Pagination className="mb-0 size-sm">
+                <Pagination.First
+                  disabled={paginaAtual === 1}
+                  onClick={() => setPaginaAtual(1)}
+                  title="Primeira página"
+                />
+                <Pagination.Prev
+                  disabled={paginaAtual === 1}
+                  onClick={() => setPaginaAtual((p) => Math.max(p - 1, 1))}
+                  title="Página anterior"
+                />
+                {gerarBotoesPaginacao().map((item, idx) => {
+                  if (item === '...') {
+                    return <Pagination.Ellipsis key={`ellipsis-${idx}`} disabled />;
+                  }
+                  return (
+                    <Pagination.Item
+                      key={item}
+                      active={item === paginaAtual}
+                      onClick={() => setPaginaAtual(item)}
+                    >
+                      {item}
+                    </Pagination.Item>
+                  );
+                })}
+                <Pagination.Next
+                  disabled={paginaAtual === totalPaginas}
+                  onClick={() => setPaginaAtual((p) => Math.min(p + 1, totalPaginas))}
+                  title="Página seguinte"
+                />
+                <Pagination.Last
+                  disabled={paginaAtual === totalPaginas}
+                  onClick={() => setPaginaAtual(totalPaginas)}
+                  title="Última página"
+                />
+              </Pagination>
+            </div>
+          )}
+        </Card.Footer>
       </Card>
 
       {/* MODAL DOSSIÊ UNIFICADO COMPLETO */}

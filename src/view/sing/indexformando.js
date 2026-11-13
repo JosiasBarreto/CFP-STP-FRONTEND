@@ -2,6 +2,8 @@ import React from "react";
 import { Tabs, Tab, Row } from "react-bootstrap";
 import Registerformandos from "./registerformandos";
 import ImportarFormandos from "./componenteformando/ImportarFormandos";
+import ModuloAdminApp from "../packages/modulo-admin";
+import { EstatisticasInscricoes } from "../packages/modulo-admin/components";
 
 export const IndexFormando = () => {
   return (
@@ -12,15 +14,33 @@ export const IndexFormando = () => {
         className="mb-3"
         justify
       >
-        <Tab eventKey="inscricao" title="INSCRIÇÃO DOS FORMANDOS">
-          <Registerformandos />
-        </Tab>
-        <Tab eventKey="importar" title="IMPORTAR FORMANDOS">
-          <ImportarFormandos />
-        </Tab>
-        <Tab eventKey="upload" title="CARREGAR FORMANDOS">
-         
-        </Tab>
+        <Tab eventKey="inscricao" title="📝 Inscrever Formandos">
+              <div className="">
+                <Registerformandos />
+              </div>
+            </Tab>
+
+            <Tab eventKey="importar" title="📥 Importar Formandos">
+              <div className="">
+                <ImportarFormandos />
+              </div>
+            </Tab>
+
+            <Tab
+              eventKey="gestao"
+              title="⚙️ Gestão de Inscrições Online"
+            >
+              <div className="">
+                <ModuloAdminApp />
+              </div>
+            </Tab>
+
+            <Tab
+              eventKey="estatisticas"
+              title="📊 Estatísticas de Inscrições"
+            >
+             <EstatisticasInscricoes />
+            </Tab>
       </Tabs>
     </Row>
   );

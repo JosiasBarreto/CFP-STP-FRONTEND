@@ -15,3 +15,133 @@ p, label, .col, div {
   font-family: 'Times New Roman', Times, serif, Geneva, Verdana, sans-serif;
   
 }
+/* Custom Green Theme Styles */
+.page-item.active .page-link {
+  background-color: #1b4332 !important;
+  border-color: #1b4332 !important;
+  color: #ffffff !important;
+}
+
+.page-link {
+  color: #1b4332 !important;
+}
+
+.page-link:hover {
+  background-color: #e8f5e9 !important;
+  color: #1b4332 !important;
+  border-color: #b7e4c7 !important;
+}
+
+.page-link:focus {
+  box-shadow: 0 0 0 0.25rem rgba(27, 67, 50, 0.25) !important;
+}
+
+.page-item.disabled .page-link {
+  color: #94a3b8 !important;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #2d6a4f !important;
+  box-shadow: 0 0 0 0.25rem rgba(45, 106, 79, 0.2) !important;
+}
+
+.btn-primary {
+  background-color: #1b4332 !important;
+  border-color: #1b4332 !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: #143527 !important;
+  border-color: #143527 !important;
+}
+
+/* Previne que qualquer Badge padrão do Bootstrap assuma a cor azul primaria ou conflitante */
+.badge {
+  background-color: #1b4332;
+  color: #ffffff;
+}
+
+.badge.bg-primary {
+  background-color: #1b4332 !important;
+  color: #ffffff !important;
+}
+
+.badge.bg-info,
+.badge.bg-info-subtle {
+  background-color: #d8f3dc !important;
+  color: #1b4332 !important;
+  border-color: #b7e4c7 !important;
+}
+
+.badge.bg-warning,
+.badge.bg-warning-subtle {
+  background-color: #eaf5ee !important;
+  color: #2d6a4f !important;
+  border-color: #c7e8d6 !important;
+}
+
+.badge.bg-danger,
+.badge.bg-danger-subtle {
+  background-color: #edf2ee !important;
+  color: #1c3829 !important;
+  border-color: #c2d1c8 !important;
+}
+
+.badge.bg-success,
+.badge.bg-success-subtle {
+  background-color: #c8eed5 !important;
+  color: #0f3822 !important;
+  border-color: #74c69d !important;
+}
+
+.badge.bg-secondary,
+.badge.bg-secondary-subtle {
+  background-color: #f1f5f3 !important;
+  color: #334155 !important;
+  border-color: #cbd5e1 !important;
+}
+
+/* Classes utilitárias monocromáticas verdes de alta especificidade */
+.badge-cfp-dark {
+  background-color: #1b4332 !important;
+  color: #ffffff !important;
+  border: 1px solid #143527 !important;
+}
+
+.badge-cfp-emerald {
+  background-color: #2d6a4f !important;
+  color: #ffffff !important;
+  border: 1px solid #1b4332 !important;
+}
+
+.badge-cfp-medium {
+  background-color: #40916c !important;
+  color: #ffffff !important;
+  border: 1px solid #2d6a4f !important;
+}
+
+.badge-cfp-light {
+  background-color: #d8f3dc !important;
+  color: #1b4332 !important;
+  border: 1px solid #b7e4c7 !important;
+}
+
+.badge-cfp-subtle {
+  background-color: #eaf5ee !important;
+  color: #2d6a4f !important;
+  border: 1px solid #c7e8d6 !important;
+}
+
+.badge-cfp-mint {
+  background-color: #c8eed5 !important;
+  color: #0f3822 !important;
+  border: 1px solid #74c69d !important;
+}
+
+.badge-cfp-muted {
+  background-color: #edf2ee !important;
+  color: #1c3829 !important;
+  border: 1px solid #c2d1c8 !important;
+}

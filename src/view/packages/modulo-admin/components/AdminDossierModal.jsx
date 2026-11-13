@@ -58,7 +58,34 @@ export const AdminDossierModal = ({
   const [fotoUrl, setFotoUrl] = useState(null);
 
   const [processando, setProcessando] = useState(false);
+  const [descarregandoDossie, setDescarregandoDossie] = useState(false);
   const [copiado, setCopiado] = useState(false);
+
+  // Descarregar dossiê completo unificado em PDF
+  const descarregarDossieCompleto = async () => {
+    setDescarregandoDossie(true);
+    try {
+      const ok = await adminApi.baixarDossieCompletoPdf(token, cand);
+      if (ok) {
+        Swal.fire({
+          title: 'Dossiê Descarregado!',
+          text: `O dossiê completo unificado de ${cand.nome || 'Candidato'} foi transferido com sucesso.`,
+          icon: 'success',
+          confirmButtonColor: '#1b4332',
+          timer: 3000,
+        });
+      }
+    } catch (err) {
+      Swal.fire({
+        title: 'Erro no Dossiê',
+        text: err.message || 'Falha ao descarregar dossiê completo.',
+        icon: 'error',
+        confirmButtonColor: '#d33',
+      });
+    } finally {
+      setDescarregandoDossie(false);
+    }
+  };
 
   // Modo de edição / retificação
   const [modoEdicao, setModoEdicao] = useState(false);
@@ -446,10 +473,27 @@ export const AdminDossierModal = ({
               size="sm"
               onClick={() => adminApi.baixarFichaOficialPdf(token, cand)}
               className="d-flex align-items-center gap-1.5 fw-semibold fs-7 shadow-xs text-dark rounded-3"
-              title="Baixar Ficha de Inscrição Oficial em PDF do Backend"
+              title="Baixar Ficha de Inscrição Oficial em PDF"
             >
               <Download style={{ width: '15px', height: '15px' }} />
               <span className="d-none d-md-inline">Ficha PDF</span>
+            </Button>
+
+            <Button
+              variant="light"
+              size="sm"
+              onClick={descarregarDossieCompleto}
+              disabled={descarregandoDossie}
+              className="d-flex align-items-center gap-1.5 fw-bold fs-7 shadow-xs text-dark rounded-3"
+              style={{ backgroundColor: '#e2ece9', color: '#1b4332' }}
+              title="Baixar Dossiê Completo Unificado em PDF (Ficha + BI + NIF + Habilitações + Certificados)"
+            >
+              {descarregandoDossie ? (
+                <Spinner size="sm" animation="border" />
+              ) : (
+                <FileText style={{ width: '15px', height: '15px', color: '#1b4332' }} />
+              )}
+              <span className="d-none d-sm-inline">Dossiê Completo</span>
             </Button>
 
             <Button variant="light" className="text-dark p-1.5 ms-1 rounded-circle border-0 shadow-xs" onClick={onClose} aria-label="Fechar">
@@ -719,11 +763,13 @@ export const AdminDossierModal = ({
                         </Col>
                         <Col sm={2} className='shadow-sm rounded-3 mb-3'>
                           <span className="d-block fw-bold fs-7 mb-0.5" style={{ color: '#475569' }}>Data de nasc.</span>
-                          <span className="d-block fs-6" style={{ fontFamily: "'', 'Times New Roman', serif", color: '#1e293b' }}>{formatarDataNascimento(cand.data_nascimento) || '—'}</span>
+                          <span className="d-block fs-6" style={{ fontFamily: "'Georgia', 'Times New Roman', serif", color: '#1e293b' }}>{formatarDataNascimento(cand.data_nascimento)}</span>
                         </Col>
                         <Col sm={2} className='shadow-sm rounded-3 mb-3'>
                           <span className="d-block fw-bold fs-7 mb-0.5" style={{ color: '#475569' }}>Idade</span>
-                          <span className="d-block fs-6" style={{ fontFamily: "'', 'Times New Roman', serif", color: '#1e293b' }}>{calcularIdade(cand.data_nascimento) +' Anos' || '—'}</span>
+                          <span className="d-block fs-6" style={{ fontFamily: "'Georgia', 'Times New Roman', serif", color: '#1e293b' }}>
+                            {calcularIdade(cand.data_nascimento) != null ? `${calcularIdade(cand.data_nascimento)} Anos` : '—'}
+                          </span>
                         </Col>
 
                         <Col sm={6} className='shadow-sm rounded-3 mb-3'>
@@ -1206,6 +1252,22 @@ export const AdminDossierModal = ({
                   <Download style={{ width: '15px', height: '15px' }} />
                   <span>Ficha PDF</span>
                 </Button>
+                <Button
+                  variant="success"
+                  size="sm"
+                  onClick={descarregarDossieCompleto}
+                  disabled={descarregandoDossie}
+                  className="d-flex align-items-center gap-1.5 fw-bold fs-7 rounded-3 text-white"
+                  style={{ backgroundColor: '#1b4332', borderColor: '#1b4332' }}
+                  title="Baixar Dossiê Completo Unificado em PDF (Ficha + BI + NIF + Habilitações + Certificados)"
+                >
+                  {descarregandoDossie ? (
+                    <Spinner size="sm" animation="border" />
+                  ) : (
+                    <FileText style={{ width: '15px', height: '15px' }} />
+                  )}
+                  <span>Dossiê Completo</span>
+                </Button>
                 <Button variant="secondary" size="sm" onClick={onClose} className="fw-semibold fs-7 px-3 ms-1 rounded-3">
                   Fechar
                 </Button>
@@ -1288,7 +1350,23 @@ export const AdminDossierModal = ({
                   <CheckCircle2 style={{ width: '15px', height: '15px' }} /> Aprovar
                 </Button>
 
-                <Button variant="secondary" size="sm" onClick={onClose} className="fw-semibold fs-7 px-3 ms-2 rounded-3">
+                <Button
+                  variant="outline-secondary"
+                  size="sm"
+                  onClick={descarregarDossieCompleto}
+                  disabled={descarregandoDossie}
+                  className="d-flex align-items-center gap-1.5 fw-semibold fs-7 rounded-3"
+                  title="Baixar Dossiê Completo Unificado em PDF (Ordem Oficial CFP)"
+                >
+                  {descarregandoDossie ? (
+                    <Spinner size="sm" animation="border" />
+                  ) : (
+                    <FileText style={{ width: '15px', height: '15px' }} />
+                  )}
+                  <span>Dossiê Completo</span>
+                </Button>
+
+                <Button variant="secondary" size="sm" onClick={onClose} className="fw-semibold fs-7 px-3 ms-1 rounded-3">
                   Fechar
                 </Button>
               </>
