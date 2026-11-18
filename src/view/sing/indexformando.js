@@ -4,6 +4,7 @@ import Registerformandos from "./registerformandos";
 import ImportarFormandos from "./componenteformando/ImportarFormandos";
 import ModuloAdminApp from "../packages/modulo-admin";
 import { EstatisticasInscricoes } from "../packages/modulo-admin/components";
+import RegisterStatusInscricao from "./RegisterStatusInscricao";
 
 export const IndexFormando = () => {
   return (
@@ -40,6 +41,11 @@ export const IndexFormando = () => {
               title="📊 Estatísticas de Inscrições"
             >
              <EstatisticasInscricoes />
+            </Tab>
+            <Tab eventKey="configurar" title="⚙️ Configurar Inscrições Online">
+              <div className="">
+                <RegisterStatusInscricao />
+              </div>
             </Tab>
       </Tabs>
     </Row>

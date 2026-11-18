@@ -1409,6 +1409,7 @@ export const EstatisticasInscricoes = ({ token, aoNotificar }) => {
             </Button>
           </Modal.Footer>
         </Modal>
+        
       )}
     </div>
   );
